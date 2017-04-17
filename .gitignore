@@ -1,0 +1,7 @@
+*/__pycache__
+*.pyc
+.svn/
+log/*
+*.log
+.env
+model.bin
