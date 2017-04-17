@@ -1,0 +1,74 @@
+missing module named pyimod03_importers - imported by d:\software\python\python352\lib\site-packages\PyInstaller\loader\rthooks\pyi_rth_pkgres.py
+missing module named __builtin__ - imported by pkg_resources._vendor.pyparsing
+missing module named 'pkg_resources.extern.pyparsing' - imported by pkg_resources._vendor.packaging.markers, pkg_resources._vendor.packaging.requirements
+missing module named StringIO - imported by six, selenium.webdriver.remote.webelement, requests.packages.urllib3.packages.six, requests.compat, bson.py3compat, pkg_resources._vendor.six
+missing module named __main__ - imported by pkg_resources
+missing module named multiprocessing.set_start_method - imported by multiprocessing, multiprocessing.spawn
+missing module named multiprocessing.get_start_method - imported by multiprocessing, multiprocessing.spawn
+missing module named multiprocessing.get_context - imported by multiprocessing, multiprocessing.pool, multiprocessing.managers, multiprocessing.sharedctypes
+missing module named multiprocessing.TimeoutError - imported by multiprocessing, multiprocessing.pool
+missing module named multiprocessing.AuthenticationError - imported by multiprocessing, multiprocessing.connection
+missing module named multiprocessing.BufferTooShort - imported by multiprocessing, multiprocessing.connection
+missing module named _sysconfigdata - imported by sysconfig
+missing module named pkg_resources.extern.packaging - imported by pkg_resources.extern, pkg_resources
+missing module named 'pkg_resources.extern.six.moves' - imported by pkg_resources, pkg_resources._vendor.packaging.requirements
+missing module named pkg_resources.extern.six - imported by pkg_resources.extern, pkg_resources
+missing module named resource - imported by posix, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named posix - imported by os, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named _posixsubprocess - imported by subprocess, multiprocessing.util, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named 'org.python' - imported by pickle, xml.sax, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named ce - imported by os, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named readline - imported by cmd, code, pdb, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+excluded module named _frozen_importlib - imported by importlib, importlib.abc, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named _frozen_importlib_external - imported by importlib._bootstrap, importlib, importlib.abc, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named _winreg - imported by platform, selenium.webdriver.firefox.firefox_binary, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named _scproxy - imported by urllib.request
+missing module named java - imported by platform, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named 'java.lang' - imported by platform, xml.sax._exceptions, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named vms_lib - imported by platform, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named termios - imported by tty, getpass, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named urllib.proxy_bypass - imported by urllib, requests.compat
+missing module named urllib.quote - imported by urllib, requests.compat
+missing module named urllib.unquote - imported by urllib, requests.compat
+missing module named urllib.unquote_plus - imported by urllib, requests.compat, pymongo.uri_parser
+missing module named urllib.quote_plus - imported by urllib, requests.compat
+missing module named urllib.urlencode - imported by urllib, requests.compat
+missing module named urllib.getproxies - imported by urllib, requests.compat
+missing module named grp - imported by tarfile, shutil, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named _dummy_threading - imported by dummy_threading, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named org - imported by copy, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named pwd - imported by posixpath, tarfile, shutil, http.server, webbrowser, netrc, getpass, distutils.util, D:\WorkSpace\python\internet-content-detection\va_image_porn_recg\main.py
+missing module named PyV8 - imported by execjs._pyv8runtime
+missing module named iconv_codec - imported by bs4.dammit
+missing module named cchardet - imported by bs4.dammit
+missing module named 'html5lib.treebuilders' - imported by bs4.builder._html5lib
+missing module named 'html5lib.constants' - imported by bs4.builder._html5lib
+missing module named html5lib - imported by bs4.builder._html5lib
+missing module named 'requests.packages.urllib3.packages.six.moves' - imported by requests.packages.urllib3.exceptions, requests.packages.urllib3.connectionpool, requests.packages.urllib3.connection, requests.packages.urllib3.util.response, requests.packages.urllib3.request, requests.packages.urllib3.response, requests.packages.urllib3.poolmanager
+missing module named Queue - imported by requests.packages.urllib3.connectionpool, pymongo.topology
+missing module named backports - imported by requests.packages.urllib3.packages.ssl_match_hostname
+missing module named _abcoll - imported by requests.packages.urllib3.packages.ordered_dict
+missing module named dummy_thread - imported by requests.packages.urllib3.packages.ordered_dict
+missing module named thread - imported by requests.packages.urllib3.packages.ordered_dict, bson.py3compat
+missing module named Cookie - imported by requests.compat
+missing module named cookielib - imported by requests.compat
+missing module named urllib2 - imported by selenium.webdriver.common.utils, selenium.webdriver.remote.remote_connection, selenium.webdriver.common.service, requests.compat
+missing module named urlparse - imported by selenium.webdriver.remote.remote_connection, requests.compat
+missing module named simplejson - imported by requests.compat
+missing module named urllib3 - imported by requests.packages
+missing module named socks - imported by requests.packages.urllib3.contrib.socks
+missing module named certifi - imported by requests.certs, pymongo.ssl_support
+missing module named 'cryptography.hazmat.bindings._commoncrypto' - imported by cryptography.hazmat.bindings.commoncrypto.binding
+runtime module named six.moves - imported by 'six.moves.urllib', cryptography.x509.general_name, cryptography.hazmat.backends.openssl.decode_asn1
+missing module named httplib - imported by selenium.webdriver.firefox.webdriver, selenium.webdriver.remote.remote_connection, selenium.webdriver.safari.webdriver, selenium.webdriver.blackberry.webdriver
+missing module named cStringIO - imported by selenium.webdriver.firefox.firefox_profile, bson.py3compat
+missing module named copy_reg - imported by cStringIO
+missing module named "'six.moves.urllib'.request" - imported by tld.utils
+missing module named "'six.moves.urllib'.parse" - imported by tld.utils
+missing module named monotonic - imported by pymongo.monotonic
+missing module named monotime - imported by pymongo.monotonic
+missing module named fcntl - imported by pymongo.pool
+missing module named 'backports.pbkdf2' - imported by pymongo.auth
+missing module named kerberos - imported by pymongo.auth
+missing module named winkerberos - imported by pymongo.auth
+missing module named wincertstore - imported by pymongo.ssl_support

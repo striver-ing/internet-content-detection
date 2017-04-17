@@ -1,0 +1,61 @@
+芒果 
+
+1.视频播放页：
+http://www.mgtv.com/b/313024/3886433.html
+
+2.取视频详细信息（id 可由原地址得出）
+http://pcweb.api.mgtv.com/player/video?video_id=3886433
+得到{
+    "name":"高清",
+    "scale":"16:9",
+    "vip":"0",
+    "url":"/vod.do?pm=B4CyJGmqckpGTbnb6GxLM5Xajguwvs_vPRlSTt2TxGvV3_SV_9Sp3lsjplrroMOb5cpqD48UvuTU1FJ2~7bEf3l2M~Lv4Zwq93bRdICa5Vff9weFW1B9Iibkx2aLmot71z44rGCwA6mdo9ypWhhuBiR_G4O0oBUKyGTaWQxx9LyJbNHXiyEwAk2DDFfz9ST8zgDOut2uKcjqgOCR_eKw7HbqkGY-&fid=462404A392DDED6459B827A4A746E8FB&arange=310&gsid=dfd8f898-ac9b-4bc3-bdc0-2da16aa6f8ca"
+},
+
+3. 取视频url
+    1.拼接 http://disp.titan.mgtv.com/ + url
+    如：
+    http://disp.titan.mgtv.com/vod.do?pm=B4CyJGmqckpGTbnb6GxLM5Xajguwvs_vPRlSTt2TxGvV3_SV_9Sp3lsjplrroMOb5cpqD48UvuTU1FJ2~7bEf3l2M~Lv4Zwq93bRdICa5Vff9weFW1B9Iibkx2aLmot71z44rGCwA6mdo9ypWhhuBiR_G4O0oBUKyGTaWQxx9LyJbNHXiyEwAk2DDFfz9ST8zgDOut2uKcjqgOCR_eKw7HbqkGY-&fid=462404A392DDED6459B827A4A746E8FB&ver=0.2.33900&arange=310&gsid=a51f5190-150e-4d5f-b936-a4974cbeace1&chk=938e2815a0b8fa5eb880186a0d0f31fa&ld=1491377300513
+
+    2. 返回
+    {"ver":"2015-02-25 v1.0.1","isothercdn":"1","info":"http://pcvideoyd.titan.mgtv.com/c1/2017/04/04_0/37F07445F1AEEF75C4D0CD27A8420247_20170404_1_1_869_mp4/EC4E1111F492FA6580FBC6374B7C098B.m3u8?pm=6bytAe547dlO~GjfhhBa0UHw~KELCpqAGhlK_MIItrq0asx~EtuFlpx979OYx3lKRIWq6BMCozFVJWZencQF5oGdL_vlABVNrGpz2VZ~hgWJyROGaw3AZorbcFWjBYvEzwZk2x5FBuAXMslGOB6g~Rqx37BnMJvjW7U_ahQj2pseNb26Qfn_Z3NqtegMEu4oDsyRN8TxNawraGJCMT3Vt0LnjHNqwjG4X6yUM3H~IXLKoh7YiejFx~WJ8ICgF57ItmQPnfpRUL7_3RvRUhLTAfPkITUpOPTotmso08U7a8t80UID_DM_2CnmXzm0lk9isZnF7TO3qfSOy8TrNSTtU_8QlwVdwOoM6BMNwUtJ250U1cF2IWOjTQWsdLsw8qvf&arange=310","status":"ok","loc":"119-106.38.133.209","t":"1491383496","idc":"isure_cloud"}
+
+    info即为视频地址
+
+
+*************************华丽的分割线*********************************
+
+乐视
+
+原地址：
+http://www.le.com/ptv/vplay/25983957.html#vid=25983957
+
+1.取视频url
+http://player-pc.le.com/mms/out/video/playJson?id=25983957&platid=1&splatid=101&format=1&tkey=-1805670490&domain=www.le.com&dvtype=1300&devid=77dc98934fb3dc56d1b4ad4b795a3926&region=cn&source=1000&accessyx=1
+
+dispatch":{
+"350":[
+    "/vod/v2/MjEwLzIzLzQvbGV0di11dHMvMTQvdmVyXzAwXzIyLTEwNTQ3MDE2OTAtYXZjLTE5OTg4Mi1hYWMtMzIwMDYtNDM3MjAwLTEzMTU0MjQwLWFjYjZiNTVkOWVjN2U3YzRjNWNkM2FlYWZkYzNhYTgxLTE0NjgxNjk5Mzg0OTgubXA0?b=240&mmsid=60097766&tm=1491386362&key=a8a42363e9255552af6a349514dc7a1d&platid=1&splatid=101&playid=0&tss=0&vtype=21&cvid=1707897908202&payff=0&pip=38bcfa9bfe35cfdd6234ccc117707a8f",
+
+    "210/23/4/letv-uts/14/ver_00_22-1054701690-avc-199882-aac-32006-437200-13154240-acb6b55d9ec7e7c4c5cd3aeafdc3aa81-1468169938498.mp4"（长时间没变）
+
+],
+
+取全部集信息
+http://d.api.m.le.com/card/dynamic?id=10024593&cid=2&vid=25983957&platform=pc&type=episode%2Cotherlist%2Crelalbum%2Crelvideo&isvip=0&callback=jQuery1710932222259075681_1491462721381&_=1491462721938
+
+
+2. 拼接地址(todo)
+3.   "     "domain":[
+                "http://play.g3proxy.lecloud.com",
+                "http://bplay.g3proxy.lecloud.com",
+                "http://115.182.92.127"
+            ],
+197/39/68/letv-uts/14/ver_00_22-1054599251-avc-797896-aac-64000-949440-103335603-79427004c230b2ce73575131672be634-1468119204145.mp4
+
+http://play.g3proxy.lecloud.com/vod/v2/MTg2LzM4LzU5L2xldHYtdXRzLzE0L3Zlcl8wMF8yMi0xMDU0NjE3NjI5LWF2Yy04MDAyOTItYWFjLTY0MDAwLTk1MTQ0MC0xMDM4Mzc0MDAtOTYxNjcwM2ZlM2Q4ZDE3OGE2NjE5YmEzMDljZWQ3ZGItMTQ2ODEyOTg1NzAzNi5tcDQ=?b=872&mmsid=59938331&tm=1491467330&key=2184824f4417ebe069a583df799813b8&platid=1&splatid=101&playid=0&tss=ios&vtype=22&cvid=857780236704&payff=0&pip=2fbdff83788b23554344c64835d52c7c&termid=1&m3v=1&format=1&expect=3&hwtype=un&ostype=Windows10&p1=1&p2=10&p3=-&tn=0.9907373627647758&vid=25960253&uuid=87AEB97105AB59146E42696E0A0E2F3FE90A250D_0&sign=letv
+
+/vod/v2/MTg2LzIvODgvbGV0di11dHMvMTQvdmVyXzAwXzIyLTEwNTQ2MTc2MjYtYXZjLTIwMDIyOS1hYWMtMzIwMDMtOTUxNDQwLTI4NjYyNjk1LTM5Nzg3MTljZDljZjI2ZmRmNGRmY2M2N2EzNDkyYjQ1LTE0NjgxNTczNzUwNDUubXA0?b=240&mmsid=59938331&tm=1491467334&key=a09e396af3334bcc0336ee5adf47b198&platid=1&splatid=101&playid=0&tss=0&vtype=21&cvid=857780236704&payff=0&pip=2fbdff83788b23554344c64835d52c7c",
+                    "186/2/88/letv-uts/14/ver_00_22-1054617626-avc-200229-aac-32003-951440-28662695-3978719cd9cf26fdf4dfcc67a3492b45-1468157375045.mp4"
+
+http://220.181.117.149/186/38/59/letv-uts/14/ver_00_22-1054617629-avc-800292-aac-64000-951440-103837400-9616703fe3d8d178a6619ba309ced7db-1468129857036_mp4/ver_00_22_39_204_2_1381612_73545036_0.ts?crypt=71aa7f2e743&b=872&nlh=4096&nlt=60&bf=68&p2p=1&video_type=mp4&termid=1&tss=ios&platid=1&splatid=101&its=0&qos=4&fcheck=0&amltag=100&mltag=100&proxy=1778917253&uid=1786315881.rp&keyitem=GOw_33YJAAbXYE-cnQwpfLlv_b2zAkYctFVqe5bsXQpaGNn3T1-vhw..&ntm=1491486600&nkey=1ef9234ba5845c0255ee2d6189358df6&nkey2=3603334058e90b262189c8d0f5f550fe&geo=CN-1-0-1&mmsid=59938331&tm=1491468125&key=835e1345dbd5f856321bc51121457792&playid=0&vtype=22&cvid=857780236704&payff=0&m3v=1&hwtype=un&ostype=Windows10&p1=1&p2=10&p3=-&tn=0.6299902028404176&vid=25960253&uuid=8CE11CB172C63CEF41F1018B3D71877DF2F12C1C_0&sign=letv&errc=0&gn=820&vrtmcd=109&buss=100&cips=106.121.4.105&ch=&appid=500&v=vod.4.2.11171200&rd=1491468287298
