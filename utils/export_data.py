@@ -133,7 +133,7 @@ class ExportData():
                         update_sql += aim_keys[i] + " = %d, "%values[-1]
 
                 elif value_types[i] == 'date':
-                    values.append(data[keys[i]])
+                    values.append(data[keys[i]].replace('年', '-').replace('月', '-').replace('日', ''))
                     if self._is_oracle:
                         sql += "to_date('%s','yyyy-mm-dd hh24:mi:ss'), "
                         update_sql += aim_keys[i] + "= to_date('%s','yyyy-mm-dd hh24:mi:ss'), "%values[-1]
