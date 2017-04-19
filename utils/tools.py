@@ -559,6 +559,21 @@ def get_current_date(date_format = '%Y-%m-%d %H:%M:%S'):
     return datetime.datetime.now().strftime(date_format)
     # return time.strftime(date_format, time.localtime(time.time()))
 
+def format_date(date, old_format, new_format = '%Y-%m-%d %H:%M:%S'):
+    '''
+    @summary: 格式化日期格式
+    ---------
+    @param date: 日期 eg：2017年4月17日 3时27分12秒
+    @param old_format: 原来的日期格式 如 '%Y年%m月%d日 %H时%M分%S秒'
+    @param new_format: 输出的日期格式
+    ---------
+    @result: 格式化后的日期，类型为字符串 如2017-4-17 3:27:12
+    '''
+
+    date_obj = datetime.datetime.strptime(date, old_format)
+    date_str = datetime.datetime.strftime(date_obj, new_format)
+    return date_str
+
 ################################################
 def get_md5(source_str):
     m = hashlib.md5()

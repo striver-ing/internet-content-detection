@@ -75,7 +75,7 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    base_url = 'http://is.snssdk.com/api/news/feed/v50/'
+    base_url = 'http://is.snssdk.com/api/news/feed/v51/'
     params = {
                 'version_code'                       : '6.0.3',
                 'app_name'                           : 'news_article',
@@ -102,7 +102,7 @@ def add_root_url(parser_params = {}):
                 'city'                               : '',
                 'concern_id'                         : '',
                 'count'                              : 20,
-                'cp'                                 : '5285F8023e48Cq1',
+                'cp'                                 : '5089F85eBd4BDq1',
                 'detail'                             : 1,
                 'image'                              : 1,
                 'language'                           : 'zh-Hans-CN',
