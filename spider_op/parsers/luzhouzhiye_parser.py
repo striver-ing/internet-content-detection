@@ -20,7 +20,7 @@ def add_site_info():
     log.debug('添加网站信息')
     site_id = SITE_ID
     name = NAME
-    table = 'Op_site_info'
+    table = 'op_site_info'
     url = "http://www.lzy.edu.cn/"
 
     base_parser.add_website_info(table, site_id, url, name)
@@ -49,22 +49,19 @@ def parser(url_info):
     website_id = url_info['site_id']
     description = url_info['remark']
 
-    html = tools.get_html_by_urllib(source_url)
+    html, request = tools.get_html_by_requests(source_url)
     if html == None:
-        base_parser.update_url('Op_urls', source_url, Constance.EXCEPTION)
+        base_parser.update_url('op_urls', source_url, Constance.EXCEPTION)
         return
 
-    # 判断中英文
-    regex = '[\u4e00-\u9fa5]+'
-    chinese_word = tools.get_info(html, regex)
-    if not chinese_word:
-        base_parser.update_url('Op_urls', source_url, Constance.EXCEPTION)
-        return
     urls = tools.get_urls(html)
 
-    urls = tools.fit_url(urls, "lzy.edu.cn")
     for url in urls:
-        base_parser.add_url('Op_urls', website_id, url, depth + 1)
+        if re.match("http", url):
+            new_url = url
+        else:
+            new_url = 'http://www.lzy.edu.cn/' + url
+        base_parser.add_url('op_urls', website_id, url, depth + 1)
 
 
     # 取当前页的文章信息
@@ -115,32 +112,40 @@ def parser(url_info):
 
     log.debug('''
                 depth               = %s
+                url                 = %s
                 title               = %s
                 release_time        = %s
                 origin              = %s
                 watched_count       = %s
                 content             = %s
-             ''' % (depth, title, release_time, origin, watched_count, content))
+             ''' % (depth, title, source_url, release_time, origin, watched_count, content))
 
     if content and title:
-        base_parser.add_op_info('Op_content_info', website_id, title=title, release_time=release_time,  origin=origin, watched_count=watched_count, content=content)
+        base_parser.add_op_info('op_content_info', website_id, url=source_url, title=title, release_time=release_time,
+                                origin=origin, watched_count=watched_count, content=content)
 
     # 更新source_url为done
     base_parser.update_url('op_urls', source_url, Constance.DONE)
 
 if __name__ == '__main__':
-    url = "http://www.lzy.edu.cn/cms.php/text/46-20272"
+    url = "http://www.lzy.edu.cn/"
     html, request = tools.get_html_by_requests(url)
-    regexs = '点击数:<script type="text/javascript" src="(.*?)"></script>'
-    times_script_url = tools.get_info(html, regexs)
-    times_script_url = ''.join(times_script_url)
-    times_script_url = 'http://www.lzy.edu.cn/' + times_script_url
-    watched_count_html, request = tools.get_html_by_requests(times_script_url)
-    regexs = '\'(\d*?)\''
-    watched_count = tools.get_info(watched_count_html, regexs)
-    watched_count = watched_count and watched_count[0] or ''
-    watched_count = tools.del_html_tag(watched_count)
-    print(watched_count)
+    urls = tools.get_urls(html)
+    for url in urls:
+        if re.match("http", url):
+            new_url = url
+        else:
+            new_url = 'http://www.lzy.edu.cn/' + url
+    # regexs = '点击数:<script type="text/javascript" src="(.*?)"></script>'
+    # times_script_url = tools.get_info(html, regexs)
+    # times_script_url = ''.join(times_script_url)
+    # times_script_url = 'http://www.lzy.edu.cn/' + times_script_url
+    # watched_count_html, request = tools.get_html_by_requests(times_script_url)
+    # regexs = '\'(\d*?)\''
+    # watched_count = tools.get_info(watched_count_html, regexs)
+    # watched_count = watched_count and watched_count[0] or ''
+    # watched_count = tools.del_html_tag(watched_count)
+    # print(watched_count)
     #urls = tools.get_urls(html)
     #print(urls)
     # for url in urls:

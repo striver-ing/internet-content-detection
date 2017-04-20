@@ -6,7 +6,7 @@ import init
 import utils.tools as tools
 from utils.log import log
 import base.constance as Constance
-
+import  re
 # 必须定义 网站id
 SITE_ID = 14
 # 必须定义 网站名
@@ -19,8 +19,8 @@ def add_site_info():
     log.debug('添加网站信息')
     site_id = SITE_ID
     name = NAME
-    table = 'Op_site_info'
-    url = "http://www.xuyong.gov.cn/"
+    table = 'op_site_info'
+    url = "http://www.lx2hs.com/"
 
     base_parser.add_website_info(table, site_id, url, name)
 
@@ -32,11 +32,8 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    url = "http://www.xuyong.gov.cn/"
-    html, request = tools.get_html_by_requests(url)
-    urls = tools.get_urls(html)
-    for url in urls:
-        base_parser.add_url('op_urls', SITE_ID, url)
+    url = "http://www.lx2hs.com/"
+    base_parser.add_url('op_urls', SITE_ID, url)
 
 # 必须定义 解析网址
 def parser(url_info):
@@ -48,34 +45,33 @@ def parser(url_info):
     website_id = url_info['site_id']
     description = url_info['remark']
 
-    html = tools.get_html_by_urllib(source_url)
+    html, request = tools.get_html_by_requests(source_url)
     if html == None:
-        base_parser.update_url('Op_urls', source_url, Constance.EXCEPTION)
+        base_parser.update_url('op_urls', source_url, Constance.EXCEPTION)
         return
 
     # 判断中英文
-    regex = '[\u4e00-\u9fa5]+'
-    chinese_word = tools.get_info(html, regex)
-    if not chinese_word:
-        base_parser.update_url('Op_urls', source_url, Constance.EXCEPTION)
-        return
     urls = tools.get_urls(html)
 
-    urls = tools.fit_url(urls, "xuyong")
     for url in urls:
-        base_parser.add_url('Op_urls', website_id, url, depth + 1)
-
+        if re.match("http", url):
+            new_url = url
+        elif re.match('/', url):
+            new_url = 'http://www.lx2hs.com' + url
+        else:
+            new_url = 'http://www.lx2hs.com/' + url
+        base_parser.add_url('op_urls', website_id, new_url, depth + 1)
 
     # 取当前页的文章信息
     # 标题
 
-    regexs = '<td  class="titlestyle1037"  align="center">(.*?)</td>'
+    regexs = '<font style=\'font-size:15px;font-weight: bold;\'>(.*?)</font></td></tr>'
     title = tools.get_info(html, regexs)
     title = title and title[0] or ''
     title = tools.del_html_tag(title)
 
-    #时间
-    regexs = '<span  class="timestyle1037" >(.*?)</span>'
+    #更新时间
+    regexs = '更新时间：(.*?)</td>'
     release_time = tools.get_info(html, regexs)
     release_time = release_time and release_time[0] or ''
     release_time = tools.del_html_tag(release_time)
@@ -87,40 +83,44 @@ def parser(url_info):
     # author = tools.del_html_tag(author)
 
     #文章来源
-    # regexs = '采编:　(.*?)阅读'
-    # origin = tools.get_info(html, regexs)
-    # origin = origin and origin[0] or ''
-    # origin = tools.del_html_tag(origin)
+    regexs = '<td align=\'center\'   class=\'info\'>(.*?)　点击数'
+    origin = tools.get_info(html, regexs)
+    origin = origin and origin[0] or ''
+    origin = tools.del_html_tag(origin)
 
     # #点击数
-    # regexs = '阅读:(\d*?)次'
-    # watched_count = tools.get_info(html, regexs)
-    # watched_count = watched_count and watched_count[0] or ''
-    # watched_count = tools.del_html_tag(watched_count)
+    regexs = '点击数：<font color=red>(\d*?)</font>次'
+    watched_count = tools.get_info(html, regexs)
+    watched_count = watched_count and watched_count[0] or ''
+    watched_count = tools.del_html_tag(watched_count)
 
     # 内容
-    regexs = ['<tr><td  class="contentstyle1037" >(.*?)</td></tr>']
+    regexs = ['<p class="MsoNormal" style="text-indent:24.0pt;">(.*?)【刷新页面】']
     content = tools.get_info(html, regexs)
     content = content and content[0] or ''
     content = tools.del_html_tag(content)
 
     log.debug('''
                 depth               = %s
+                url                 = %s
                 title               = %s
                 release_time        = %s
+                origin              = %s
+                watched_count       = %s
                 content             = %s
-             ''' % (depth+1, title, release_time,  content))
+             ''' % (depth+1, source_url, title, release_time, origin, watched_count, content))
 
     if content and title:
-        base_parser.add_op_info('Op_content_info', website_id, title=title, release_time=release_time, content=content)
+        base_parser.add_op_info('op_content_info', website_id, url=source_url, title=title, release_time=release_time,
+                                origin=origin, watched_count=watched_count, content=content)
 
     # 更新source_url为done
     base_parser.update_url('op_urls', source_url, Constance.DONE)
 
 if __name__ == '__main__':
-    url = "http://www.xuyong.gov.cn/content.jsp?urltype=news.NewsContentUrl&wbtreeid=1013&wbnewsid=48578"
-    html, request = tools.get_html_by_requests(url)
-    regexs = ['<tr><td  class="contentstyle1037" >(.*?)</td></tr>']
+    url = "http://lxezbxzx.gotoip2.com/info_Show.asp?InfoId=382&ClassId=27&Topid=0"
+    html, request = tools.get_html_by_requests(url, code='gb2312')
+    regexs = ['<p class="MsoNormal" style="text-indent:24.0pt;">(.*?)【刷新页面】']
     content = tools.get_info(html, regexs)
     content = content and content[0] or ''
     content = tools.del_html_tag(content)

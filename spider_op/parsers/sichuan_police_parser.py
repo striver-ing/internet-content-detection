@@ -7,6 +7,7 @@ import utils.tools as tools
 from utils.log import log
 import base.constance as Constance
 import chardet
+import re
 
 # 必须定义 网站id
 SITE_ID = 9
@@ -20,7 +21,7 @@ def add_site_info():
     log.debug('添加网站信息')
     site_id = SITE_ID
     name = NAME
-    table = 'Op_site_info'
+    table = 'op_site_info'
     url = "http://www.scpolicec.edu.cn/"
 
     base_parser.add_website_info(table, site_id, url, name)
@@ -34,7 +35,7 @@ def add_root_url(parser_params = {}):
         '''%str(parser_params))
 
     url = "http://www.scpolicec.edu.cn/"
-    html, request = tools.get_html_by_requests(url, code='gb2342')
+    html, request = tools.get_html_by_requests(url, code='gb2312')
     urls = tools.get_urls(html)
     for url in urls:
         base_parser.add_url('op_urls', SITE_ID, url)
@@ -51,20 +52,19 @@ def parser(url_info):
 
     html = tools.get_html_by_urllib(source_url, code='gb2312')
     if html == None:
-        base_parser.update_url('Op_urls', source_url, Constance.EXCEPTION)
+        base_parser.update_url('op_urls', source_url, Constance.EXCEPTION)
         return
 
-    # 判断中英文
-    regex = '[\u4e00-\u9fa5]+'
-    chinese_word = tools.get_info(html, regex)
-    if not chinese_word:
-        base_parser.update_url('Op_urls', source_url, Constance.EXCEPTION)
-        return
     urls = tools.get_urls(html)
 
-    urls = tools.fit_url(urls, "scpolicec")
     for url in urls:
-        base_parser.add_url('Op_urls', website_id, url, depth + 1)
+        if re.match("http", url):
+            new_url = url
+        elif re.match('/', url):
+            new_url = 'http://www.scpolicec.edu.cn' + url
+        else:
+            new_url = 'http://www.scpolicec.edu.cn/' + url
+        base_parser.add_url('op_urls', website_id, new_url, depth + 1)
 
 
     # 取当前页的文章信息
@@ -107,28 +107,30 @@ def parser(url_info):
 
     log.debug('''
                     depth               = %s
+                    url                 = %s
                     title               = %s
                     release_time        = %s
                     author              = %s
                     origin              = %s
                     watched_count       = %s
                     content             = %s
-                 ''' % (depth, title, release_time, author, origin, watched_count, content))
+                 ''' % (depth+1, source_url, title, release_time, author, origin, watched_count, content))
 
     if content and title:
-        base_parser.add_op_info('Op_content_info', website_id, title=title, release_time=release_time, author=author,
+        base_parser.add_op_info('op_content_info', website_id,url=source_url, title=title, release_time=release_time, author=author,
                                 origin=origin, watched_count=watched_count, content=content)
     # 更新source_url为done
     base_parser.update_url('op_urls', source_url, Constance.DONE)
 
 if __name__ == '__main__':
-    url = "http://news.scpolicec.edu.cn/bencandy.php?fid=63&id=4823"
-    html, request = tools.get_html_by_requests(url, code='gb2312')
-    regexs = ['<p style="text-align: center;">(.*?)</table>']
-    content = tools.get_info(html, regexs)
-    content = content and content[0] or ''
-    content = tools.del_html_tag(content)
-    print(content)
+    url = "http://news.scpolicec.edu.cn/bencandy.php?fid=63&id=4827"
+    html, request = tools.get_html_by_requests(url,code='gb2312')
+    # urls = tools.get_urls(html)
+    regexs = '<div class="main_title">(.*?)<div class="top_about">'
+    title = tools.get_info(html, regexs)
+    title = title and title[0] or ''
+    title = tools.del_html_tag(title)
+    print(title)
     #urls = tools.get_urls(html)
     #print(urls)
     # for url in urls:

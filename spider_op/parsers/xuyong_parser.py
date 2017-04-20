@@ -7,10 +7,11 @@ import utils.tools as tools
 from utils.log import log
 import base.constance as Constance
 import re
+
 # 必须定义 网站id
-SITE_ID = 2
+SITE_ID = 7
 # 必须定义 网站名
-NAME = 'jiangyang'
+NAME = 'xuyong'
 
 
 # 必须定义 添加网站信息
@@ -20,7 +21,7 @@ def add_site_info():
     site_id = SITE_ID
     name = NAME
     table = 'op_site_info'
-    url = "http://www.jiangyang.gov.cn/"
+    url = "http://www.xuyong.gov.cn/"
 
     base_parser.add_website_info(table, site_id, url, name)
 
@@ -32,7 +33,7 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    url = "http://www.jiangyang.gov.cn/"
+    url = "http://www.xuyong.gov.cn/"
     base_parser.add_url('op_urls', SITE_ID, url)
 
 # 必须定义 解析网址
@@ -49,48 +50,49 @@ def parser(url_info):
     if html == None:
         base_parser.update_url('op_urls', source_url, Constance.EXCEPTION)
         return
-
     urls = tools.get_urls(html)
+
     for url in urls:
         if re.match("http", url):
             new_url = url
         else:
-            new_url = 'http://www.jiangyang.gov.cn/'+url
+            new_url = 'http://www.xuyong.gov.cn'+url
         base_parser.add_url('op_urls', website_id, new_url, depth + 1)
 
     # 取当前页的文章信息
     # 标题
 
-    regexs = '<div class="tit">(.*?)</div>'
+    regexs = '<td  class="titlestyle1037"  align="center">(.*?)</td></tr>'
     title = tools.get_info(html, regexs)
     title = title and title[0] or ''
     title = tools.del_html_tag(title)
 
     #时间
-    regexs = '<label>(.*?)</label>'
+    regexs = '<span  class="timestyle1037" >(.*?)</span>'
     release_time = tools.get_info(html, regexs)
     release_time = release_time and release_time[0] or ''
     release_time = tools.del_html_tag(release_time)
 
+    # #作者
+    # regexs = '<span>作者：(.*?)</span>'
+    # author = tools.get_info(html, regexs)
+    # author = author and author[0] or ''
+    # author = tools.del_html_tag(author)
+
     #文章来源
-    regexs = ' <label>来源：(.*?)</label>'
-    origin = tools.get_info(html, regexs)
-    origin = origin and origin[0] or ''
-    origin = tools.del_html_tag(origin)
+    # regexs = '采编:　(.*?)阅读'
+    # origin = tools.get_info(html, regexs)
+    # origin = origin and origin[0] or ''
+    # origin = tools.del_html_tag(origin)
 
     # #点击数
-    # regexs = '<span>点击数.*?src="(.*?)"></script>'
-    # times_script_url = tools.get_info(html, regexs)
-    # times_script_url = ''.join(times_script_url)
-    # times_script_url = 'http://www.luzhou.gov.cn' + times_script_url
-    # watched_count_html, request = tools.get_html_by_requests(times_script_url)
-    # regexs = '\'(\d*?)\''
-    # watched_count = tools.get_info(watched_count_html, regexs)
+    # regexs = '阅读:(\d*?)次'
+    # watched_count = tools.get_info(html, regexs)
     # watched_count = watched_count and watched_count[0] or ''
     # watched_count = tools.del_html_tag(watched_count)
 
     # 内容
-    regexs = ['<div class="content" id="nr" style="">(.*?)</div>']
+    regexs = ['<tr><td  class="contentstyle1037" >(.*?) <tr><td  class="pagestyle1037"  align="left">']
     content = tools.get_info(html, regexs)
     content = content and content[0] or ''
     content = tools.del_html_tag(content)
@@ -100,36 +102,30 @@ def parser(url_info):
                 url                 = %s
                 title               = %s
                 release_time        = %s
-                origin              = %s
                 content             = %s
-             ''' % (depth+1, source_url, title, release_time, origin, content))
+             ''' % (depth+1, source_url, title, release_time,  content))
 
     if content and title:
         base_parser.add_op_info('op_content_info', website_id, url=source_url, title=title,
-                                release_time=release_time, origin=origin, content=content)
+                                release_time=release_time, content=content)
 
     # 更新source_url为done
     base_parser.update_url('op_urls', source_url, Constance.DONE)
 
-    # # 解析
-    # html, request = tools.get_html_by_requests(root_url)
-    # if not html:
-    #     base_parser.update_url('urls', root_url, Constance.EXCEPTION)
 if __name__ == '__main__':
-    url = "http://www.jiangyang.gov.cn/template/default/news_detail.jsp?id=8ac14d835b557c83015b6a8a78bd69d5"
-    html, request = tools.get_html_by_requests(url)
-    regexs = '<label>(.*?)</label>'
-    release_time = tools.get_info(html, regexs)
-    release_time = release_time and release_time[0] or ''
-    release_time = tools.del_html_tag(release_time)
-    print(release_time)
-    # urls = tools.get_urls(html)
-    # for url in urls:
-    #     if re.match("http", url):
-    #         url = url
-    #     else:
-    #         url = 'http://www.jiangyang.gov.cn/'+url
-    #         print(url)
+    url = "http://www.xuyong.gov.cn/content.jsp?urltype=news.NewsContentUrl&wbtreeid=1015&wbnewsid=48759"
+    html = tools.get_html_by_urllib(url)
+    print(html)
+
+    urls = tools.get_urls(html)
+
+    for url in urls:
+        if re.match("http", url):
+            print(url)
+        else:
+            url = 'http://www.xuyong.gov.cn'+url
+            print(url)
+        # print(url)
     #urls = tools.get_urls(html)
     #print(urls)
     # for url in urls:

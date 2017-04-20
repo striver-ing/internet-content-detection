@@ -32,11 +32,7 @@ def main():
 
     # 添加parser
     # spider.add_parser(cctv_parser)
-    spider.add_parser(hejiang_parser)
-    spider.add_parser(luzhou_parser)
-    spider.add_parser(luxian_parser)
-    spider.add_parser(naxi_parser)
-    spider.add_parser(longmatan_parser)
+    spider.add_parser(luzhouzuojia_parser)
     spider.start()
 
 if __name__ == '__main__':

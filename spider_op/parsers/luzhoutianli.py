@@ -1,6 +1,6 @@
 import sys
 sys.path.append('../../')
-
+# 访问503
 import base.base_parser as base_parser
 import init
 import utils.tools as tools
@@ -19,7 +19,7 @@ def add_site_info():
     log.debug('添加网站信息')
     site_id = SITE_ID
     name = NAME
-    table = 'Op_site_info'
+    table = 'op_site_info'
     url = "http://www.luzhoutianli.com/"
 
     base_parser.add_website_info(table, site_id, url, name)
@@ -50,20 +50,12 @@ def parser(url_info):
 
     html = tools.get_html_by_urllib(source_url)
     if html == None:
-        base_parser.update_url('Op_urls', source_url, Constance.EXCEPTION)
+        base_parser.update_url('op_urls', source_url, Constance.EXCEPTION)
         return
 
-    # 判断中英文
-    regex = '[\u4e00-\u9fa5]+'
-    chinese_word = tools.get_info(html, regex)
-    if not chinese_word:
-        base_parser.update_url('Op_urls', source_url, Constance.EXCEPTION)
-        return
     urls = tools.get_urls(html)
-
-    urls = tools.fit_url(urls, "luzhoutianli")
     for url in urls:
-        base_parser.add_url('Op_urls', website_id, url, depth + 1)
+        base_parser.add_url('op_urls', website_id, url, depth + 1)
 
 
     # 取当前页的文章信息
@@ -106,16 +98,17 @@ def parser(url_info):
 
     log.debug('''
                 depth               = %s
+                url                 = %s
                 title               = %s
                 release_time        = %s
                 author              = %s
                 origin              = %s
                 watched_count       = %s
                 content             = %s
-             ''' % (depth, title, release_time, author, origin, watched_count, content))
+             ''' % (depth, source_url, title, release_time, author, origin, watched_count, content))
 
     if content and title:
-        base_parser.add_op_info('Op_content_info', website_id, title=title, release_time=release_time, author=author,
+        base_parser.add_op_info('op_content_info', website_id, url=source_url, title=title, release_time=release_time, author=author,
                                 origin=origin, watched_count=watched_count, content=content)
 
     # 更新source_url为done
@@ -127,9 +120,9 @@ def parser(url_info):
     #     base_parser.update_url('urls', root_url, Constance.EXCEPTION)
 if __name__ == '__main__':
     url = "http://www.luzhoutianli.com/luzhotuianli/item_14864969_732306.html"
-    html = tools.get_html_by_requests(url)
+    html,request = tools.get_html_by_requests(url)
     print(html)
-    regexs = '<strong class="NameTxt"><a >(.*?)</a></strong>'
+    regexs = '<strong class="NameTxt"><a>(.*?)</a></strong>'
     title = tools.get_info(html, regexs)
     title = title and title[0] or ''
     #title = tools.del_html_tag(title)

@@ -55,7 +55,6 @@ def parser(url_info):
         return
 
     urls = tools.get_urls(html)
-
     for url in urls:
         if re.match("http", url):
             new_url = url

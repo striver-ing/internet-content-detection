@@ -54,12 +54,12 @@ def parser(url_info):
     urls = tools.get_urls(html)
     for url in urls:
         if re.match("http", url):
-            url = url
+            new_url = url
         elif re.match('/', url):
-            url = 'http://www.gulin.gov.cn' + url
+            new_url = 'http://www.gulin.gov.cn' + url
         else:
-            url = 'http://www.gulin.gov.cn/template/default/' + url
-        base_parser.add_url('Op_urls', website_id, url, depth + 1)
+            new_url = 'http://www.gulin.gov.cn/template/default/' + url
+        base_parser.add_url('op_urls', website_id, new_url, depth + 1)
 
 
     # 取当前页的文章信息
@@ -95,7 +95,7 @@ def parser(url_info):
     watched_count = tools.del_html_tag(watched_count)
 
     # 内容
-    regexs = ['<div class="news_content" id="news_content">(.*?)<\div>']
+    regexs = '<div class="news_content" id="news_content">(.*?)</span></b></p>'
     content = tools.get_info(html, regexs)
     content = content and content[0] or ''
     content = tools.del_html_tag(content)
@@ -108,27 +108,33 @@ def parser(url_info):
                 origin              = %s
                 watched_count       = %s
                 content             = %s
-             ''' % (depth, source_url, title, release_time, origin, watched_count, content))
+             ''' % (depth+1, source_url, title, release_time, origin, watched_count, content))
 
     if content and title:
-        base_parser.add_op_info('op_content_info', website_id, url=source_url, title=title, release_time=release_time,  origin=origin, watched_count=watched_count, content=content)
+        base_parser.add_op_info('op_content_info', website_id, url=source_url, title=title,
+                                release_time=release_time, origin=origin, watched_count=watched_count, content=content)
 
     # 更新source_url为done
     base_parser.update_url('op_urls', source_url, Constance.DONE)
 
 if __name__ == '__main__':
-    url = "http://www.gulin.gov.cn/"
+    url = "http://news.scpolicec.edu.cn/bencandy.php?fid=63&id=4827"
     html, request = tools.get_html_by_requests(url)
-    urls = tools.get_urls(html)
-    for url in urls:
-        if re.match("http", url):
-            url = url
-        elif re.match('/', url):
-            url = 'http://www.gulin.gov.cn' + url
-            print(url)
-        else:
-            url = 'http://www.gulin.gov.cn/template/default/' + url
-            print(url)
+    #urls = tools.get_urls(html)
+    regexs = '<div class="news_content" id="news_content">(.*?)</span></b></p>'
+    content = tools.get_info(html, regexs)
+    content = content and content[0] or ''
+    content = tools.del_html_tag(content)
+    print(content)
+    # for url in urls:
+    #     if re.match("http", url):
+    #         url = url
+    #     elif re.match('/', url):
+    #         url = 'http://www.gulin.gov.cn' + url
+    #         #print(url)
+    #     else:
+    #         url = 'http://www.gulin.gov.cn/template/default/' + url
+    #         print(url)
         #print(url)
     #urls = tools.get_urls(html)
     #print(urls)
