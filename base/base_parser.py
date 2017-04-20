@@ -542,7 +542,6 @@ def add_game_app_info(table, site_id, url, title = '', summary = '', update_info
         'sexy_image_url': '',
         'image_pron_status': 0
     }
-
     db.add(table, gameApp_info_dict)
 
 
@@ -613,4 +612,20 @@ def add_article_info(table, website_id, source_url, title, content):
         'read_status':0
     }
 
+    db.add(table, content_info_dict)
+
+def add_op_info(table, website_id, url ='', title='', release_time='', author='', origin='', watched_count='', content=''):
+
+    content_info_dict = {
+        'site_id': website_id,
+        'url': url,
+        'title': title,
+        'release_time': release_time,
+        'author': author,
+        'origin': origin,
+        'watch_count': watched_count,
+        'content': content,
+        'record_time': tools.get_current_date(),
+        'read_status': 0
+    }
     db.add(table, content_info_dict)
