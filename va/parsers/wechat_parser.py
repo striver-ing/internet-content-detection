@@ -131,7 +131,7 @@ def parser(url_info):
         except:
             continue
 
-        contained_key, contained_key_count = base_parser.get_contained_key(title, content, remark['search_keyword1'], remark['search_keyword2'], remark['search_keyword3'], task_id = remark['task_id'])
+        contained_key, contained_key_count = base_parser.get_contained_key(title, content, remark['search_keyword1'], remark['search_keyword2'], remark['search_keyword3'])
 
         log.debug('''
             标题：   %s
@@ -150,7 +150,7 @@ def parser(url_info):
             continue
 
         base_parser.add_content_info('VA_content_info', SITE_ID, url, title, content, image_url = image, release_time = release_time, origin = origin,
-                                     watched_count = watched_count, search_type=SEARCH_TYPE, keyword = contained_key, keyword_count = contained_key_count)
+                                     watched_count = watched_count, search_type=SEARCH_TYPE, keyword = contained_key, keyword_count = contained_key_count, task_id = remark['task_id'])
 
     base_parser.update_url('VA_urls', root_url, Constance.DONE)
 
