@@ -143,16 +143,19 @@ def get_html_by_requests(url, headers = '', code = 'utf-8'):
 
 def get_json_by_requests(url, params = None, headers = '', data = None):
     json = {}
+    response = None
     try:
         #response = requests.get(url, params = params)
         if data:
-            response = requests.post(url, headers = headers, data = data, timeout = TIME_OUT)
+            response = requests.post(url, headers = headers, data = data, params = params, timeout = TIME_OUT)
         else:
             response = requests.get(url, headers=headers, params = params, timeout=TIME_OUT)
-
+        response.encoding = 'utf-8'
         json = response.json()
     except Exception as e:
         log.error(e)
+    finally:
+        response and response.close()
 
     return json
 
@@ -425,6 +428,23 @@ def write_file(filename, content, mode = 'w'):
     mkdir(directory)
     with open(filename, mode, encoding = 'utf-8') as file:
         file.writelines(content)
+
+def read_file(filename, readlines = False):
+    '''
+    @summary: 读文件
+    ---------
+    @param filename: 文件名（有路径）
+    @param readlines: 按行读取 （默认False）
+    ---------
+    @result: 按行读取返回List，否则返回字符串
+    '''
+
+    content = ''
+    with open(filename, 'r', encoding = 'utf-8') as file:
+        content = file.readlines() if readlines else file.read()
+
+    return content
+
 
 def download_file(url, base_path, filename = '', call_func = ''):
     file_path = base_path + filename
