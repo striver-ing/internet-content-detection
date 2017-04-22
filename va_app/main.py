@@ -25,6 +25,7 @@ def main():
 
     # 添加parser
     spider.add_parser(headline_parser)
+    spider.add_parser(kuaibao_parser)
 
     spider.start()
 
