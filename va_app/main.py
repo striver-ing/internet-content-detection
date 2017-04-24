@@ -10,6 +10,7 @@ from db.mongodb import MongoDB
 
 # 需配置
 from va_app.parsers import *
+import va_app.export_data as export_data
 def main():
     def begin_callback():
         log.info('\n********** VA_APP begin **********')
@@ -17,6 +18,7 @@ def main():
         db.delete('VAApp_urls', {})
 
     def end_callback():
+        export_data.main()
         log.info('\n********** VA_APP end **********')
 
 

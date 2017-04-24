@@ -214,29 +214,29 @@ def parser(url_info):
                 %(title, abstract, img_url, original_url, release_time, video_url, content, column_id, sensitive_id, violate_id)
                 )
 
-            # 下载
-            base_path = FILE_LOCAL_PATH
-            is_download = 0
+                # 下载
+                base_path = FILE_LOCAL_PATH
+                is_download = 0
 
-            # 下载图片
-            img_name = ''
-            if img_url:
-                img_name = 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
-                is_download = tools.download_file(img_url, base_path, img_name)
-                if not is_download:
-                    img_name = ''
+                # 下载图片
+                img_name = ''
+                if img_url:
+                    img_name = 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
+                    is_download = tools.download_file(img_url, base_path, img_name)
+                    if not is_download:
+                        img_name = ''
 
 
-            # 下载视频
-            video_name = ''
-            if video_url:
-                video_name = 'videos/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.mp4'
-                is_download = tools.download_file(video_url, base_path, video_name)
-                if not is_download:
-                    video_name = ''
+                # 下载视频
+                video_name = ''
+                if video_url:
+                    video_name = 'videos/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.mp4'
+                    is_download = tools.download_file(video_url, base_path, video_name)
+                    if not is_download:
+                        video_name = ''
 
-            if original_url:
-                base_parser.add_va_app_content_info('VAApp_content_info', SITE_ID, title, abstract, img_url, img_name, original_url, release_time, video_url, video_name, content, column_id, is_download, sensitive_id, violate_id, STORAGE_ID)
+                if original_url:
+                    base_parser.add_va_app_content_info('VAApp_content_info', SITE_ID, title, abstract, img_url, img_name, original_url, release_time, video_url, video_name, content, column_id, is_download, sensitive_id, violate_id, STORAGE_ID)
 
 
         except Exception as e:
