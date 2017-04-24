@@ -19,11 +19,10 @@ SITE_ID = 2
 # 必须定义 网站名
 NAME = '天天快报'
 
-FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'kuaibao_save_path')
+FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'headlines_save_path')
 NEWS_LOCAL =  1
 VIDEO      = 2
-APP_ID = 5
-STORAGE_ID = 3
+STORAGE_ID = 2
 
 URL = 'http://r.cnews.qq.com/getSubNewsChlidInterest'
 

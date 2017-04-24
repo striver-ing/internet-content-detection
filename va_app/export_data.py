@@ -10,7 +10,7 @@ def main():
 
     key_map = {
         'id': 'int__id',
-        'APP_ID': 'vint_1',
+        'APP_ID': 'int_site_id',
         'COLUMN_ID ': 'int_column_id',
         'CONTENT_ID': 'int__id',
         'RELEASE_TIME': 'date_release_time',
@@ -40,7 +40,7 @@ def main():
     #导出信息
     key_map = {
         'id': 'int__id',          # 目标键 = 源键对应的值         类型为str
-        'APP_ID': 'vint_1',          # 目标键 = 源键对应的值         类型为int
+        'APP_ID': 'int_site_id',          # 目标键 = 源键对应的值         类型为int
         'COLUMN_ID': 'int_column_id',         # 目标键 = 源键对应的值         类型为date
         'CONTENT_ID': 'int__id',                  # 目标键 = 值                   类型为int
         'RELEASE_TIME': 'date_release_time',

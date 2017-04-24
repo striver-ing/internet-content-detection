@@ -52,7 +52,6 @@ ONE_PAGE_TIME_INTERVAL = 3600
 FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'headlines_save_path')
 NEWS_LOCAL =  1
 VIDEO      = 2
-APP_ID = 4
 STORAGE_ID = 2
 
 # 必须定义 添加网站信息
