@@ -55,7 +55,7 @@ def parser(url_info):
         if re.match("http", url):
             new_url = url
         else:
-            new_url = 'http://www.jiangyang.gov.cn/'+url
+            new_url = 'http://www.jiangyang.gov.cn/template/default/'+url
         base_parser.add_url('op_urls', website_id, new_url, depth + 1)
 
     # 取当前页的文章信息
@@ -63,6 +63,9 @@ def parser(url_info):
 
     regexs = '<div class="tit">(.*?)</div>'
     title = tools.get_info(html, regexs)
+    if not title:
+        regexs = '<h1>(.*?)</h1>'
+        title = tools.get_info(html, regexs)
     title = title and title[0] or ''
     title = tools.del_html_tag(title)
 
@@ -70,30 +73,30 @@ def parser(url_info):
     regexs = '<label>(.*?)</label>'
     release_time = tools.get_info(html, regexs)
     release_time = release_time and release_time[0] or ''
-    release_time = tools.del_html_tag(release_time)
+    if release_time:
+        release_time = tools.format_date(release_time)
+    if not release_time:
+        regexs = '<span class="time">发布时间：(.*?)</span><span class="source"></span></p>'
+        release_time = tools.get_info(html, regexs)
+        release_time = release_time and release_time[0] or ''
+        #release_time = tools.format_date(release_time)
 
     #文章来源
-    regexs = ' <label>来源：(.*?)</label>'
+    regexs = '<label>来源：(.*?)</label>'
     origin = tools.get_info(html, regexs)
     origin = origin and origin[0] or ''
     origin = tools.del_html_tag(origin)
-
-    # #点击数
-    # regexs = '<span>点击数.*?src="(.*?)"></script>'
-    # times_script_url = tools.get_info(html, regexs)
-    # times_script_url = ''.join(times_script_url)
-    # times_script_url = 'http://www.luzhou.gov.cn' + times_script_url
-    # watched_count_html, request = tools.get_html_by_requests(times_script_url)
-    # regexs = '\'(\d*?)\''
-    # watched_count = tools.get_info(watched_count_html, regexs)
-    # watched_count = watched_count and watched_count[0] or ''
-    # watched_count = tools.del_html_tag(watched_count)
 
     # 内容
     regexs = ['<div class="content" id="nr" style="">(.*?)</div>']
     content = tools.get_info(html, regexs)
     content = content and content[0] or ''
     content = tools.del_html_tag(content)
+    if not content:
+        regexs = '<p style="text-align: center;"(.*?)</div>.*?<div class="content">'
+        content = tools.get_info(html, regexs)
+        content = content and content[0] or ''
+        content = tools.del_html_tag(content)
 
     log.debug('''
                 depth               = %s
@@ -116,13 +119,62 @@ def parser(url_info):
     # if not html:
     #     base_parser.update_url('urls', root_url, Constance.EXCEPTION)
 if __name__ == '__main__':
-    url = "http://www.jiangyang.gov.cn/template/default/news_detail.jsp?id=8ac14d835b557c83015b6a8a78bd69d5"
+    depth=1
+    url = "http://www.jiangyang.gov.cn"
     html, request = tools.get_html_by_requests(url)
+    # urls = tools.get_urls(html)
+    # for url in urls:
+    #     if re.match("http", url):
+    #         new_url = url
+    #     else:
+    #         print(url)
+    #         new_url = 'http://www.jiangyang.gov.cn/template/default/' + url
+
+    # regexs = '<div class="tit">(.*?)</div>'
+    # title = tools.get_info(html, regexs)
+    # if not title:
+    #     regexs = '<h1>(.*?)</h1>'
+    #     title = tools.get_info(html, regexs)
+    # title = title and title[0] or ''
+    # title = tools.del_html_tag(title)
+    #
+    # # 时间
     regexs = '<label>(.*?)</label>'
     release_time = tools.get_info(html, regexs)
     release_time = release_time and release_time[0] or ''
-    release_time = tools.del_html_tag(release_time)
-    print(release_time)
+    if release_time:
+        release_time = tools.format_date(release_time)
+    if not release_time:
+        regexs = '<span class="time">发布时间：(.*?)</span><span class="source"></span></p>'
+        release_time = tools.get_info(html, regexs)
+        release_time = release_time and release_time[0] or ''
+        #print(release_time)
+        release_time = tools.format_date(release_time)
+    #
+    # # 文章来源
+    # regexs = '<label>来源：(.*?)</label>'
+    # origin = tools.get_info(html, regexs)
+    # origin = origin and origin[0] or ''
+    # origin = tools.del_html_tag(origin)
+    #
+    # # 内容
+    # regexs = ['<div class="content" id="nr" style="">(.*?)</div>']
+    # content = tools.get_info(html, regexs)
+    # content = content and content[0] or ''
+    # content = tools.del_html_tag(content)
+    # if not content:
+    #     regexs = '<p style="text-align: center;">(.*?)</div>.*?<div class="content">'
+    #     content = tools.get_info(html, regexs)
+    #     content = content and content[0] or ''
+    #     content = tools.del_html_tag(content)
+    # log.debug('''
+    #                depth               = %s
+    #                url                 = %s
+    #                title               = %s
+    #                release_time        = %s
+    #                origin              = %s
+    #                content             = %s
+    #             ''' % (depth + 1, url, title, release_time, origin, content))
     # urls = tools.get_urls(html)
     # for url in urls:
     #     if re.match("http", url):

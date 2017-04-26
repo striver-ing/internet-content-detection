@@ -71,7 +71,7 @@ def parser(url_info):
     regexs = '<span  class="timestyle1037" >(.*?)</span>'
     release_time = tools.get_info(html, regexs)
     release_time = release_time and release_time[0] or ''
-    release_time = tools.del_html_tag(release_time)
+    release_time = tools.format_date(release_time)
 
     # #作者
     # regexs = '<span>作者：(.*?)</span>'

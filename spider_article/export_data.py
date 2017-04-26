@@ -7,18 +7,27 @@ import time
 
 def main():
     # 导出数据
+    export_data = ExportData()
     key_map = {
-        'aim_key1' : 'str_source_key2',          # 目标键 = 源键对应的值         类型为str
-        'aim_key2' : 'int_source_key3',          # 目标键 = 源键对应的值         类型为int
-        'aim_key3' : 'date_source_key4',         # 目标键 = 源键对应的值         类型为date
-        'aim_key4' : 'vint_id',                  # 目标键 = 值                   类型为int
-        'aim_key5' : 'vstr_name',                # 目标键 = 值                   类型为str
-        'aim_key6' : 'sint_select id from xxx' ,  # 目标键 = 值为sql 查询出的结果 类型为int
-        'aim_key7' : 'sstr_select name from xxx' # 目标键 = 值为sql 查询出的结果 类型为str
+        'id': 'int__id',
+        'name': 'str_name',
+        'url': 'str_url',
     }
+    export_data.export_to_oracle(source_table='article_site_info', aim_table='OP_SITE_INFO', key_map=key_map,
+                                 unique_key='url')
+    key2_map = {
+        'id': 'int__id',
+        'op_title': 'str_title',
+        'ourl': 'str_url',
+        'summary': 'str_content',
+        # 'op_author': 'str_author',
+        # 'found_time': 'date_release_time',
+        # 'creat_time': 'date_record_time',
+        'site_id': 'int_site_id'
+    }
+    export_data.export_to_oracle(source_table='article_text_info', aim_table='OP_OPINION_INFO', key_map=key2_map,
+                                 unique_key='ourl')
 
-    export_data = ExportData(source_table = '', aim_table = '', key_map = key_map, unique_key = 'url')
-    export_data.export_to_oracle()
 
 if __name__ == '__main__':
     main()

@@ -75,7 +75,7 @@ def parser(url_info):
     regexs = '<span>发布时间：(.*?)</span>'
     release_time = tools.get_info(html, regexs)
     release_time = release_time and release_time[0] or ''
-    release_time = tools.del_html_tag(release_time)
+    release_time = tools.format_date(release_time)
 
     #文章来源
     regexs = '<span>文章来源：(.*?)</span>'

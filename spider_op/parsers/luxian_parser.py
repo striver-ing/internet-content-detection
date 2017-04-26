@@ -34,10 +34,7 @@ def add_root_url(parser_params = {}):
         '''%str(parser_params))
 
     url = "http://www.luxian.gov.cn/"
-    html, request = tools.get_html_by_requests(url)
-    urls = tools.get_urls(html)
-    for url in urls:
-        base_parser.add_url('op_urls', SITE_ID, url)
+    base_parser.add_url('op_urls', SITE_ID, url)
 
 # 必须定义 解析网址
 def parser(url_info):
@@ -75,7 +72,7 @@ def parser(url_info):
     regexs = '<SPAN>日期：(.*?)</SPAN>'
     release_time = tools.get_info(html, regexs)
     release_time = release_time and release_time[0] or ''
-    release_time = tools.del_html_tag(release_time)
+
 
     # #作者
     regexs = '<SPAN>作者：(.*?)</SPAN>'

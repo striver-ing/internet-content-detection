@@ -8,9 +8,9 @@ from utils.log import log
 import base.constance as Constance
 import re
 # 必须定义 网站id
-SITE_ID = 12
+SITE_ID = 15
 # 必须定义 网站名
-NAME = 'luzhougaozhong'
+NAME = 'http://www.scmu.edu.cn/'
 
 
 # 必须定义 添加网站信息
@@ -20,7 +20,7 @@ def add_site_info():
     site_id = SITE_ID
     name = NAME
     table = 'op_site_info'
-    url = "http://www.lugao.net/"
+    url = "http://www.scmu.edu.cn/"
 
     base_parser.add_website_info(table, site_id, url, name)
 
@@ -32,7 +32,7 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    url = "http://www.lugao.net/"
+    url = "http://www.scmu.edu.cn/"
     base_parser.add_url('op_urls', SITE_ID, url)
 
 # 必须定义 解析网址
@@ -45,7 +45,7 @@ def parser(url_info):
     website_id = url_info['site_id']
     description = url_info['remark']
 
-    html = tools.get_html_by_urllib(source_url)
+    html , request= tools.get_html_by_requests(source_url, code='gb2312')
     if html == None:
         base_parser.update_url('op_urls', source_url, Constance.EXCEPTION)
         return
@@ -56,32 +56,33 @@ def parser(url_info):
         if re.match("http", url):
             new_url = url
         elif re.match('/', url):
-            new_url = 'http://www.lugao.net' + url
+            new_url = 'http://www.scmu.edu.cn' + url
         else:
-            new_url = 'http://www.lugao.net/' + url
+            new_url = 'http://www.scmu.edu.cn/' + url
         base_parser.add_url('op_urls', website_id, new_url, depth + 1)
 
     # 取当前页的文章信息
     # 标题
 
-    regexs = '<title>(.*?)</title>'
+    regexs = ['<div class="main_list_right_2_7">(.*?)<div class="main_list_right_2_7_1">',
+              '<div class="articlett">(.*?)</div>']
     title = tools.get_info(html, regexs)
     title = title and title[0] or ''
     title = tools.del_html_tag(title)
 
     #时间
-    regexs = '发表时间：(.*?)&nbsp;'
+    regexs = '发布时间：(.*?) 点击数'
     release_time = tools.get_info(html, regexs)
     release_time = release_time and release_time[0] or ''
 
     #作者
-    author = '编辑：(.*?)</div>'
+    regexs = '作者：(.*?)  来源'
     author = tools.get_info(html, regexs)
     author = release_time and author[0] or ''
     author = tools.del_html_tag(author)
 
     #文章来源
-    regexs = '来源：(.*?)&nbsp'
+    regexs = '来源： (.*?) 发布时间'
     origin = tools.get_info(html, regexs)
     origin = origin and origin[0] or ''
     origin = tools.del_html_tag(origin)
@@ -93,7 +94,8 @@ def parser(url_info):
     watched_count = tools.del_html_tag(watched_count)
 
     # 内容
-    regexs = ['<td height="2" class="graphic10">(.*?)来源']
+    regexs = ['<div class="main_list_right_2_5">(.*?)<div class="main_list_right_2_7_2">',
+              '<div class="content">(.*?)<div id="pages" class="text-c"></div>']
     content = tools.get_info(html, regexs)
     content = content and content[0] or ''
     content = tools.del_html_tag(content)
@@ -121,16 +123,19 @@ def parser(url_info):
     # if not html:
     #     base_parser.update_url('urls', root_url, Constance.EXCEPTION)
 if __name__ == '__main__':
-    url = "http://www.lugao.net"
-    html, request = tools.get_html_by_requests(url)
-    urls = tools.get_urls(html)
-    for url in urls:
-        if re.match("http", url):
-            new_url = url
-        elif re.match('/', url):
-            new_url = 'http://www.lugao.net' + url
-        else:
-            new_url = 'http://www.lugao.net/' + url
+    # url = "http://www.lzmc.edu.cn/html/2013/xyxw_0407/2012.html"
+    # html, request = tools.get_html_by_requests(url)
+    # urls = tools.get_urls(html)
+    url_info = {
+        "_id": "58f855acea18a92568e3c9bb",
+        "remark": "",
+        "status": 2,
+        "depth": 0,
+        "site_id": 13,
+        "url": "http://www.lzmc.edu.cn/html/2013/xyxw_0407/2012.html"
+    }
+
+    parser(url_info)
     # regexs = ['<td height="2" class="graphic10">(.*?)来源']
     # content = tools.get_info(html, regexs)
     # content = content and content[0] or ''

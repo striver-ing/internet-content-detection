@@ -45,7 +45,7 @@ def parser(url_info):
     website_id = url_info['site_id']
     description = url_info['remark']
 
-    html, request = tools.get_html_by_requests(source_url)
+    html, request = tools.get_html_by_requests(source_url, code='gb2312')
     if html == None:
         base_parser.update_url('op_urls', source_url, Constance.EXCEPTION)
         return
@@ -65,37 +65,36 @@ def parser(url_info):
     # 取当前页的文章信息
     # 标题
 
-    regexs = '<font style=\'font-size:15px;font-weight: bold;\'>(.*?)</font></td></tr>'
+    regexs = '<title>(.*?)</title>'
     title = tools.get_info(html, regexs)
     title = title and title[0] or ''
     title = tools.del_html_tag(title)
 
     #更新时间
-    regexs = '更新时间：(.*?)</td>'
+    regexs = '发表时间：(.*?)&nbsp'
     release_time = tools.get_info(html, regexs)
     release_time = release_time and release_time[0] or ''
-    release_time = tools.del_html_tag(release_time)
 
     # #作者
-    # regexs = '<span>作者：(.*?)</span>'
-    # author = tools.get_info(html, regexs)
-    # author = author and author[0] or ''
-    # author = tools.del_html_tag(author)
+    regexs = '<span>编辑：(.*?)</div>'
+    author = tools.get_info(html, regexs)
+    author = author and author[0] or ''
+    author = tools.del_html_tag(author)
 
-    #文章来源
-    regexs = '<td align=\'center\'   class=\'info\'>(.*?)　点击数'
-    origin = tools.get_info(html, regexs)
-    origin = origin and origin[0] or ''
-    origin = tools.del_html_tag(origin)
+    # #文章来源
+    # regexs = '<td align=\'center\'   class=\'info\'>(.*?)　点击数'
+    # origin = tools.get_info(html, regexs)
+    # origin = origin and origin[0] or ''
+    # origin = tools.del_html_tag(origin)
 
     # #点击数
-    regexs = '点击数：<font color=red>(\d*?)</font>次'
+    regexs = '点击/评论：<span class="style1">(\d*?)</span>'
     watched_count = tools.get_info(html, regexs)
     watched_count = watched_count and watched_count[0] or ''
     watched_count = tools.del_html_tag(watched_count)
 
     # 内容
-    regexs = ['<p class="MsoNormal" style="text-indent:24.0pt;">(.*?)【刷新页面】']
+    regexs = ['0</span>(.*?)来源']
     content = tools.get_info(html, regexs)
     content = content and content[0] or ''
     content = tools.del_html_tag(content)
@@ -105,31 +104,40 @@ def parser(url_info):
                 url                 = %s
                 title               = %s
                 release_time        = %s
-                origin              = %s
                 watched_count       = %s
                 content             = %s
-             ''' % (depth+1, source_url, title, release_time, origin, watched_count, content))
+             ''' % (depth, source_url, title, release_time, watched_count, content))
 
     if content and title:
         base_parser.add_op_info('op_content_info', website_id, url=source_url, title=title, release_time=release_time,
-                                origin=origin, watched_count=watched_count, content=content)
+                                watched_count=watched_count, content=content)
 
     # 更新source_url为done
     base_parser.update_url('op_urls', source_url, Constance.DONE)
 
 if __name__ == '__main__':
-    url = "http://lxezbxzx.gotoip2.com/info_Show.asp?InfoId=382&ClassId=27&Topid=0"
-    html, request = tools.get_html_by_requests(url, code='gb2312')
-    regexs = ['<p class="MsoNormal" style="text-indent:24.0pt;">(.*?)【刷新页面】']
-    content = tools.get_info(html, regexs)
-    content = content and content[0] or ''
-    content = tools.del_html_tag(content)
-    print(content)
+    # url = "http://lxezbxzx.gotoip2.com/info_Show.asp?InfoId=382&ClassId=27&Topid=0"
+    # html, request = tools.get_html_by_requests(url, code='gb2312')
+    # regexs = ['<p class="MsoNormal" style="text-indent:24.0pt;">(.*?)【刷新页面】']
+    # content = tools.get_info(html, regexs)
+    # content = content and content[0] or ''
+    # content = tools.del_html_tag(content)
+    # print(content)
     #urls = tools.get_urls(html)
     #print(urls)
     # for url in urls:
     #     print(url)
         #base_parser.add_url('article_urls', SITE_ID, url)
+    url_info = {
+        "_id": "58f855acea18a92568e3c9bb",
+        "remark": "",
+        "status": 2,
+        "depth": 0,
+        "site_id": 13,
+        "url": "http://www.lx2hs.com/article.aspx?id=14499"
+    }
+
+    parser(url_info)
 
 
 

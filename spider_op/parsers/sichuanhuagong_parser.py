@@ -77,8 +77,7 @@ def parser(url_info):
     #时间
     regexs = '<td height="3" align="center" valign="top">(.*?)</td>'
     release_time = tools.get_info(html, regexs)
-    release_time = release_time and release_time[0] or ''
-    release_time = tools.del_html_tag(release_time)
+    release_time = release_time and release_time[1] or ''
 
     # #作者
     regexs = '<td width="250">(.*?)</td>'

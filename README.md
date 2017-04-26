@@ -303,6 +303,11 @@
 
 - 今日头条、映客、爱奇艺
 
+### Youtube ###
+
+- 点播参考：[http://www.cnblogs.com/yinxiangnan-charles/p/5645561.html](http://www.cnblogs.com/yinxiangnan-charles/p/5645561.html)
+- 直播参考：[http://ju.outofmemory.cn/entry/90587](http://ju.outofmemory.cn/entry/90587)﻿（取直播页面源代码中的hlsvp值，用支持m3u8的播放器可以直接播）
+
 ### 翻页 ###
 
 有页码：

@@ -76,6 +76,7 @@ def get_html_auto_deal_code(url):
         log.error(e)
     return html
 
+# import chardet
 @log_function_time
 def get_html_by_urllib(url, code = 'utf-8'):
     html = None
@@ -92,6 +93,7 @@ def get_html_by_urllib(url, code = 'utf-8'):
             # 设置定时器 防止在read时卡死
             t = Timer(TIMER_TIME, timeout_handler, [page])
             t.start()
+            # charset = chardet.detect(page.read())['encoding']
             html = page.read().decode(code,'ignore')
             t.cancel()
 
@@ -205,6 +207,28 @@ def fit_url(urls, identis):
             if identi in link:
                 fit_urls.append(link)
     return list(set(fit_urls))
+
+def unquote_url(url):
+    '''
+    @summary: 将url解码
+    ---------
+    @param url:
+    ---------
+    @result:
+    '''
+
+    return urllib.parse.unquote(url)
+
+def quote_url(url):
+    '''
+    @summary: 将url编码 编码意思http://www.w3school.com.cn/tags/html_ref_urlencode.html
+    ---------
+    @param url:
+    ---------
+    @result:
+    '''
+
+    return urllib.parse.quote(url)
 
 _regexs = {}
 # @log_function_time
@@ -579,7 +603,7 @@ def get_current_date(date_format = '%Y-%m-%d %H:%M:%S'):
     return datetime.datetime.now().strftime(date_format)
     # return time.strftime(date_format, time.localtime(time.time()))
 
-def format_date(date, old_format, new_format = '%Y-%m-%d %H:%M:%S'):
+def format_date(date, old_format = '', new_format = '%Y-%m-%d %H:%M:%S'):
     '''
     @summary: 格式化日期格式
     ---------
@@ -590,8 +614,27 @@ def format_date(date, old_format, new_format = '%Y-%m-%d %H:%M:%S'):
     @result: 格式化后的日期，类型为字符串 如2017-4-17 3:27:12
     '''
 
-    date_obj = datetime.datetime.strptime(date, old_format)
-    date_str = datetime.datetime.strftime(date_obj, new_format)
+    if not old_format:
+        if '年' in date:
+            old_format += '%Y年'
+        if '月' in date:
+            old_format += '%m月'
+        if '日' in date:
+            old_format += '%d日'
+        if '时' in date:
+            old_format += ' %H时'
+        if '分' in date:
+            old_format += '%M分'
+        if '秒' in date:
+            old_format += '%S秒'
+
+    #print(old_format)
+    try:
+        date_obj = datetime.datetime.strptime(date, old_format)
+        date_str = datetime.datetime.strftime(date_obj, new_format)
+    except Exception as e:
+        log.error('日期格式化出错，old_format = %s 不符合 %s 格式'%(old_format, date))
+        date_str = date
     return date_str
 
 ################################################
