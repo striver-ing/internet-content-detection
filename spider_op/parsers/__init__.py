@@ -13,5 +13,6 @@ __all__=[
     'luzhougaozhong_parser',
     'sichuanluxian_parser',
     'luzhoutianli_parser',
-    'sichuanyikeda_parser'
+    'sichuanyikeda_parser',
+    'luzhoubaidu_parser'
 ]
