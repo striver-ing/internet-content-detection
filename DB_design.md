@@ -512,6 +512,63 @@ urls表 `GameApp_urls`
 |sensitive_id|varchar|||敏感信息id（多个敏感信息id用逗号分割）|
 |read_status||||读取状态（0 没读， 1读取）|
 
+### 视频网网站监测系统 PROGRAM ###
+
+网站表 `PROGRAM_site_info`
+
+| 字段名              | 数据类型| 长度 | 说明       | 描述 |
+|:-------------------|:-------|:-----|:--------- |:----|
+|site_id|||| 网站id |
+|name|||| 网站名|
+|domain||||域名|
+|url||||网址|
+|ip||||服务器ip|
+|address||||服务器地址|
+|video_license||||网络视听许可证|
+|public_safety||||公安备案号|
+|icp||||ICP号|
+|read_status||||读取状态|
+|record_time||||记录时间|
+
+urls表 `PROGRAM_urls`
+
+| 字段名              | 数据类型| 长度 | 说明       | 描述 |
+|:-------------------|:-------|:-----|:--------- |:----|
+|url||||网址|
+|depth|int|||层级|
+|status|int|||状态（0 todo, 1 doing, 2 done, 3 exception）|
+|remark||||url备注|
+|site_id||||网站id|
+
+视频信息表（以部为单位） `PROGRAM_info`
+
+| 字段名              | 数据类型| 长度 | 说明       | 描述 |
+|:-------------------|:-------|:-----|:--------- |:----|
+|_id||||节目id|
+|site_id|int|||网站id|
+|read_status|int|||导出状态（0 todo, 1 done）|
+|record_time||||记录时间|
+|release_time||||发布时间|
+|episode||||集数|
+|actors||||演员|
+|directors||||导演|
+|program_name||||节目名称|
+|summary||||摘要|
+
+分集信息表（以集为单位）`PROGRAM_EPISODE_info`
+
+| 字段名              | 数据类型| 长度 | 说明       | 描述 |
+|:-------------------|:-------|:-----|:--------- |:----|
+|_id||||集id|
+|program_id||||节目id|
+|program_episode|int|||当前集数|
+|time_length|str|||本集时长|
+|program_name||||节目名称|
+|download_status||||下载状态|
+|download_url||||下载地址|
+|play_url||||播放地址|
+|program_url||||节目链接|
+|update_time||||更新时间|
 
 ---
 ### 视频特征库 FeaVideo_ ###
