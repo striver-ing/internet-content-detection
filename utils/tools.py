@@ -24,6 +24,7 @@ import time
 import os
 import execjs   # pip install PyExecJS
 import hashlib
+from pprint import pprint
 
 TIME_OUT = 30
 TIMER_TIME = 5
@@ -237,13 +238,20 @@ def get_info(html, regexs, allow_repeat = False, fetch_one = False):
 
     infos = []
     for regex in regexs:
-        try:
-            if regex == '':
+        if regex == '':
                 continue
-            infos = _regexs[regex].findall(str(html)) if not fetch_one else _regexs[regex].search(html).group()
-        except:
+
+        if regex not in _regexs.keys():
             _regexs[regex] = re.compile(regex, re.S)
-            infos = _regexs[regex].findall(str(html)) if not fetch_one else _regexs[regex].search(html).group()
+
+        if fetch_one:
+                infos = _regexs[regex].search(html)
+                if infos:
+                    infos = infos.groups()
+                else:
+                    return ''
+        else:
+            infos = _regexs[regex].findall(str(html))
 
         # infos = re.findall(regex,str(html),re.S)
         # infos = re.compile(regexs, re.S).findall(str(html))
@@ -251,7 +259,7 @@ def get_info(html, regexs, allow_repeat = False, fetch_one = False):
             break
 
     if fetch_one:
-        return infos
+        return infos if len(infos) > 1 else infos[0]
     else:
         return allow_repeat and infos or sorted(set(infos),key = infos.index)
 
@@ -340,12 +348,8 @@ def dumps_json(json_):
 
     return json_
 
-headers = {
-'User-Agent': 'living/3.9.4 (iPhone; iOS 9.3.1; Scale/3.00)',
-'Cookie': 'token=02062c434458ad1b278009a9bAX5diInm250f1c4',
-'Accept-Language': 'zh-Hans-CN;q=1',
-'Accept-Encoding': 'gzip'
-}
+def print(object):
+    pprint(object)
 
 def get_json_value(json_object, key):
     '''

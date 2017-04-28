@@ -629,3 +629,36 @@ def add_op_info(table, website_id, url ='', title='', release_time='', author=''
         'read_status': 0
     }
     db.add(table, content_info_dict)
+
+def add_program_info(table, site_id, program_name, image_url = '', episode = '', directors = '', actors = '', summary = '', release_time = ''):
+    '''
+    @summary:
+    ---------
+    @param table:
+    @param site_id:
+    @param program_name:
+    @param image_url:
+    @param episode: 集数
+    @param directors: 导演
+    @param actors: 演员
+    @param summary: 简介
+    @param release_time:
+    ---------
+    @result:
+    '''
+    program_info = {
+        'site_id' : site_id,
+        'program_name' : program_name,
+        'image_url' : image_url,
+        'episode' : episode,
+        'directors' : directors,
+        'actors' : actors,
+        'summary' : summary,
+        'release_time' : release_time,
+        'read_status' : 0,
+        'record_time' : tools.get_current_date()
+    }
+
+    db.add(table, program_info)
+
+    return program_info['_id']

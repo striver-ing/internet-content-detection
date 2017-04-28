@@ -101,7 +101,7 @@ class MongoDB(Singleton):
         else:
             return True
 
-    def delete(self, table, condition = {}):
+    def delete(self, table, condition={}):
         '''
         @summary: 删除数据
         ---------
@@ -111,7 +111,10 @@ class MongoDB(Singleton):
         @result:
         '''
         try:
-            self._db[table].remove(condition)
+            if not condition:
+                self._db[table].drop()
+            else:
+                self._db[table].remove(condition)
         except Exception as e:
             log.error(e)
             return False

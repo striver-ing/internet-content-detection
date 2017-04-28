@@ -554,6 +554,7 @@ urls表 `PROGRAM_urls`
 |directors||||导演|
 |program_name||||节目名称|
 |summary||||摘要|
+|image_url||||图片地址|
 
 分集信息表（以集为单位）`PROGRAM_EPISODE_info`
 
@@ -563,12 +564,83 @@ urls表 `PROGRAM_urls`
 |program_id||||节目id|
 |program_episode|int|||当前集数|
 |time_length|str|||本集时长|
-|program_name||||节目名称|
+|episode_name||||节目名称|
 |download_status||||下载状态|
 |download_url||||下载地址|
 |play_url||||播放地址|
 |program_url||||节目链接|
-|update_time||||更新时间|
+|record_time||||记录时间|
+|summary||||简介|
+|image_url||||图片地址|
+
+### 两微一端检查系统 WWA ###
+
+微信公众号 `WWA_wechart_official_accounts`
+
+| 字段名              | 数据类型| 长度 | 说明       | 描述 |
+|:-------------------|:-------|:-----|:--------- |:----|
+|id||||主键id|
+|name||||公众号名称|
+|account_id||||公众号账号|
+|account_url||||账号url|
+|image_url||||贴图|
+|article_count||||文章数量|
+|summary||||简介|
+|certification||||微信认证|
+|is_verified||||是否加V（是否认证）|
+|barcode||||二维码|
+|read_status||||导出状态|
+|record_time||||记录时间|
+
+
+微信公众号文章 `WWA_wechat_article`
+
+| 字段名              | 数据类型| 长度 | 说明       | 描述 |
+|:-------------------|:-------|:-----|:--------- |:----|
+|id||||主键id|
+|official_accounts_id||||公众号id|
+|title||||标题|
+|summary||||简介|
+|image_url||||贴图地址|
+|article_url||||文章地址|
+|release_time||||发布时间|
+|content||||内容|
+|video_url||||视频地址|
+|record_time||||记录时间|
+|read_status||||导出状态|
+
+
+微博账号表 `WWA_webo_account`
+
+
+| 字段名              | 数据类型| 长度 | 说明       | 描述 |
+|:-------------------|:-------|:-----|:--------- |:----|
+|name||||名字|
+|image_url||||贴图地址|
+|summary||||简介|
+|fans_count||||粉丝数|
+|verified_reason||||微博认证|
+|is_verified||||是否认证|
+|url||||账号url|
+|follow_count||||关注数|
+|sex||||性别（0 男 1 女）|
+
+微博文章表 `WWA_webo_article`
+
+
+| 字段名              | 数据类型| 长度 | 说明       | 描述 |
+|:-------------------|:-------|:-----|:--------- |:----|
+|name||||名字|
+|account_id|||||
+|head_image||||头像|
+|is_verified||||是否认证|
+|release_time||||发布时间|
+|come_from||||来自|
+|content||||内容|
+|image_url||||图片地址|
+|video_url||||视频地址|
+|transpond_count||||转发数|
+|praise_count||||点赞数|
 
 ---
 ### 视频特征库 FeaVideo_ ###
