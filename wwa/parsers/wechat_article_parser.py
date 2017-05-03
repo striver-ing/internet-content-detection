@@ -9,11 +9,14 @@ from utils.log import log
 from db.mongodb import MongoDB
 import base.constance as Constance
 from db.oracledb import OracleDB
+import time
 
 # 必须定义 网站id
 SITE_ID = 1
 # 必须定义 网站名
 NAME = '微信'
+
+FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path')
 
 # 必须定义 添加网站信息
 @tools.run_safe_model(__name__)
@@ -35,11 +38,12 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    keyword = parser_params['keyword']
+    keywords = parser_params['keywords']
 
-    if keyword:
-        url = 'http://weixin.sogou.com/weixin?type=1&s_from=input&query=%s&ie=utf8&_sug_=n&_sug_type_='%keyword
-        base_parser.add_url('WWA_wechat_article_url', SITE_ID, url)
+    for keyword in keywords:
+        if keyword:
+            url = 'http://weixin.sogou.com/weixin?type=1&s_from=input&query=%s&ie=utf8&_sug_=n&_sug_type_='%keyword
+            base_parser.add_url('WWA_wechat_article_url', SITE_ID, url)
 
 # 必须定义 解析网址
 def parser(url_info):
@@ -70,8 +74,6 @@ def parser(url_info):
         base_parser.update_url('urls', root_url, Constance.EXCEPTION)
         return
 
-    # print(account_url.replace('&amp;',"&"))
-
     headers = {
         "Referer": "http://weixin.sogou.com/weixin?type=1&s_from=input&query=%E5%B0%8F%E7%BD%97%E6%81%B6%E6%90%9E%E8%A7%86%E9%A2%91&ie=utf8&_sug_=n&_sug_type_=",
         "Accept-Language": "zh-CN,zh;q=0.8",
@@ -86,6 +88,7 @@ def parser(url_info):
     }
 
     html, request = tools.get_html_by_requests(account_url, headers = headers)
+    # print(html)
 
     regex = 'var msgList = (.*?});'
     article_json = tools.get_info(html, regex, fetch_one = True)
@@ -96,6 +99,11 @@ def parser(url_info):
         title = tools.get_json_value(article, 'app_msg_ext_info.title')
         summary = tools.get_json_value(article, 'app_msg_ext_info.digest')
         image_url = tools.get_json_value(article, 'app_msg_ext_info.cover')
+
+        # 下载图片
+        local_image_url = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
+        is_download = tools.download_file(image_url, local_image_url)
+        local_image_url = local_image_url if is_download else ''
 
         article_url = tools.get_json_value(article, 'app_msg_ext_info.content_url')
         article_url = tools.get_full_url('http://mp.weixin.qq.com', article_url)
@@ -108,16 +116,41 @@ def parser(url_info):
         regex = '(<div class="rich_media_content " id="js_content">.*?)<script nonce'
         content = tools.get_info(content_html, regex, fetch_one = True)
 
-        log.debug('''
-            标题      %s
-            简介      %s
-            图片地址  %s
-            文章地址  %s
-            发布时间  %s
-            内容      %s
-            '''%(title, summary, image_url, article_url, release_time, content))
+        # # 取content里的图片 下载图片 然后替换内容中原来的图片地址
+        regex = '<img.*?data-src="(.*?)"'
+        images = tools.get_info(content, regex)
+        for image in images:
+            local_image_path = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.' + image[image.rfind('=') + 1:]
+            is_download = tools.download_file(image, local_image_path)
+            if is_download:
+                content = content.replace(image, local_image_path)
+            time.sleep(5)
 
-        base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '')
+        # 违规事件
+        violate_id = ''
+        vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
+        for vioation_knowledge_info in vioation_knowledge_infos:
+            _id = vioation_knowledge_info[0]
+            keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
+            keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
+            keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
+
+            if base_parser.is_violate(title + tools.del_html_tag(content), key1=keyword1, key2=keyword2, key3=keyword3):
+                violate_id = _id
+                break
+
+        log.debug('''
+        标题         %s
+        简介         %s
+        图片地址     %s
+        文章地址     %s
+        发布时间     %s
+        内容         %s
+        本地贴图地址 %s
+        违规状态     %s
+        '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id))
+
+        base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id)
 
         # 同一天发布的
         oneday_article_list = article.get('app_msg_ext_info', {}).get('multi_app_msg_item_list', [])
@@ -125,6 +158,11 @@ def parser(url_info):
             title = tools.get_json_value(article, 'title')
             summary = tools.get_json_value(article, 'digest')
             image_url = tools.get_json_value(article, 'cover')
+
+            # 下载图片
+            local_image_url = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
+            is_download = tools.download_file(image_url, local_image_url)
+            local_image_url = local_image_url if is_download else ''
 
             article_url = tools.get_json_value(article, 'content_url')
             article_url = tools.get_full_url('http://mp.weixin.qq.com', article_url)
@@ -134,18 +172,43 @@ def parser(url_info):
             regex = '(<div class="rich_media_content " id="js_content">.*?)<script nonce'
             content = tools.get_info(content_html, regex, fetch_one = True)
 
+            # # 取content里的图片 下载图片 然后替换内容中原来的图片地址
+            regex = '<img.*?data-src="(.*?)"'
+            images = tools.get_info(content, regex)
+            for image in images:
+                local_image_path = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.' + image[image.rfind('=') + 1:]
+                is_download = tools.download_file(image, local_image_path)
+                if is_download:
+                    content = content.replace(image, local_image_path)
+                time.sleep(5)
+
+            # 违规事件
+            violate_id = ''
+            vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
+            for vioation_knowledge_info in vioation_knowledge_infos:
+                _id = vioation_knowledge_info[0]
+                keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
+                keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
+                keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
+
+                if base_parser.is_violate(title + tools.del_html_tag(content), key1=keyword1, key2=keyword2, key3=keyword3):
+                    violate_id = _id
+                    break
+
             log.debug('''
-                标题      %s
-                简介      %s
-                图片地址  %s
-                文章地址  %s
-                发布时间  %s
-                内容      %s
-                '''%(title, summary, image_url, article_url, release_time, content))
+            标题         %s
+            简介         %s
+            图片地址     %s
+            文章地址     %s
+            发布时间     %s
+            内容         %s
+            本地贴图地址 %s
+            违规状态     %s
+            '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id))
 
-            base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '')
+            base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id)
 
-    base_parser.update_url('WWA_wechat_article_url', root_url, Connection.DONE)
+    base_parser.update_url('WWA_wechat_article_url', root_url, Constance.DONE)
 
 
 if __name__ == '__main__':

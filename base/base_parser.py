@@ -741,22 +741,24 @@ def add_wwa_weibo_info_info(table, site_id, url = '', weibo_id = '', release_tim
     }
     db.add(table, user_info)
 
-def add_wechat_accout_info(table, site_id, name, account_id, account_url, image_url, article_count, summary, certification, is_verified, barcode):
+def add_wechat_accout_info(table, site_id, name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url):
     account_info = {
         'name' : name,
         'account_id' : account_id,
         'account_url' : account_url,
         'image_url' : image_url,
+        'local_image_url' : local_image_url,
         'article_count' : article_count,
         'summary' : summary,
         'certification' : certification,
         'is_verified' : is_verified,
-        'barcode' : barcode,
+        'barcode_url' : barcode_url,
+        'local_barcode_url' : local_barcode_url,
         'read_status' : 0,
-        'record_time' : tools.get_current_date()
+        'record_time' : tools.get_current_date(),
     }
 
-def add_wechat_content_info(table, site_id, official_accounts_id, title, summary = '', image_url = '', article_url = '', release_time = '', content = '', video_url = '', violate_status = ''):
+def add_wechat_content_info(table, site_id, official_accounts_id, title, summary = '', image_url = '', article_url = '', release_time = '', content = '', video_url = '', violate_status = '', local_image_url = ''):
 
     content_info = {
         'site_id' : site_id,
@@ -770,7 +772,71 @@ def add_wechat_content_info(table, site_id, official_accounts_id, title, summary
         'video_url' : video_url,
         'record_time' : tools.get_current_date(),
         'read_status' : 0,
-        'violate_status' : violate_status
+        'violate_status' : violate_status,
+        'local_image_url' : local_image_url
     }
 
     db.add(table, content_info)
+
+def add_WWA_search_app_info(table, site_id, url, title = '', summary = '', update_info = '', score = '',
+                     author = '', app_url = '', image_url='',
+                     software_size='', tag='',
+                     platform='', download_count='', release_time='', language='',
+                     sensitive_id='', read_status=0):
+
+    '''
+    @summary:
+    ---------
+    @param title: 标题
+    @param site_id: 网站id
+    @param summary: 简介
+    @param update_info: 更新信息
+    @param socre: 评分
+    @param author: 作者
+    @param url: 原文url
+    @param app_url: app下载的url
+    @param image_url : 图片url（多个url逗号分割）
+    @param classify_id: 分类
+    @param software_size: 大小
+    @param tag: 版本 |
+    @param platform: 平台（ios / android）
+    @param download_count:下载次数
+    @param release_time: 发布时间
+    @param record_time: 记录时间
+    @param sensitive_id: varchar|||敏感信息id（多个敏感信息id用逗号分割）
+    @param read_status: 读取状态（0没读， 1读取）
+    ---------
+    @result:
+    '''
+
+    if language == '中文':
+        language = 601
+    elif language == '英文':
+        language = 602
+    else:
+        language = 603
+
+    gameApp_info_dict={
+        'site_id': site_id,
+        'url': url,
+        'summary': tools.del_html_tag(summary, except_line_break = True),
+        'title': title,
+        'update_info': tools.del_html_tag(update_info, except_line_break = True),
+        'score': score,
+        'author': author,
+        'app_url': app_url,
+        'image_url': image_url,
+        'software_size': software_size,
+        'tag': tag,
+        'platform': platform,
+        'download_count': download_count,
+        'release_time': release_time,
+        'record_time': tools.get_current_date(),
+        'language': language,
+        'sensitive_id': sensitive_id,
+        'read_status': 0,
+        'sexy_image_status': '',
+        'sexy_image_url': '',
+        'image_pron_status': 0
+    }
+    db.add(table, gameApp_info_dict)

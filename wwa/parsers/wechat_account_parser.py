@@ -16,6 +16,8 @@ SITE_ID = 1
 # 必须定义 网站名
 NAME = '微信'
 
+FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path')
+
 # 必须定义 添加网站信息
 @tools.run_safe_model(__name__)
 def add_site_info():
@@ -36,12 +38,13 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    keyword = parser_params['keyword']
+    keywords = parser_params['keywords']
 
-    if keyword:
-        for page in range(1, 11):
-            url = 'http://weixin.sogou.com/weixin?query=%s&_sug_type_=&s_from=input&_sug_=y&type=1&page=%d&ie=utf8'%(keyword, page)
-            base_parser.add_url('WWA_wechat_account_url', SITE_ID, url)
+    for keyword in keywords:
+        if keyword:
+            for page in range(1, 11):
+                url = 'http://weixin.sogou.com/weixin?query=%s&_sug_type_=&s_from=input&_sug_=y&type=1&page=%d&ie=utf8'%(keyword, page)
+                base_parser.add_url('WWA_wechat_account_url', SITE_ID, url)
 
 # 必须定义 解析网址
 def parser(url_info):
@@ -63,6 +66,8 @@ def parser(url_info):
     regex = '<!-- a -->(.*?)<!-- z -->'
     account_blocks = tools.get_info(html, regex)
 
+    # print(html)
+
     # 文章数url
     regex = '<script>var account_anti_url = "(.*?)";</script>'
     articles_count_url = tools.get_info(html, regex, fetch_one = True)
@@ -73,6 +78,11 @@ def parser(url_info):
         # print(account_block)
         regex = '<div class="img-box">.*?<img src="(.*?)"'
         image_url = tools.get_info(account_block, regex, fetch_one = True)
+
+        # 下载图片
+        local_image_url = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
+        is_download = tools.download_file(image_url, local_image_url)
+        local_image_url = local_image_url if is_download else ''
 
         regex = '<a.*?account_name.*?>(.*?)</a>'
         name = tools.get_info(account_block, regex, fetch_one = True)
@@ -99,6 +109,11 @@ def parser(url_info):
         regex = '微信扫一扫关注.*?<img.*?src="(.*?)"'
         barcode_url = tools.get_info(account_block, regex, fetch_one = True)
 
+        # 下载图片
+        local_barcode_url = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
+        is_download = tools.download_file(barcode_url, local_barcode_url)
+        local_barcode_url = local_barcode_url if is_download else ''
+
         regex = '<a.*?account_name.*?href="(.*?)">'
         account_url = tools.get_info(account_block, regex, fetch_one = True)
 
@@ -107,14 +122,16 @@ def parser(url_info):
             公众号账号          %s
             账号url             %s
             贴图                %s
+            本地贴图            %s
             文章数量            %s
             简介                %s
             微信认证            %s
             是否加V（是否认证） %s
             二维码              %s
-            '''%(name, account_id, account_url, image_url, article_count, summary, certification, is_verified, barcode_url))
+            本地二维码          %s
+            '''%(name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url))
 
-        base_parser.add_wechat_accout_info('WWA_wechat_official_accounts', site_id, name, account_id, account_url, image_url, article_count, summary, certification, is_verified, barcode_url)
+        base_parser.add_wechat_accout_info('WWA_wechat_official_accounts', site_id, name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url)
 
     base_parser.update_url('WWA_wechat_account_url', root_url, Constance.DONE)
 

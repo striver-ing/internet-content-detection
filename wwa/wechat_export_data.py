@@ -18,9 +18,8 @@ def main():
         'ARTICLE_CONTENT' : 'clob_content',
         'VIDEO_URL' : 'str_video_url',
         'VIOLATE_STATUS' : 'int_violate_status',
-        'IMAGE_URL' : 'str_image_url'
-
-
+        'IMAGE_URL' : 'str_image_url',
+        'LOCAL_IMAGE_URL' : 'str_local_image_url'
     }
 
     export_data = ExportData()
@@ -35,8 +34,10 @@ def main():
         'ARTICLE_COUNT' : 'int_article_count',
         'WECHAT_CERTIFICATION' : 'str_certification',
         'IS_VERIFIED' : 'int_is_verified',
-        'BARCODE_URL' : 'str_barcode',
+        'BARCODE_URL' : 'str_barcode_url',
+        'LOCAL_BARCODE_URL' : 'str_local_barcode_url',
         'IMAGE_URL' : 'str_image_url',
+        'LOCAL_IMAGE_URL' : 'str_local_image_url',
         'ACCOUNT_URL' : 'str_account_url',
         'MONITOR_STATUS' : 'vint_401',
         'SUMMARY' : 'str_summary'
