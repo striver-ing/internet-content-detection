@@ -326,7 +326,7 @@ def get_json(json_str):
     @result: 返回json对象
     '''
 
-    return json.loads(json_str)
+    return json.loads(json_str) if json_str else {}
 
 def dumps_json(json_):
     '''
@@ -669,3 +669,11 @@ def get_base64(secret, message):
     return signature
 
 ##################################################
+
+def cut_string(text, length):
+    text_list = re.findall('.{%d}'%length, text, re.S)
+    leave_text = text[len(text_list) * length:]
+    if leave_text:
+        text_list.append(leave_text)
+
+    return text_list

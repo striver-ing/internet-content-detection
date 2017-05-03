@@ -34,6 +34,7 @@ class ExportData():
             'aim_key5' : 'vstr_name',                # 目标键 = 值                   类型为str
             'aim_key6' : 'sint_select id from xxx'   # 目标键 = 值为sql 查询出的结果 类型为int
             'aim_key7' : 'sstr_select name from xxx' # 目标键 = 值为sql 查询出的结果 类型为str
+            'aim_key8' : 'clob_key8'                 # 目标键 = 源键对应的值         类型为str
         }
 
         @param unique_key:    唯一的key 目标数据库根据该key去重
@@ -117,6 +118,20 @@ class ExportData():
                     values.append(str(data[keys[i]]).replace("'", "''"))# if isinstance(data[keys[i]], str) else data[keys[i]])  # 将单引号替换成两个单引号 否者sql语句语法出错
                     sql += "'%s', "
                     update_sql += aim_keys[i] + " = '%s', "%values[-1]
+
+                elif value_types[i] == 'clob':
+                    text = str(data[keys[i]]).replace("'", "''")
+                    values_ = tools.cut_string(text, 2000)
+
+                    clob_text = ''
+                    for value in values_:
+                        clob_text += "to_clob('%s') || "%value
+
+                    clob_text = clob_text[:-len(' || ')]
+                    values.append(clob_text)
+                    sql += "%s, "
+
+                    update_sql += aim_keys[i] + " = %s, "%values[-1]
 
                 elif value_types[i] == 'int':
                     if isinstance(data[keys[i]], int):
