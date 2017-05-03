@@ -76,23 +76,23 @@ def add_root_url(parser_params = {}):
 
     base_url = 'http://is.snssdk.com/api/news/feed/v51/'
     params = {
-                'version_code'                       : '6.0.3',
+                'version_code'                       : '6.1.0',
                 'app_name'                           : 'news_article',
                 'vid'                                : 'B0DB5DD0-FF94-4773-85B1-EFC11132C2A4',
                 'device_id'                          : '34633749953',
                 'channel'                            : 'App Store',
                 'resolution'                         : '1242*2208',
                 'aid'                                : 13,
-                'ab_version'                         : '117912,112577,101786,117787,115757,101533,117646,118765,110341,113607,118273,114108,113114,106784,113608,101558,105475,112401,117714,105610,118581,118607,105821,112578,115570,118604,118850,116615,31210,118530,118216,114338',
+                'ab_version'                         : '121237,123183,112577,122834,119378,113607,123189,123476,114105,123187,113608,116023,119889,115472,123489,123025,123178,122311,112578,115572,122589,123276,115776,122948,123126,31241,122932,121010,122992,114338',
                 'ab_feature'                         : 'z1',
                 'openudid'                           : '7064ff7d773ef8efeb5d6a25f62cd3d85035674f',
                 'live_sdk_version'                   : '1.6.5',
                 'idfv'                               : 'B0DB5DD0-FF94-4773-85_b1-EFC11132C2A4',
                 'ac'                                 : 'WIFI',
-                'os_version'                         : '10.2.1',
+                'os_version'                         : '10.3.1',
                 'ssmix'                              : 'a',
                 'device_platform'                    : 'iphone',
-                'iid'                                : 8954368598,
+                'iid'                                : 9891507523,
                 'ab_client'                          : 'a1,f2,f7,e1',
                 'device_type'                        : 'iPhone 7 Plus',
                 'idfa'                               : 'D2E02B97-0F35-486F-9CD4-A2EC13BBC8FB',
@@ -101,7 +101,7 @@ def add_root_url(parser_params = {}):
                 'city'                               : '',
                 'concern_id'                         : '',
                 'count'                              : 20,
-                'cp'                                 : '5089F85eBd4BDq1',
+                'cp'                                 : '51950c8381DCDq1',
                 'detail'                             : 1,
                 'image'                              : 1,
                 'language'                           : 'zh-Hans-CN',
@@ -111,7 +111,7 @@ def add_root_url(parser_params = {}):
                 'refer'                              : 1,
                 'strict'                             : 0,
                 'tt_from'                            : 'load_more',
-                'user_city'                          : '泸州'
+                'user_city'                          : '重庆'
         }
 
     time_interval = ONE_PAGE_TIME_INTERVAL

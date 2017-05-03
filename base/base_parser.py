@@ -662,3 +662,40 @@ def add_program_info(table, site_id, program_name, image_url = '', episode = '',
     db.add(table, program_info)
 
     return program_info['_id']
+
+def add_wechat_accout_info(table, site_id, name, account_id, account_url, image_url, article_count, summary, certification, is_verified, barcode):
+    account_info = {
+        'name' : name,
+        'account_id' : account_id,
+        'account_url' : account_url,
+        'image_url' : image_url,
+        'article_count' : article_count,
+        'summary' : summary,
+        'certification' : certification,
+        'is_verified' : is_verified,
+        'barcode' : barcode,
+        'read_status' : 0,
+        'record_time' : tools.get_current_date()
+    }
+
+    db.add(table, account_info)
+
+
+def add_wechat_content_info(table, site_id, official_accounts_id, title, summary = '', image_url = '', article_url = '', release_time = '', content = '', video_url = '', violate_status = ''):
+
+    content_info = {
+        'site_id' : site_id,
+        'official_accounts_id' : official_accounts_id,
+        'title' : title,
+        'summary' : summary,
+        'image_url' : image_url,
+        'article_url' : article_url,
+        'release_time' : release_time,
+        'content' : content,
+        'video_url' : video_url,
+        'record_time' : tools.get_current_date(),
+        'read_status' : 0,
+        'violate_status' : violate_status
+    }
+
+    db.add(table, content_info)
