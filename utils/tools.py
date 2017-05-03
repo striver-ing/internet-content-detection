@@ -8,6 +8,7 @@ import json
 import configparser #读配置文件的
 import codecs
 import uuid
+import urllib.parse
 from urllib.parse import quote
 from utils.log import log
 from tld import get_tld

@@ -92,27 +92,19 @@ PARAMS = {
 }
 
 data = {
-    "adcode": "110114",
-    "loc_name": "",
-    "loc_addr": "",
-    "locMore": "1",
+    "chlid": "kb_location_chongqing",
+    "cityList": "重庆",
     "forward": "1",
-    "loc_busi_cgy": "",
-    "page": 0,  # 翻页
-    "cachedCount": 0,  #缓存数 每一次取到的条目叠加
-    "loc_busi_dis": "419",
-    "cityId": "city279",
-    "chlid": "city279",
-    "provinceName": "四川",
-    "cityList": "泸州",
-    "loc_busi_id": "1860975694553074438",
-    "lat": "0",
-    "cityName": "泸州",
-    "last_id": "",
+    "provinceId": "kb_location_chongqing",
+    "locMore": "1",
+    "cityId": "",
+    "last_id": "20170502C02XEN00",
+    "page": 0,
     "uid": "6586AD26-34CC-49A8-A30F-A93410F22503",
-    "locType": "city",
-    "lon": "0",
-    "loc_busi_name": ""
+    "cachedCount": 0,
+    "provinceName": "重庆",
+    "cityName": "",
+    "locType": "city"
 }
 
 # 必须定义 添加网站信息
@@ -206,7 +198,7 @@ def parser(url_info):
                 release_time :  %s
                 video_url:      %s
                 content :       %s
-                column_id:      %d
+                column_id:      %s
                 sensitive_id:   %s
                 violate_id:     %s
 
@@ -246,7 +238,15 @@ def parser(url_info):
     base_parser.update_url('VAApp_urls', root_url, Constance.DONE)
 
 if __name__=='__main__':
+    ss ={
+        "_id": "59084934ea18a923749d0336",
+        "remark": '',
+        "depth": 0,
+        "url": "http://r.cnews.qq.com/getSubNewsChlidInterest",
+        "site_id": 2,
+        "status": 0
+    }
+    parser(ss)
 
 
-    pass
 

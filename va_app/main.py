@@ -26,7 +26,7 @@ def main():
     spider = Spider(tab_urls = 'VAApp_urls', tab_site = 'VAApp_site_info', tab_content = 'VAApp_content_info', parser_count = 1, begin_callback = begin_callback, end_callback = end_callback, parser_params = {})
 
     # 添加parser
-    spider.add_parser(headline_parser)
+    #spider.add_parser(headline_parser)
     spider.add_parser(kuaibao_parser)
 
     spider.start()

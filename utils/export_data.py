@@ -140,7 +140,10 @@ class ExportData():
                         update_sql += aim_keys[i] + " = %d, "%values[-1]
                     elif isinstance(data[keys[i]], str):
                         sql += '%s, '
-                        values.append('null')
+                        if data[keys[i]]:
+                            values.append(data[keys[i]])
+                        else:
+                            values.append('null')
                         update_sql += aim_keys[i] + " = %s, "%values[-1]
                     else:  # _id
                         values.append(int(str(data[keys[i]])[-6:], 16))

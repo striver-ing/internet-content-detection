@@ -12,7 +12,7 @@ import base.constance as Constance
 from db.oracledb import OracleDB
 
 db = MongoDB()
-oracledb = OracleDB()
+#oracledb = OracleDB()
 
 # 必须定义 网站id
 SITE_ID = 2
@@ -175,27 +175,27 @@ def parser(url_info):
                 # 判断是否违规
                 # 敏感事件
                 sensitive_id = ''
-                sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
-                for sensitive_event_info in sensitive_event_infos:
-                    _id = sensitive_event_info[0]
-                    keyword1 = sensitive_event_info[3].split(' ') if sensitive_event_info[3] else []
-                    keyword2 = sensitive_event_info[4].split(' ') if sensitive_event_info[4] else []
-                    keyword3 = sensitive_event_info[5].split(' ') if sensitive_event_info[5] else []
-
-                    if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
-                        sensitive_id = _id
+                # sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
+                # for sensitive_event_info in sensitive_event_infos:
+                #     _id = sensitive_event_info[0]
+                #     keyword1 = sensitive_event_info[3].split(' ') if sensitive_event_info[3] else []
+                #     keyword2 = sensitive_event_info[4].split(' ') if sensitive_event_info[4] else []
+                #     keyword3 = sensitive_event_info[5].split(' ') if sensitive_event_info[5] else []
+				#
+                #     if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
+                #         sensitive_id = _id
 
                 # 违规事件
                 violate_id = ''
-                vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
-                for vioation_knowledge_info in vioation_knowledge_infos:
-                    _id = vioation_knowledge_info[0]
-                    keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
-                    keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
-                    keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
-
-                    if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
-                        violate_id = _id
+                # vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
+                # for vioation_knowledge_info in vioation_knowledge_infos:
+                #     _id = vioation_knowledge_info[0]
+                #     keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
+                #     keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
+                #     keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
+				#
+                #     if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
+                #         violate_id = _id
 
 
                 log.debug('''
@@ -246,7 +246,13 @@ def parser(url_info):
     base_parser.update_url('VAApp_urls', root_url, Constance.DONE)
 
 if __name__=='__main__':
-
-
-    pass
+    ss = {
+        "_id": "59084934ea18a923749d0336",
+        "remark": 1,
+        "depth": 0,
+        "url": "http://r.cnews.qq.com/getSubNewsChlidInterest",
+        "site_id": 2,
+        "status": 0
+    }
+    parser(ss)
 

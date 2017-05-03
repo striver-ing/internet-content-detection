@@ -663,6 +663,84 @@ def add_program_info(table, site_id, program_name, image_url = '', episode = '',
 
     return program_info['_id']
 
+
+# 两微一端
+
+def add_wwa_weibo_user_info(table, site_id, _id = '', name = '', url = '', image_url = '',
+                            verified_reason = '', is_verified_reason = '', sex = '',
+                            summary = '', fans_count = '', follow_count = ''):
+    '''
+    @summary:
+    ---------
+    @param table:
+    @param site_id:
+    @param _id:       用户id
+    @param name:      昵称
+    @param image_url: 头像
+    @param verified_reason: 认证详情
+    @param is_verified_reason: 是否认证
+    @param sex: 性别
+    @param summary: 简介
+    @param fans_count: 粉丝数
+    @param follow_count: 关注数
+    ---------
+    @result:
+    '''
+    user_info = {
+        '_id': _id,
+        'site_id': site_id,
+        'name': name,
+        'url': url,
+        'image_url': image_url,
+        'blog_verified': verified_reason,
+        'is_verified': is_verified_reason,
+        'sex': sex,
+        'summary': summary,
+        'fans_count': fans_count,
+        'follow_count': follow_count,
+        'read_status': 0,
+        'record_time': tools.get_current_date()
+    }
+    db.add(table, user_info)
+
+def add_wwa_weibo_info_info(table, site_id, url = '', weibo_id = '', release_time = '', come_from = '',
+                               content = '', image_url = '', video_url = '', transpond_count = '', praise_count = '',
+                               violate_id = ''):
+    '''
+    @summary:
+    ---------
+    @param table:
+    @param site_id:
+    @param url:      原文地址
+    @param weibo_id: 微博id
+    @param release_time: 发布时间
+    @param come_from: 来自
+    @param image_url: 图片地址
+    @param video_url: 视频地址
+    @param transpond_count: 转发数
+    @param praise_count: 点赞数
+    @param violate_id: 违规id
+    ---------
+    @result:
+    '''
+    user_info = {
+        'url': url,
+        'site_id': site_id,
+        'weibo_id': weibo_id,
+        'url': url,
+        'release_time': release_time,
+        'come_from': come_from,
+        'content': content,
+        'image_url': image_url,
+        'video_url': video_url,
+        'transpond_count': transpond_count,
+        'praise_count': praise_count,
+        'read_status': 0,
+        'violate_id': violate_id,
+        'record_time': tools.get_current_date()
+    }
+    db.add(table, user_info)
+
 def add_wechat_accout_info(table, site_id, name, account_id, account_url, image_url, article_count, summary, certification, is_verified, barcode):
     account_info = {
         'name' : name,
@@ -677,9 +755,6 @@ def add_wechat_accout_info(table, site_id, name, account_id, account_url, image_
         'read_status' : 0,
         'record_time' : tools.get_current_date()
     }
-
-    db.add(table, account_info)
-
 
 def add_wechat_content_info(table, site_id, official_accounts_id, title, summary = '', image_url = '', article_url = '', release_time = '', content = '', video_url = '', violate_status = ''):
 

@@ -1,3 +1,4 @@
+<<<<<<< .mine
 Host: mp.weixin.qq.com
 Accept-Encoding: gzip, deflate
 Cookie: pass_ticket=swEXnoc7pkNxX8AND25O/MozmFCb650Df88BagNZYYyCsYYHy/NKl4R3GHKrtVeJ; wap_sid=CLWetMUHEkBJdktKZ0syeUZzUHVfTFQtaEgyYk9ISFZSZXd6dVc5dHV4eW1ObGxDWTI4UGxLaWtZX0tFSjF4MjBtSl9QUXoxGAQgpBQomLb69wgwgqKiyAU=; wap_sid2=CLWetMUHElw2VkcwOVdrbVM4MWk2c1FJNk5wLTNnVnVZZEJaTlBlTnJVNUd0RmZTeU5vMlo2V3M1eHVJRDJ3UWVfRWFPaEl3alhHcjJ2WXBibVdiWkNnUW9MbnJnSVlEQUFBfjCCoqLIBQ==; pgv_pvi=6440374272; pgv_pvid=3222140920; RK=WSmKbia6dG; pt2gguin=o0564773807; ptcz=8b712ba6a3803ddbac0375ae56cfa4acca41ae6b799fadcaba709e762c31c487; news_commid=oDOGxv2k0KHkTLScPdJDmY6zNbns; sd_cookie_crttime=1486563314320; sd_userid=22421486563314320
@@ -7,3 +8,27 @@ User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit
 Referer: https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MjM5OTA1MDUyMA==&scene=124&devicetype=iOS10.3.1&version=16050720&lang=zh_CN&nettype=WIFI&a8scene=3&fontScale=100&pass_ticket=swEXnoc7pkNxX8AND25O%2FMozmFCb650Df88BagNZYYyCsYYHy%2FNKl4R3GHKrtVeJ&wx_header=1
 Accept-Language: zh-cn
 X-Requested-With: XMLHttpRequest
+||||||| .r113
+Host:kuaibao.qq.com
+Upgrade-Insecure-Requests:1
+User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36=======
+vid	B0DB5DD0-FF94-4773-85B1-EFC11132C2A4
+version_code	6.1.0
+ssmix	a
+resolution	1242*2208
+os_version	10.3.1
+openudid	7064ff7d773ef8efeb5d6a25f62cd3d85035674f
+live_sdk_version	1.6.5
+iid	9891507523
+idfv	B0DB5DD0-FF94-4773-85B1-EFC11132C2A4
+idfa	D2E02B97-0F35-486F-9CD4-A2EC13BBC8FB
+device_type	iPhone 7 Plus
+device_platform	iphone
+device_id	34633749953
+channel	App Store
+app_name	news_article
+aid	13
+ac	WIFI
+ab_version	121237,123183,112577,122834,119378,123409,113607,123189,114105,123187,122582,113608,116023,119889,115472,105610,123025,123178,122311,112578,115572,122589,123276,115776,122948,123126,31241,122932,121010,122992,114338
+ab_feature	z1
+ab_client	a1,f2,f7,e1>>>>>>> .r116
