@@ -33,7 +33,7 @@ def main():
             'id': 'int__id',
             'release_time': 'date_release_time',
             'come_from': 'str_come_from',
-            'content': 'str_content',
+            'content': 'clob_content',
             'image_url': 'str_image_url',
             'video_url': 'str_video_url',
             'transpond_count': 'int_transpond_count',
@@ -41,7 +41,8 @@ def main():
             'check_status': 'vint_301',
             'weibo_id': 'int_weibo_id',
             'article_url': 'str_url',
-            'violate_status': 'int_violate_id'
+            'violate_status': 'int_violate_id',
+            'record_time' : 'date_record_time'
         }
 
         export = ExportData('WWA_weibo_info_info', 'tab_mvms_weibo_article_info', key_map, unique_key='ARTICLE_url')

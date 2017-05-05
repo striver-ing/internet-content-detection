@@ -63,7 +63,7 @@ def main():
         # 'CONTENT1': '',
 
     }
-    export_data.export_to_oracle(source_table = 'VAApp_vioation_content_info', aim_table = 'TAB_MVMS_VIOLATION_CONTENT', key_map = key_map, unique_key = 'ORIGINAL_URL')
+    export_data.export_to_oracle(source_table = 'WWA_app_vioation_content_info', aim_table = 'TAB_MVMS_VIOLATION_CONTENT', key_map = key_map, unique_key = 'ORIGINAL_URL')
 
 if __name__ == '__main__':
     main()

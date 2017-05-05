@@ -72,6 +72,13 @@ def add_root_url(parser_params):
                 base_parser.update_url('WWA_weibo_info_urls', weibo_content_url, Constance.TODO)
 
 def parser(url_info):
+    '''
+    @summary:
+    ---------
+    @param url_info:
+    ---------
+    @result:
+    '''
     root_url = url_info['url']
     weibo_id = url_info['remark']
 
@@ -81,13 +88,19 @@ def parser(url_info):
         mblog = tools.get_json_value(card, 'mblog')
         if not mblog:
             continue
+
         url = tools.get_json_value(card, 'scheme')
-        origin_html = tools.get_html_by_requests(url)
+        origin_html, r = tools.get_html_by_requests(url)
+        if not origin_html:
+            continue
+
         release_time = get_release_time(mblog)
         come_from = tools.get_json_value(mblog, 'source')
         regexs = ['"text": "(.+?)",']
         content = ''.join(tools.get_info(origin_html, regexs))
         # content = tools.del_html_tag(content)
+        content = content.replace('\\', '')
+
         regexs = ['"pic_ids": \[(.*?)\],']
         image_url = ''.join(tools.get_info(origin_html, regexs))
         image_url = tools.del_html_tag(image_url).replace('\"', '').replace('\\n', '')
@@ -126,6 +139,33 @@ def parser(url_info):
                           违规id：       %s
                          ''' % (url, weibo_id, release_time, come_from, content, image_url, video_url,
                                 transpond_count, praise_count, violate_id))
-        base_parser.add_wwa_weibo_info_info('WWA_weibo_info_info', SITE_ID, url, weibo_id, release_time, come_from,
-                                            content, image_url, video_url, transpond_count, praise_count, violate_id)
+
+        if content:
+            base_parser.add_wwa_weibo_info_info('WWA_weibo_info_info', SITE_ID, url, weibo_id, release_time, come_from,
+                                                content, image_url, video_url, transpond_count, praise_count, violate_id)
     base_parser.update_url('WWA_weibo_info_urls', root_url, Constance.DONE)
+
+if __name__ == '__main__':
+    url = 'http://m.weibo.cn/status/yBYBoxI8s?mblogid=yBYBoxI8s&luicode=10000011&lfid=2304131702808681_-_WEIBO_SECOND_PROFILE_WEIBO'
+    url = 'http://m.weibo.cn/status/yzopxuFLw?mblogid=yzopxuFLw&luicode=10000011&lfid=2304131702808681_-_WEIBO_SECOND_PROFILE_WEIBO'
+    origin_html, r = tools.get_html_by_requests(url)
+    regexs = ['"text": "(.+?)",']
+    content = ''.join(tools.get_info(origin_html, regexs))
+    # content = tools.del_html_tag(content)
+    content = content.replace('\\', '')
+    print(content)
+
+    regexs = ['"pic_ids": \[(.*?)\],']
+    image_url = ''.join(tools.get_info(origin_html, regexs))
+    image_url = tools.del_html_tag(image_url).replace('\"', '').replace('\\n', '')
+    if image_url:
+        image_url = image_url.split(',')
+        for i in range(len(image_url)):
+            image_url[i] = 'http://wx2.sinaimg.cn/large/' + image_url[i] + '.jpg'
+        image_url = ','.join(image_url)
+
+    print(image_url)
+
+    regexs = ['"stream_url": "(.*?)"']
+    video_url = ''.join(tools.get_info(origin_html, regexs))
+    print(video_url)

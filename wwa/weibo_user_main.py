@@ -39,7 +39,9 @@ def main():
             'account_url': 'str_url',
             'follow_count': 'int_follow_count',
             'image_url': 'str_image_url',
-            'monitor_status': 'vint_401'
+            'monitor_status': 'vint_401',
+            'SEARCH_TYPE' : 'vint_702',
+            'region' : 'str_area'
         }
 
         export = ExportData('WWA_weibo_user_info', 'tab_mvms_weibo_info', key_map, 'account_url')

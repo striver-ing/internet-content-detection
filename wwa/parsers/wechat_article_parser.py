@@ -19,6 +19,7 @@ NAME = '微信'
 FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path') + 'wechat/'
 
 oracledb = OracleDB()
+mongodb = MongoDB()
 
 # 必须定义 添加网站信息
 @tools.run_safe_model(__name__)
@@ -99,6 +100,10 @@ def parser(url_info):
     article_list = article_json.get('list', {})
     for article in article_list:
         title = tools.get_json_value(article, 'app_msg_ext_info.title')
+        is_have = mongodb.find('WWA_wechat_article', {'title' : title})
+        if is_have:
+            continue
+
         summary = tools.get_json_value(article, 'app_msg_ext_info.digest')
         image_url = tools.get_json_value(article, 'app_msg_ext_info.cover')
 
@@ -178,7 +183,7 @@ def parser(url_info):
             regex = '<img.*?data-src="(.*?)"'
             images = tools.get_info(content, regex)
             for image in images:
-                local_image_path = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.' + image[image.rfind('=') + 1:]
+                local_image_path = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.' + (image[image.rfind('=') + len('='):] if '=' in image else 'png')
                 is_download = tools.download_file(image, local_image_path)
                 if is_download:
                     content = content.replace(image, local_image_path)

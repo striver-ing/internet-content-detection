@@ -667,7 +667,7 @@ def add_program_info(table, site_id, program_name, image_url = '', episode = '',
 # 两微一端
 
 def add_wwa_weibo_user_info(table, site_id, _id = '', name = '', url = '', image_url = '',
-                            verified_reason = '', is_verified_reason = '', sex = '',
+                            verified_reason = '', is_verified_reason = '', area = '', sex = '',
                             summary = '', fans_count = '', follow_count = ''):
     '''
     @summary:
@@ -679,6 +679,7 @@ def add_wwa_weibo_user_info(table, site_id, _id = '', name = '', url = '', image
     @param image_url: 头像
     @param verified_reason: 认证详情
     @param is_verified_reason: 是否认证
+    @param area: 所在地
     @param sex: 性别
     @param summary: 简介
     @param fans_count: 粉丝数
@@ -694,6 +695,7 @@ def add_wwa_weibo_user_info(table, site_id, _id = '', name = '', url = '', image
         'image_url': image_url,
         'blog_verified': verified_reason,
         'is_verified': is_verified_reason,
+        'area': area,
         'sex': sex,
         'summary': summary,
         'fans_count': fans_count,
