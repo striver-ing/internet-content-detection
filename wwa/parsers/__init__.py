@@ -1,5 +1,6 @@
 __all__ = [
     'kuaibao_parser',
+    'headline_parser',
     'yingyongbao_parser',
     'android_market_parser',
     'mobile360_assistant_parser',

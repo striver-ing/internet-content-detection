@@ -42,7 +42,7 @@ def main():
         'MONITOR_STATUS' : 'vint_401',
         'SUMMARY' : 'str_summary'
     }
-    export_data.export_to_oracle(source_table = 'WWA_wechat_official_accounts', aim_table = 'TAB_MVMS_WECHAT_INFO', key_map = key_map, unique_key = 'ACCOUNT_ID')
+    # export_data.export_to_oracle(source_table = 'WWA_wechat_official_accounts', aim_table = 'TAB_MVMS_WECHAT_INFO', key_map = key_map, unique_key = 'ACCOUNT_ID')
 
 if __name__ == '__main__':
     main()

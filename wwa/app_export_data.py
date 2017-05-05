@@ -35,7 +35,7 @@ def main():
     }
 
     export_data = ExportData()
-    export_data.export_to_oracle(source_table = 'VAApp_content_info', aim_table = 'TAB_MVMS_APP_CONTENT', key_map = key_map, unique_key = 'ORIGINAL_URL')
+    export_data.export_to_oracle(source_table = 'WWA_app_content_info', aim_table = 'TAB_MVMS_APP_CONTENT', key_map = key_map, unique_key = 'ORIGINAL_URL')
 
     #导出信息
     key_map = {

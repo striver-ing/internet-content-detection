@@ -758,6 +758,8 @@ def add_wechat_accout_info(table, site_id, name, account_id, account_url, image_
         'record_time' : tools.get_current_date(),
     }
 
+    db.add(table, account_info)
+
 def add_wechat_content_info(table, site_id, official_accounts_id, title, summary = '', image_url = '', article_url = '', release_time = '', content = '', video_url = '', violate_status = '', local_image_url = ''):
 
     content_info = {
@@ -840,3 +842,61 @@ def add_WWA_search_app_info(table, site_id, url, title = '', summary = '', updat
         'image_pron_status': 0
     }
     db.add(table, gameApp_info_dict)
+
+
+def add_wwa_app_content_info(table, site_id, title, summary, image_url, img_stor_path, url, release_time, video_url, video_stor_path, content, column_id, is_download, sensitive_id, violate_id, storage_id):
+    '''
+    @summary:
+    ---------
+    @param table:
+    @param site_id:
+    @param title:
+    @param summary:
+    @param image_url:
+    @param img_stor_path:
+    @param url:
+    @param release_time:
+    @param video_url:
+    @param video_stor_path:
+    @param content:
+    @param column_id:
+    @param is_download:
+    @param sensitive_id:
+    @param violate_id:
+    ---------
+    @result:
+    '''
+
+
+    is_audio = video_url and 1 or 0
+
+    content_info_dict = {
+        'title':title,
+        'summary':summary,
+        'image_url':image_url,
+        'img_stor_path':img_stor_path,
+        'url':url,
+        'release_time':release_time,
+        'video_url':video_url,
+        'video_stor_path':video_stor_path,
+        'content':content,
+        'column_id':column_id,
+        'is_download':is_download,
+        'sensitive_id':sensitive_id,
+        'violate_id':violate_id,
+        'storage_id':storage_id,
+        'site_id':site_id,
+        'record_time':tools.get_current_date(),
+        'sexy_image_status': '',
+        'sexy_image_url': '',
+        'image_pron_status': 0,
+        'read_status':0,
+        'is_audio':is_audio
+    }
+
+    db.add(table, content_info_dict)
+
+    if sensitive_id or violate_id:
+        content_info_dict['content_id'] = content_info_dict['_id']
+        db.add('WWA_app_vioation_content_info', content_info_dict)
+

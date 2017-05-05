@@ -113,7 +113,7 @@ def add_site_info():
     log.debug('添加网站信息')
     site_id = SITE_ID
     name = NAME
-    table = 'VAApp_site_info'
+    table = 'WWA_app_site_info'
     url = 'http://sj.qq.com/myapp/detail.htm?apkName=com.tencent.reading'
 
     base_parser.add_website_info(table, site_id, url, name)
@@ -127,7 +127,7 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    base_parser.add_url('VAApp_urls', SITE_ID, URL, remark = NEWS_LOCAL)
+    base_parser.add_url('WWA_app_urls', SITE_ID, URL, remark = NEWS_LOCAL)
 
 # 必须定义 解析网址
 def parser(url_info):
@@ -228,14 +228,14 @@ def parser(url_info):
                         video_name = ''
 
                 if original_url:
-                    base_parser.add_va_app_content_info('VAApp_content_info', SITE_ID, title, abstract, img_url, img_name, original_url, release_time, video_url, video_name, content, column_id, is_download, sensitive_id, violate_id, STORAGE_ID)
+                    base_parser.add_va_app_content_info('WWA_app_content_info', SITE_ID, title, abstract, img_url, img_name, original_url, release_time, video_url, video_name, content, column_id, is_download, sensitive_id, violate_id, STORAGE_ID)
 
 
         except Exception as e:
             log.debug(e)
             pass
 
-    base_parser.update_url('VAApp_urls', root_url, Constance.DONE)
+    base_parser.update_url('WWA_app_urls', root_url, Constance.DONE)
 
 if __name__=='__main__':
     ss ={

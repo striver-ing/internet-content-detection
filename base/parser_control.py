@@ -45,6 +45,8 @@ class  PaserControl(threading.Thread):
                                 base_parser.update_url(self._tab_urls, url['url'], Constance.EXCEPTION)
                             break
 
+                    time.sleep(3) # 防止封
+
                 time.sleep(self._interval)
             except Exception as e:
                 log.debug(e)

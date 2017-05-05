@@ -37,7 +37,7 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    keywords = parser_params['keyword']
+    keywords = parser_params['keywords']
 
     def inner_add_url(base_url, page_count):
         for i in range(1, page_count):

@@ -34,7 +34,7 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    keywords = parser_params['keyword']
+    keywords = parser_params['keywords']
 
     def inner_add_url(url):
         html = tools.get_html_by_urllib(url)

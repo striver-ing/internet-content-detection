@@ -15,12 +15,12 @@ def main():
 
     sql = 'select t.ID from TAB_MVMS_WEIBO_INFO t where monitor_status = 402'
     result = db.find(sql, fetch_one=False)
+    if not result:
+        return
+
     parser_params = []
     for i in result:
-        print(i[0])
         parser_params.extend(str(i[0]).split(','))
-    print(parser_params)
-
 
     def begin_callback():
         log.info('\n********** WWA_weibo_info begin **********')

@@ -11,6 +11,7 @@ from db.oracledb import OracleDB
 
 # 需配置
 from wwa.parsers import wechat_article_parser
+import wwa.wechat_export_data as export_data
 def main():
     oracledb = OracleDB()
     sql = 'select t.account_id from TAB_MVMS_WECHAT_INFO t where monitor_status = 402'
@@ -22,16 +23,14 @@ def main():
     for result in result_list:
         keywords.append(result[0])
 
-    print(keywords)
-
     def begin_callback():
         log.info('\n********** WWA_wechat_article begin **********')
         db = MongoDB()
         db.delete('WWA_wechat_article_url', {})
 
     def end_callback():
-        # export_data.main()
         log.info('\n********** WWA_wechat_article end **********')
+        export_data.main()
 
     parser_params = {'keywords': keywords}
 

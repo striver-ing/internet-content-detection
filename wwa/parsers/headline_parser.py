@@ -60,7 +60,7 @@ def add_site_info():
     log.debug('添加网站信息')
     site_id = SITE_ID
     name = NAME
-    table = 'VAApp_site_info'
+    table = 'WWA_app_site_info'
     url = 'http://sj.qq.com/myapp/detail.htm?apkName=com.ss.android.article.news'
 
     base_parser.add_website_info(table, site_id, url, name)
@@ -130,7 +130,7 @@ def add_root_url(parser_params = {}):
         params['max_behot_time'] = max_behot_time
 
         url = tools.joint_url(base_url, params)
-        base_parser.add_url('VAApp_urls', SITE_ID, url, remark = NEWS_LOCAL)
+        base_parser.add_url('WWA_app_urls', SITE_ID, url, remark = NEWS_LOCAL)
 
         # 视频
         params['category'] = 'video'
@@ -138,7 +138,7 @@ def add_root_url(parser_params = {}):
         params['max_behot_time'] = max_behot_time
 
         url = tools.joint_url(base_url, params)
-        base_parser.add_url('VAApp_urls', SITE_ID, url, remark = VIDEO)
+        base_parser.add_url('WWA_app_urls', SITE_ID, url, remark = VIDEO)
 
 # 必须定义 解析网址
 def parser(url_info):
@@ -167,7 +167,7 @@ def parser(url_info):
     json = tools.get_json_by_requests(root_url)
 
     if not json:
-        base_parser.update_url('VAApp_urls', root_url, Constance.EXCEPTION)
+        base_parser.update_url('WWA_app_urls', root_url, Constance.EXCEPTION)
         return
 
     datas = json['data']
@@ -177,7 +177,7 @@ def parser(url_info):
         title = tools.get_json_value(data, 'title')
 
         # 检测数据库中是否存在，若存在则退出
-        if db.find('VAApp_content_info', {'title':title}):
+        if db.find('WWA_app_content_info', {'title':title}):
             continue
 
         abstract = tools.get_json_value(data, 'abstract')
@@ -288,10 +288,10 @@ def parser(url_info):
                 video_name = ''
 
         if original_url:
-            base_parser.add_va_app_content_info('VAApp_content_info', SITE_ID, title, abstract, img_url, img_name, original_url, release_time, video_url, video_name, content, column_id, is_download, sensitive_id, violate_id, STORAGE_ID)
+            base_parser.add_wwa_app_content_info('WWA_app_content_info', SITE_ID, title, abstract, img_url, img_name, original_url, release_time, video_url, video_name, content, column_id, is_download, sensitive_id, violate_id, STORAGE_ID)
 
 
-    base_parser.update_url('VAApp_urls', root_url, Constance.DONE)
+    base_parser.update_url('WWA_app_urls', root_url, Constance.DONE)
 
 if __name__=='__main__':
     # title = '黑边眼镜后的炯炯目光——追思横堀克己先生'

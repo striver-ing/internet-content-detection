@@ -11,6 +11,7 @@ from db.oracledb import OracleDB
 
 # 需配置
 from wwa.parsers import wechat_account_parser
+import wwa.wechat_export_data as export_data
 
 def main():
     oracledb = OracleDB()
@@ -29,8 +30,8 @@ def main():
         db.delete('WWA_wechat_account_url', {})
 
     def end_callback():
-        # export_data.main()
         log.info('\n********** WWA_wechat_account end **********')
+        export_data.main()
 
     parser_params = {'keywords': keywords}
 

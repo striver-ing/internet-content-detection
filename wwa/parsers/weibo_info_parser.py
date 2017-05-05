@@ -87,6 +87,7 @@ def parser(url_info):
         come_from = tools.get_json_value(mblog, 'source')
         regexs = ['"text": "(.+?)",']
         content = ''.join(tools.get_info(origin_html, regexs))
+        # content = tools.del_html_tag(content)
         regexs = ['"pic_ids": \[(.*?)\],']
         image_url = ''.join(tools.get_info(origin_html, regexs))
         image_url = tools.del_html_tag(image_url).replace('\"', '').replace('\\n', '')

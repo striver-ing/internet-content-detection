@@ -13,38 +13,17 @@ from wwa.parsers import weibo_user_parser
 def main():
     db = OracleDB()
 
-    # 导出数据
-    key_map = {
-        'id': 'int__id',
-        'name': 'str_name',
-        'sex': 'int_sex',
-        'summary': 'str_summary',
-        'fans_count': 'int_fans_count',
-        'blog_verified': 'str_blog_verified',
-        'is_verified': 'int_is_verified',
-        'account_url': 'str_url',
-        'follow_count': 'int_follow_count',
-        'image_url': 'str_image_url',
-        'monitor_status': 'vint_401'
-    }
-
-    export = ExportData('WWA_weibo_user_info', 'tab_mvms_weibo_info', key_map, unique_key='account_url')
-    export.export_to_oracle()
-
-    log.info('\n********** WWA_weibo_user end **********')
-
     sql = 'select t.KEYWORD from TAB_MVMS_SEARCH_INFO t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time  and search_type = 702'
     result = db.find(sql, fetch_one=False)
+    if not result:
+        return
+
     parser_params = []
     for i in result:
-        print(i[0])
         parser_params.extend(str(i[0]).split(','))
-    print(parser_params)
-
 
     def begin_callback():
         log.info('\n********** WWA_weibo_user begin **********')
-
 
     def end_callback():
         # 导出数据

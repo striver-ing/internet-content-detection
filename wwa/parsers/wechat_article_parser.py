@@ -18,6 +18,8 @@ NAME = '微信'
 
 FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path')
 
+oracledb = OracleDB()
+
 # 必须定义 添加网站信息
 @tools.run_safe_model(__name__)
 def add_site_info():
@@ -43,7 +45,7 @@ def add_root_url(parser_params = {}):
     for keyword in keywords:
         if keyword:
             url = 'http://weixin.sogou.com/weixin?type=1&s_from=input&query=%s&ie=utf8&_sug_=n&_sug_type_='%keyword
-            base_parser.add_url('WWA_wechat_article_url', SITE_ID, url)
+            base_parser.add_url('WWA_wechat_article_url', SITE_ID, url, remark = keyword)
 
 # 必须定义 解析网址
 def parser(url_info):
@@ -54,7 +56,7 @@ def parser(url_info):
     depth = url_info['depth']
     site_id = url_info['site_id']
     remark = url_info['remark']
-    official_accounts_id = 'cqcq110'
+    official_accounts_id = remark
 
     # 解析
     html, request = tools.get_html_by_requests(root_url)
@@ -120,7 +122,7 @@ def parser(url_info):
         regex = '<img.*?data-src="(.*?)"'
         images = tools.get_info(content, regex)
         for image in images:
-            local_image_path = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.' + image[image.rfind('=') + 1:]
+            local_image_path = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.' + (image[image.rfind('=') + len('='):] if '=' in image else 'png')
             is_download = tools.download_file(image, local_image_path)
             if is_download:
                 content = content.replace(image, local_image_path)
