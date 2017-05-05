@@ -17,6 +17,7 @@ def main():
     sql = 'select t.account_id from TAB_MVMS_WECHAT_INFO t where monitor_status = 402'
     result_list = oracledb.find(sql)
     if not result_list:
+        log.debug('无任务 结束')
         return
 
     keywords = []

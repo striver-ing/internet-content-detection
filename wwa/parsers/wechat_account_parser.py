@@ -16,7 +16,7 @@ SITE_ID = 1
 # 必须定义 网站名
 NAME = '微信'
 
-FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path')
+FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path') + 'wechat/'
 
 # 必须定义 添加网站信息
 @tools.run_safe_model(__name__)
@@ -108,6 +108,7 @@ def parser(url_info):
 
         regex = '微信扫一扫关注.*?<img.*?src="(.*?)"'
         barcode_url = tools.get_info(account_block, regex, fetch_one = True)
+        barcode_url = barcode_url.replace('&amp;',"&")
 
         # 下载图片
         local_barcode_url = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
@@ -116,6 +117,7 @@ def parser(url_info):
 
         regex = '<a.*?account_name.*?href="(.*?)">'
         account_url = tools.get_info(account_block, regex, fetch_one = True)
+        account_url = account_url.replace('&amp;',"&")
 
         log.debug('''
             公众号名称          %s
@@ -134,6 +136,7 @@ def parser(url_info):
         base_parser.add_wechat_accout_info('WWA_wechat_official_accounts', site_id, name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url)
 
     base_parser.update_url('WWA_wechat_account_url', root_url, Constance.DONE)
+    tools.delay_time()
 
 
 if __name__ == '__main__':

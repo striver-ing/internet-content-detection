@@ -11,7 +11,7 @@ from db.oracledb import OracleDB
 
 # 需配置
 from wwa.parsers import *
-import wwa.search_app_main as export_data
+import wwa.export_search_app_data as export_data
 def main():
     db = MongoDB()
     oracle = OracleDB()
@@ -27,8 +27,9 @@ def main():
 
     keywords = []
 
-    result_list = oracle.find('select keyword from TAB_MVMS_SEARCH_INFO where  MONITOR_START_TIME <= sysdate AND MONITOR_END_TIME >= sysdate and search_type=702')
+    result_list = oracle.find('select keyword from TAB_MVMS_SEARCH_INFO where  MONITOR_START_TIME <= sysdate AND MONITOR_END_TIME >= sysdate and search_type=703')
     if not result_list:
+        log.debug('无任务 结束')
         return
 
     keywords = []
@@ -44,7 +45,7 @@ def main():
     spider.add_parser(android_market_parser)
     spider.add_parser(baidu_mobile_assistant_parser)
     spider.add_parser(mobile360_assistant_parser)
-    # spider.start()
+    spider.start()
 
 if __name__ == '__main__':
     main()

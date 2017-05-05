@@ -16,6 +16,7 @@ def main():
     sql = 'select t.KEYWORD from TAB_MVMS_SEARCH_INFO t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time  and search_type = 702'
     result = db.find(sql, fetch_one=False)
     if not result:
+        log.debug('无任务 结束')
         return
 
     parser_params = []

@@ -18,6 +18,7 @@ def main():
     sql = 'select t.KEYWORD from TAB_MVMS_SEARCH_INFO t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time  and search_type = 701'
     result_list = oracledb.find(sql)
     if not result_list:
+        log.debug('无任务 结束')
         return
 
     keywords = []

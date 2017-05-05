@@ -16,7 +16,7 @@ SITE_ID = 1
 # 必须定义 网站名
 NAME = '微信'
 
-FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path')
+FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path') + 'wechat/'
 
 oracledb = OracleDB()
 
@@ -126,7 +126,7 @@ def parser(url_info):
             is_download = tools.download_file(image, local_image_path)
             if is_download:
                 content = content.replace(image, local_image_path)
-            time.sleep(5)
+            tools.delay_time()
 
         # 违规事件
         violate_id = ''
@@ -182,7 +182,7 @@ def parser(url_info):
                 is_download = tools.download_file(image, local_image_path)
                 if is_download:
                     content = content.replace(image, local_image_path)
-                time.sleep(5)
+                tools.delay_time()
 
             # 违规事件
             violate_id = ''
@@ -211,6 +211,7 @@ def parser(url_info):
             base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id)
 
     base_parser.update_url('WWA_wechat_article_url', root_url, Constance.DONE)
+    tools.delay_time()
 
 
 if __name__ == '__main__':

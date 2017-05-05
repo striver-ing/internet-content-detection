@@ -16,6 +16,7 @@ def main():
     sql = 'select t.ID from TAB_MVMS_WEIBO_INFO t where monitor_status = 402'
     result = db.find(sql, fetch_one=False)
     if not result:
+        log.debug('无任务 结束')
         return
 
     parser_params = []

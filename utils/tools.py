@@ -642,6 +642,9 @@ def format_date(date, old_format = '', new_format = '%Y-%m-%d %H:%M:%S'):
         date_str = date
     return date_str
 
+def delay_time(sleep_time = 5):
+    time.sleep(sleep_time)
+
 ################################################
 def get_md5(source_str):
     m = hashlib.md5()

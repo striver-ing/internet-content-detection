@@ -49,7 +49,7 @@ function base64decode (e) {
 '''
 
 ONE_PAGE_TIME_INTERVAL = 3600
-FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'headlines_save_path')
+FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path')
 NEWS_LOCAL =  1
 VIDEO      = 2
 STORAGE_ID = 2
@@ -273,7 +273,7 @@ def parser(url_info):
         # 下载图片
         img_name = ''
         if img_url:
-            img_name = 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
+            img_name = 'headlines/images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
             is_download = tools.download_file(img_url, base_path, img_name)
             if not is_download:
                 img_name = ''
@@ -282,7 +282,7 @@ def parser(url_info):
         # 下载视频
         video_name = ''
         if video_url:
-            video_name = 'videos/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.mp4'
+            video_name = 'headlines/videos/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.mp4'
             is_download = tools.download_file(video_url, base_path, video_name)
             if not is_download:
                 video_name = ''
