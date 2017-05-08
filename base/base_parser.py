@@ -707,7 +707,7 @@ def add_wwa_weibo_user_info(table, site_id, _id = '', name = '', url = '', image
 
 def add_wwa_weibo_info_info(table, site_id, url = '', weibo_id = '', release_time = '', come_from = '',
                                content = '', image_url = '', video_url = '', transpond_count = '', praise_count = '',
-                               violate_id = ''):
+                               violate_id = '', sensitive_id = ''):
     '''
     @summary:
     ---------
@@ -739,7 +739,8 @@ def add_wwa_weibo_info_info(table, site_id, url = '', weibo_id = '', release_tim
         'praise_count': praise_count,
         'read_status': 0,
         'violate_id': violate_id,
-        'record_time': tools.get_current_date()
+        'record_time': tools.get_current_date(),
+        'sensitive_id' : sensitive_id
     }
     db.add(table, user_info)
 
@@ -760,9 +761,11 @@ def add_wechat_accout_info(table, site_id, name, account_id, account_url, image_
         'record_time' : tools.get_current_date(),
     }
 
-    db.add(table, account_info)
+    if not db.add(table, account_info):
+        account_info.pop('_id')
+        db.update(table, old_value = {'account_id' : account_id}, new_value = account_info)
 
-def add_wechat_content_info(table, site_id, official_accounts_id, title, summary = '', image_url = '', article_url = '', release_time = '', content = '', video_url = '', violate_status = '', local_image_url = ''):
+def add_wechat_content_info(table, site_id, official_accounts_id, title, summary = '', image_url = '', article_url = '', release_time = '', content = '', video_url = '', violate_status = '', local_image_url = '', sensitive_id = ''):
 
     content_info = {
         'site_id' : site_id,
@@ -777,7 +780,8 @@ def add_wechat_content_info(table, site_id, official_accounts_id, title, summary
         'record_time' : tools.get_current_date(),
         'read_status' : 0,
         'violate_status' : violate_status,
-        'local_image_url' : local_image_url
+        'local_image_url' : local_image_url,
+        'sensitive_id' : sensitive_id
     }
 
     db.add(table, content_info)

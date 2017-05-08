@@ -11,7 +11,7 @@ def main():
             continue
 
         content = content.strip()
-        regex = ['(.*?):? +(.*)', '(.*?):(.*)', '([^:]*)']
+        regex = ['(.*?):(.*)', '(.*?):? +(.*)', '([^:]*)']
 
         result = tools.get_info(content, regex)
         result = result[0] if isinstance(result[0], tuple) else result

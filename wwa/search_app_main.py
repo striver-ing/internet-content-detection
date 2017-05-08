@@ -35,10 +35,11 @@ def main():
     keywords = []
     for result in result_list:
         keywords.extend(result[0].split(','))
+
     parser_params = {'keywords' : keywords}
 
     # 配置spider
-    spider = Spider(tab_urls = 'WWA_search_app_urls', tab_site = 'WWA_search_app_site_info', tab_content = 'WWA_search_app_content_info', begin_callback = begin_callback, end_callback = end_callback, parser_params = parser_params)
+    spider = Spider(tab_urls = 'WWA_search_app_urls', tab_site = 'WWA_search_app_site_info', tab_content = 'WWA_search_app_content_info', content_unique_key = 'title', begin_callback = begin_callback, end_callback = end_callback, parser_params = parser_params)
 
     # 添加parser
     spider.add_parser(yingyongbao_parser)

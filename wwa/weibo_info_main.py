@@ -42,6 +42,7 @@ def main():
             'weibo_id': 'int_weibo_id',
             'article_url': 'str_url',
             'violate_status': 'int_violate_id',
+            'sensitive_id' : 'int_sensitive_id',
             'record_time' : 'date_record_time'
         }
 
@@ -60,3 +61,23 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # # 导出数据
+    # key_map = {
+    #     'id': 'int__id',
+    #     'release_time': 'date_release_time',
+    #     'come_from': 'str_come_from',
+    #     'content': 'clob_content',
+    #     'image_url': 'str_image_url',
+    #     'video_url': 'str_video_url',
+    #     'transpond_count': 'int_transpond_count',
+    #     'praise_count': 'int_praise_count',
+    #     'check_status': 'vint_301',
+    #     'weibo_id': 'int_weibo_id',
+    #     'article_url': 'str_url',
+    #     'violate_status': 'int_violate_id',
+    #     'sensitive_id' : 'int_sensitive_id',
+    #     'record_time' : 'date_record_time'
+    # }
+
+    # export = ExportData('WWA_weibo_info_info', 'tab_mvms_weibo_article_info', key_map, unique_key='ARTICLE_url')
+    # export.export_to_oracle()

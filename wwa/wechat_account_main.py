@@ -28,7 +28,7 @@ def main():
     def begin_callback():
         log.info('\n********** WWA_wechat_account begin **********')
         db = MongoDB()
-        # db.delete('WWA_wechat_account_url', {})
+        db.delete('WWA_wechat_account_url', {})
 
     def end_callback():
         log.info('\n********** WWA_wechat_account end **********')

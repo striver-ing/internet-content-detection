@@ -114,35 +114,50 @@ def parser(url_info):
         transpond_count = tools.get_json_value(mblog, 'reposts_count')
         praise_count = tools.get_json_value(mblog, 'attitudes_count')
 
+        # 敏感事件
+        sensitive_id = ''
+        sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
+        for sensitive_event_info in sensitive_event_infos:
+            _id = sensitive_event_info[0]
+            keyword1 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
+            keyword2 = sensitive_event_info[4].split(',') if sensitive_event_info[4] else []
+            keyword3 = sensitive_event_info[5].split(',') if sensitive_event_info[5] else []
+
+            if base_parser.is_violate(content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
+                sensitive_id = _id
+                break
+
         # 违规事件
         violate_id = ''
         vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
         for vioation_knowledge_info in vioation_knowledge_infos:
             _id = vioation_knowledge_info[0]
-            keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
-            keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
-            keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
+            keyword1 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
+            keyword2 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
+            keyword3 = vioation_knowledge_info[4].split(',') if vioation_knowledge_info[4] else []
 
             if base_parser.is_violate(content, key1=keyword1, key2=keyword2, key3=keyword3):
                 violate_id = _id
+                break
 
         log.debug('''
-                          原文地址：     %s
-                          微博ID：       %s
-                          发布时间：     %s
-                          来自：         %s
-                          内容：         %s
-                          图片地址：     %s
-                          视频地址：     %s
-                          转发数：       %s
-                          点赞数：       %s
-                          违规id：       %s
-                         ''' % (url, weibo_id, release_time, come_from, content, image_url, video_url,
-                                transpond_count, praise_count, violate_id))
+                  原文地址：     %s
+                  微博ID：       %s
+                  发布时间：     %s
+                  来自：         %s
+                  内容：         %s
+                  图片地址：     %s
+                  视频地址：     %s
+                  转发数：       %s
+                  点赞数：       %s
+                  违规id：       %s
+                  敏感事件      %s
+                 ''' % (url, weibo_id, release_time, come_from, content, image_url, video_url,
+                        transpond_count, praise_count, violate_id, sensitive_id))
 
         if content:
             base_parser.add_wwa_weibo_info_info('WWA_weibo_info_info', SITE_ID, url, weibo_id, release_time, come_from,
-                                                content, image_url, video_url, transpond_count, praise_count, violate_id)
+                                                content, image_url, video_url, transpond_count, praise_count, violate_id, sensitive_id = sensitive_id)
     base_parser.update_url('WWA_weibo_info_urls', root_url, Constance.DONE)
 
 if __name__ == '__main__':

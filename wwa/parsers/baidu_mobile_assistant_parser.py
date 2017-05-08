@@ -135,10 +135,10 @@ def parser(url_info):
                 title, url, summary, score, app_url, image_url, software_size, tag, platform,
                 download_count, language))
 
-        base_parser.add_WWA_search_app_info('WWA_search_app_content_info', site_id, url, title=title,
-                                 summary=summary, score=score, app_url=app_url, image_url=image_url,
-                                 software_size=software_size, tag=tag, platform=platform,
-                                 download_count=download_count, language=language,sensitive_id='')
+            base_parser.add_WWA_search_app_info('WWA_search_app_content_info', site_id, url, title=title,
+                                     summary=summary, score=score, app_url=app_url, image_url=image_url,
+                                     software_size=software_size, tag=tag, platform=platform,
+                                     download_count=download_count, language=language,sensitive_id='')
 
         except Exception as e:
             log.error(e)

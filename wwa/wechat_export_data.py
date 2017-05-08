@@ -39,10 +39,15 @@ def main():
         'IMAGE_URL' : 'str_image_url',
         'LOCAL_IMAGE_URL' : 'str_local_image_url',
         'ACCOUNT_URL' : 'str_account_url',
-        'MONITOR_STATUS' : 'vint_401',
+        # 'MONITOR_STATUS' : 'vint_401',
         'SUMMARY' : 'str_summary'
     }
-    export_data.export_to_oracle(source_table = 'WWA_wechat_official_accounts', aim_table = 'TAB_MVMS_WECHAT_INFO', key_map = key_map, unique_key = 'ACCOUNT_ID')
+
+    unique_key_mapping_source_key = {
+        'ACCOUNT_ID' : 'str_account_id'
+    }
+
+    export_data.export_to_oracle(source_table = 'WWA_wechat_official_accounts', aim_table = 'TAB_MVMS_WECHAT_INFO', key_map = key_map, unique_key = 'ACCOUNT_ID', update_read_status = False, unique_key_mapping_source_key = unique_key_mapping_source_key)
 
 if __name__ == '__main__':
     main()

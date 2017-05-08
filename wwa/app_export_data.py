@@ -16,7 +16,7 @@ def main():
         'RELEASE_TIME': 'date_release_time',
         'TITLE': 'str_title',
         'ORIGINAL_URL': 'str_url',
-        'CONTENT': 'str_content',
+        'CONTENT': 'clob_content',
         'ABSTRACT_IMAGE_URL': 'str_image_url',
         'ABSTRACT_IMAGE_LOCAL_PATH': 'str_img_stor_path',
         'VIDEO_URL': 'str_video_url',
@@ -59,7 +59,7 @@ def main():
         # 'CHECK_TIME': '',
         # 'CHECK_USER': '',
         # 'DOWN_STO_ID': '',
-        'CONTENT': 'str_content',
+        'CONTENT': 'clob_content',
         # 'CONTENT1': '',
 
     }

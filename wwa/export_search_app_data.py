@@ -30,7 +30,7 @@ def main():
     }
     export_data = ExportData()
     export_data.export_to_oracle(source_table='WWA_search_app_content_info', aim_table='TAB_MVMS_APP_INFO', key_map=key_map,
-                                 unique_key='url')
+                                 unique_key='title')
 
 if __name__ == '__main__':
     main()

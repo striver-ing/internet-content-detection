@@ -59,11 +59,28 @@ def parser(url_info):
     remark = url_info['remark']
     official_accounts_id = remark
 
+    headers =  {
+        "Cache-Control": "max-age=0",
+        "Connection": "keep-alive",
+        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36",
+        "Accept-Language": "zh-CN,zh;q=0.8",
+        "Host": "weixin.sogou.com",
+        "Cookie": "SUV=1493992505819275; SMYUV=1493992505820875; UM_distinctid=15bd8e481e362-01a3df9ec0e7c3-62101875-ffc00-15bd8e481e41a7; ABTEST=6|1494142883|v1; SNUID=35798DEB8581CA6EBB507B9A8549C894; SUID=B0FC096F2A30990A00000000590ECFA3; JSESSIONID=aaa3JllZJGZGTf7mN4UUv; SUID=9DFC19703108990A00000000590ECFA4; IPLOC=CN5000; weixinIndexVisited=1; sct=2",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Encoding": "gzip, deflate, sdch",
+        "Upgrade-Insecure-Requests": "1",
+        "Referer": "http://weixin.sogou.com/weixin?type=1&s_from=input&query=chongqing&ie=utf8&_sug_=n&_sug_type_="
+    }
+
     # 解析
-    html, request = tools.get_html_by_requests(root_url)
+    html, request = tools.get_html_by_requests(root_url, headers = headers)
     if not html:
         base_parser.update_url('urls', root_url, Constance.EXCEPTION)
         return
+
+    regex = '<input type=text name="c" value="" placeholder="(.*?)" id="seccodeInput">'
+    check_info = tools.get_info(html, regex, fetch_one = True)
+    print(check_info)
 
     # 公众号信息块
     regex = '<!-- a -->(.*?)<!-- z -->'
@@ -133,31 +150,45 @@ def parser(url_info):
                 content = content.replace(image, local_image_path)
             tools.delay_time()
 
+        # 敏感事件
+        sensitive_id = ''
+        sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
+        for sensitive_event_info in sensitive_event_infos:
+            _id = sensitive_event_info[0]
+            keyword1 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
+            keyword2 = sensitive_event_info[4].split(',') if sensitive_event_info[4] else []
+            keyword3 = sensitive_event_info[5].split(',') if sensitive_event_info[5] else []
+
+            if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
+                sensitive_id = _id
+                break
+
         # 违规事件
         violate_id = ''
         vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
         for vioation_knowledge_info in vioation_knowledge_infos:
             _id = vioation_knowledge_info[0]
-            keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
-            keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
-            keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
+            keyword1 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
+            keyword2 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
+            keyword3 = vioation_knowledge_info[4].split(',') if vioation_knowledge_info[4] else []
 
             if base_parser.is_violate(title + tools.del_html_tag(content), key1=keyword1, key2=keyword2, key3=keyword3):
                 violate_id = _id
                 break
 
-        log.debug('''
-        标题         %s
-        简介         %s
-        图片地址     %s
-        文章地址     %s
-        发布时间     %s
-        内容         %s
-        本地贴图地址 %s
-        违规状态     %s
-        '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id))
+            log.debug('''
+                标题         %s
+                简介         %s
+                图片地址     %s
+                文章地址     %s
+                发布时间     %s
+                内容         %s
+                本地贴图地址 %s
+                违规状态     %s
+                敏感事件     %s
+                '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id, sensitive_id))
 
-        base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id)
+        base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id, sensitive_id = sensitive_id)
 
         # 同一天发布的
         oneday_article_list = article.get('app_msg_ext_info', {}).get('multi_app_msg_item_list', [])
@@ -179,7 +210,7 @@ def parser(url_info):
             regex = '(<div class="rich_media_content " id="js_content">.*?)<script nonce'
             content = tools.get_info(content_html, regex, fetch_one = True)
 
-            # # 取content里的图片 下载图片 然后替换内容中原来的图片地址
+            # 取content里的图片 下载图片 然后替换内容中原来的图片地址
             regex = '<img.*?data-src="(.*?)"'
             images = tools.get_info(content, regex)
             for image in images:
@@ -189,14 +220,27 @@ def parser(url_info):
                     content = content.replace(image, local_image_path)
                 tools.delay_time()
 
+            # 敏感事件
+            sensitive_id = ''
+            sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
+            for sensitive_event_info in sensitive_event_infos:
+                _id = sensitive_event_info[0]
+                keyword1 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
+                keyword2 = sensitive_event_info[4].split(',') if sensitive_event_info[4] else []
+                keyword3 = sensitive_event_info[5].split(',') if sensitive_event_info[5] else []
+
+                if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
+                    sensitive_id = _id
+                    break
+
             # 违规事件
             violate_id = ''
             vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
             for vioation_knowledge_info in vioation_knowledge_infos:
                 _id = vioation_knowledge_info[0]
-                keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
-                keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
-                keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
+                keyword1 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
+                keyword2 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
+                keyword3 = vioation_knowledge_info[4].split(',') if vioation_knowledge_info[4] else []
 
                 if base_parser.is_violate(title + tools.del_html_tag(content), key1=keyword1, key2=keyword2, key3=keyword3):
                     violate_id = _id
@@ -211,9 +255,10 @@ def parser(url_info):
             内容         %s
             本地贴图地址 %s
             违规状态     %s
-            '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id))
+            敏感事件     %s
+            '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id, sensitive_id))
 
-            base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id)
+            base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id, sensitive_id = sensitive_id)
 
     base_parser.update_url('WWA_wechat_article_url', root_url, Constance.DONE)
     tools.delay_time()

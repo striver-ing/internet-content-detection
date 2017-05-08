@@ -224,24 +224,26 @@ def parser(url_info):
         sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
         for sensitive_event_info in sensitive_event_infos:
             _id = sensitive_event_info[0]
-            keyword1 = sensitive_event_info[3].split(' ') if sensitive_event_info[3] else []
-            keyword2 = sensitive_event_info[4].split(' ') if sensitive_event_info[4] else []
-            keyword3 = sensitive_event_info[5].split(' ') if sensitive_event_info[5] else []
+            keyword1 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
+            keyword2 = sensitive_event_info[4].split(',') if sensitive_event_info[4] else []
+            keyword3 = sensitive_event_info[5].split(',') if sensitive_event_info[5] else []
 
             if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
                 sensitive_id = _id
+                break
 
         # 违规事件
         violate_id = ''
         vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
         for vioation_knowledge_info in vioation_knowledge_infos:
             _id = vioation_knowledge_info[0]
-            keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
-            keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
-            keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
+            keyword1 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
+            keyword2 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
+            keyword3 = vioation_knowledge_info[4].split(',') if vioation_knowledge_info[4] else []
 
             if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
                 violate_id = _id
+                break
 
 
         log.debug('''
@@ -301,9 +303,9 @@ if __name__=='__main__':
     # sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
     # for sensitive_event_info in sensitive_event_infos:
     #     _id = sensitive_event_info[0]
-    #     keyword1 = sensitive_event_info[3].split(' ') if sensitive_event_info[3] else []
-    #     keyword2 = sensitive_event_info[4].split(' ') if sensitive_event_info[4] else []
-    #     keyword3 = sensitive_event_info[5].split(' ') if sensitive_event_info[5] else []
+    #     keyword1 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
+    #     keyword2 = sensitive_event_info[4].split(',') if sensitive_event_info[4] else []
+    #     keyword3 = sensitive_event_info[5].split(',') if sensitive_event_info[5] else []
 
     #     # print(keyword1)
     #     # print(keyword2)
@@ -321,9 +323,9 @@ if __name__=='__main__':
     # vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
     # for vioation_knowledge_info in vioation_knowledge_infos:
     #     _id = vioation_knowledge_info[0]
-    #     keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
-    #     keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
-    #     keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
+    #     keyword1 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
+    #     keyword2 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
+    #     keyword3 = vioation_knowledge_info[4].split(',') if vioation_knowledge_info[4] else []
 
     #     if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
     #         print(_id)

@@ -38,27 +38,23 @@ class ImagePornControl(threading.Thread):
 
             for image in images:
                 try:
-                    image_urls = image['image_url'].split(',')
+                    image_url = image['image_url']
 
                     sexy_image_status = [] # 检测结果
                     sexy_image_url    = [] # 对应的照片url
 
-                    for image_url in image_urls:
-                        try:
-                            result = self._image_porn_recg.image_predict(image_url)
-                        except Exception as e:
-                            log.debug(e)
-                        else:
-                            log.debug('''
-                                image_url :%s
-                                result    :%d
-                                '''%(image_url, result))
+                    try:
+                        result = self._image_porn_recg.image_predict(image_url)
+                    except Exception as e:
+                        log.debug(e)
+                    else:
+                        log.debug('''
+                            image_url :%s
+                            result    :%d
+                            '''%(image_url, result))
 
-                            sexy_image_status.append(str(result))
-                            sexy_image_url.append(image_url)
-
-                    sexy_image_status = 1 if ','.join(sexy_image_status) == '6' else 5
-                    sexy_image_url    = ','.join(sexy_image_url)
+                    sexy_image_status = 1 if result == 6 else 5
+                    sexy_image_url    = image_url
 
                     self._db.update(self._tab_images, {'_id':image['_id']}, {'image_pron_status':Constance.DONE, 'sexy_image_status':sexy_image_status, 'sexy_image_url':sexy_image_url})
 
