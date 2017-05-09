@@ -96,16 +96,17 @@ def parser(url_info):
 
         try:
             release_time = headers[i].next_sibling()[0]
-            release_time = ''.join(tools.re.compile('\d\d\d\d年\d+?月\d+?日').findall(str(release_time)))
+            release_time = tools.re.compile('\d\d\d\d年\d+?月\d+?日').findall(str(release_time))
             if not release_time:
                 release_time = headers[i].next_sibling()[1]
-                release_time = ''.join(tools.re.compile('\d\d\d\d年\d+?月\d+?日').findall(str(release_time)))
+                release_time = tools.re.compile('\d\d\d\d年\d+?月\d+?日').findall(str(release_time))
                 if not release_time:
                     release_time = headers[i].next_sibling()[2]
-                    release_time = ''.join(tools.re.compile('\d\d\d\d年\d+?月\d+?日').findall(str(release_time)))
+                    release_time = tools.re.compile('\d\d\d\d年\d+?月\d+?日').findall(str(release_time))
                     if not release_time:
                         release_time = headers[i].next_sibling()[3]
-                        release_time = ''.join(tools.re.compile('\d\d\d\d年\d+?月\d+?日').findall(str(release_time)))
+                        release_time = tools.re.compile('\d\d\d\d年\d+?月\d+?日').findall(str(release_time))
+            release_time = release_time[0]
             release_time = release_time.replace('年','-').replace('月','-').replace('日','')
         except:
             release_time = ''

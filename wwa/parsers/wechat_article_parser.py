@@ -78,9 +78,10 @@ def parser(url_info):
         base_parser.update_url('urls', root_url, Constance.EXCEPTION)
         return
 
+    # print(html)
     regex = '<input type=text name="c" value="" placeholder="(.*?)" id="seccodeInput">'
     check_info = tools.get_info(html, regex, fetch_one = True)
-    print(check_info)
+    log.debug('取文章链接' + check_info)
 
     # 公众号信息块
     regex = '<!-- a -->(.*?)<!-- z -->'
@@ -89,25 +90,30 @@ def parser(url_info):
     regex = '<a.*?account_name.*?href="(.*?)">'
     account_url = tools.get_info(account_block, regex, fetch_one = True)
     account_url = account_url.replace('&amp;',"&")
+    log.debug('account_url = ' + account_url)
 
     if not account_url:
         base_parser.update_url('urls', root_url, Constance.EXCEPTION)
         return
 
     headers = {
-        "Referer": "http://weixin.sogou.com/weixin?type=1&s_from=input&query=%E5%B0%8F%E7%BD%97%E6%81%B6%E6%90%9E%E8%A7%86%E9%A2%91&ie=utf8&_sug_=n&_sug_type_=",
-        "Accept-Language": "zh-CN,zh;q=0.8",
-        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
-        "Cookie": "pac_uid=1_564773807; tvfe_boss_uuid=eeeb6134bd4e5be1; gaduid=5862150e9f6d4; ts_refer=mail.qq.com/cgi-bin/mail_spam%3Faction%3Dcheck_link%26url%3Dhttps%3A//mp.weixin.qq.com/wxopen/waactivateemail; mobileUV=1_159bf00b102_8712; ts_uid=9087534314; RK=nSmCPga6ck; pgv_pvi=9617059840; o_cookie=564773807; eas_sid=N1D4D9C3x2h8y732i7G4l4T8c2; ptcz=88fc02c9c9cc3a96b2f6f25e9d8709e845187d5ca9ba22e8f4807c3792f2ffda; pt2gguin=o0564773807; pgv_pvid=9163084522; qz_gdt=htrqowk3bmacky7pwyyq; sig=h01eaa03e4d0cff57cda912bc080c1e4de70fb54d527bb196784ceec926b5a572c3241f2a7d75424a69",
-        "Host": "mp.weixin.qq.com",
-        "Accept-Encoding": "gzip, deflate, sdch",
         "Cache-Control": "max-age=0",
+        "Cookie": "sig=h0103501987bd47456233d89945ec9344c0874df4623269ab6dc12a8ec675a0291dcf19d6043325766e",
         "Connection": "keep-alive",
+        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Referer": "http://mp.weixin.qq.com/profile?src=3&timestamp=1494380748&ver=1&signature=fGdbGg2AtWpVljuVN2Gao7KWjc0*v7x97PoqrIsVtzfRn5Zu9zneTBdwP-b7kEdKB*bGRj-TmI*TAPvxy-nVKA==",
         "Upgrade-Insecure-Requests": "1",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+        "Host": "mp.weixin.qq.com",
+        "If-Modified-Since": "Wed, 10 May 2017 09:45:54 +0800",
+        "Accept-Language": "zh-CN,zh;q=0.8",
+        "Accept-Encoding": "gzip, deflate, sdch"
     }
 
     html, request = tools.get_html_by_requests(account_url, headers = headers)
+    regex = '<input class="weui_input frm_input" id="input" placeholder="(.*?)" maxlength="4">'
+    check_info = tools.get_info(html, regex, fetch_one = True)
+    log.debug("取文章详细内容 " + check_info)
     # print(html)
 
     regex = 'var msgList = (.*?});'
@@ -119,6 +125,7 @@ def parser(url_info):
         title = tools.get_json_value(article, 'app_msg_ext_info.title')
         is_have = mongodb.find('WWA_wechat_article', {'title' : title})
         if is_have:
+            log.debug(title + " 已存在")
             continue
 
         summary = tools.get_json_value(article, 'app_msg_ext_info.digest')

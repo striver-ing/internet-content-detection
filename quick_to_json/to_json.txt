@@ -3,8 +3,9 @@ Accept-Encoding:gzip, deflate, sdch
 Accept-Language:zh-CN,zh;q=0.8
 Cache-Control:max-age=0
 Connection:keep-alive
-Cookie:SUV=1493992505819275; SMYUV=1493992505820875; UM_distinctid=15bd8e481e362-01a3df9ec0e7c3-62101875-ffc00-15bd8e481e41a7; ABTEST=6|1494142883|v1; SNUID=35798DEB8581CA6EBB507B9A8549C894; SUID=B0FC096F2A30990A00000000590ECFA3; JSESSIONID=aaa3JllZJGZGTf7mN4UUv; SUID=9DFC19703108990A00000000590ECFA4; IPLOC=CN5000; weixinIndexVisited=1; sct=2
-Host:weixin.sogou.com
-Referer:http://weixin.sogou.com/weixin?type=1&s_from=input&query=chongqing&ie=utf8&_sug_=n&_sug_type_=
+Cookie:sig=h0103501987bd47456233d89945ec9344c0874df4623269ab6dc12a8ec675a0291dcf19d6043325766e
+Host:mp.weixin.qq.com
+If-Modified-Since:Wed, 10 May 2017 09:45:54 +0800
+Referer:http://mp.weixin.qq.com/profile?src=3&timestamp=1494380748&ver=1&signature=fGdbGg2AtWpVljuVN2Gao7KWjc0*v7x97PoqrIsVtzfRn5Zu9zneTBdwP-b7kEdKB*bGRj-TmI*TAPvxy-nVKA==
 Upgrade-Insecure-Requests:1
 User-Agent:Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36

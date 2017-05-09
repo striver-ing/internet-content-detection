@@ -15,6 +15,7 @@ NAME = '新浪微博'
 
 db = MongoDB()
 oracledb = OracleDB()
+FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path') + 'weibo/'
 
 def get_release_time(mblog):
     try:
@@ -139,6 +140,13 @@ def parser(url_info):
             if base_parser.is_violate(content, key1=keyword1, key2=keyword2, key3=keyword3):
                 violate_id = _id
                 break
+
+        # 下载视频
+        is_mp4 = tools.is_file(video_url, 'mp4')
+        if is_mp4:
+            local_video_path = FILE_LOCAL_PATH + 'videos/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.mp4'
+            is_download = tools.download_file(video_url, local_video_path)
+            video_url = local_video_path if is_download else ''
 
         log.debug('''
                   原文地址：     %s

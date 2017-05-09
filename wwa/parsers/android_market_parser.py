@@ -93,8 +93,8 @@ def parser(url_info):
             author = tools.get_info(app_html, author)
             author = ''.join(author)
 
-            app_url = 'button_bg button_1 right_mt.*?<a href="(.*?)" rel="nofollow"> '
-            app_url = tools.get_info(info, app_url)
+            app_url = '<div class="button_bg button_3 btn_mar ">.*?<a href="(.*?)"'
+            app_url = tools.get_info(app_html, app_url)
             app_url = ''.join(app_url)
             app_url = 'http://apk.hiapk.com' + app_url
 
@@ -164,11 +164,6 @@ def parser(url_info):
 
     base_parser.update_url('WWA_search_app_urls', root_url, Constance.DONE)
 
-
-    # # 解析
-    # html, request = tools.get_html_by_requests(root_url)
-    # if not html:
-    #     base_parser.update_url('urls', root_url, Constance.EXCEPTION)
 if __name__ == '__main__':
     keywords = ['重庆广播电台','重庆电视台,麻辣,火锅,底料']
     # def inner_add_url(base_url, page_count):

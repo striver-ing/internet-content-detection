@@ -474,11 +474,37 @@ def read_file(filename, readlines = False):
 
     return content
 
+def is_file(url, file_type):
+    if not url:
+        return False
+
+    try:
+        content_type = request.urlopen(url).info().get('Content-Type', '')
+
+        if file_type in content_type:
+            return True
+        else:
+            return False
+    except Exception as e:
+        log.error(e)
+        return False
 
 def download_file(url, base_path, filename = '', call_func = ''):
     file_path = base_path + filename
     directory = os.path.dirname(file_path)
     mkdir(directory)
+
+    # 进度条
+    def progress_callfunc(blocknum, blocksize, totalsize):
+        '''回调函数
+        @blocknum : 已经下载的数据块
+        @blocksize : 数据块的大小
+        @totalsize: 远程文件的大小
+        '''
+        percent = 100.0 * blocknum * blocksize / totalsize
+        if percent > 100:
+            percent = 100
+        print ('%.2f%%' % percent)
 
     if url:
         try:
@@ -488,7 +514,7 @@ def download_file(url, base_path, filename = '', call_func = ''):
                       '''
                          %(url, file_path))
 
-            request.urlretrieve(url, file_path)
+            request.urlretrieve(url, file_path, progress_callfunc)
 
             log.debug('''
                          下载完毕 %s

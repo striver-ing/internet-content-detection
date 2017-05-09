@@ -7,6 +7,7 @@ import utils.tools as tools
 from db.oracledb import OracleDB
 from utils.export_data import ExportData
 import time
+from db.mongodb import MongoDB
 
 # 需配置
 from va.parsers import *
@@ -14,13 +15,15 @@ def main():
     search_task_sleep_time = int(tools.get_conf_value('config.conf', 'task', 'search_task_sleep_time'))
 
     db = OracleDB()
+    mongodb = MongoDB()
+    mongodb.delete('VA_urls')
 
     #  更新符合日期条件的任务状态 未做
-    sql = 'update tab_ivms_task_info t set t.task_status = 501 where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time'
+    sql = 'update tab_ivms_task_info t set t.task_status = 501 where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time and task_type = 802'
     db.update(sql)
 
     # 更新关键词状态 未做
-    sql = 'update tab_ivms_task_keyword k set k.finish_status = 601 where k.task_id in (select t.task_id from tab_ivms_task_info t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time)'
+    sql = 'update tab_ivms_task_keyword k set k.finish_status = 601 where k.task_id in (select t.task_id from tab_ivms_task_info t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time and task_type = 802)'
     db.update(sql)
 
     while True:
@@ -69,6 +72,7 @@ def main():
 
             def begin_callback():
                 log.info('\n********** VA begin **********')
+                mongodb.delete('VA_urls')
                 # 更新任务状态 正在做
                 sql = 'update TAB_IVMS_TASK_INFO set task_status = 502 where task_id = %d'%task_id
                 db.update(sql)
