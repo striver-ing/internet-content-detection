@@ -147,6 +147,8 @@ def parser(url_info):
             local_video_path = FILE_LOCAL_PATH + 'videos/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.mp4'
             is_download = tools.download_file(video_url, local_video_path)
             video_url = local_video_path if is_download else ''
+        else:
+            video_url = ''
 
         log.debug('''
                   原文地址：     %s
