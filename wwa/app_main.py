@@ -12,9 +12,12 @@ from db.mongodb import MongoDB
 from wwa.parsers import *
 import wwa.app_export_data as export_data
 def main():
+    db = MongoDB()
+    db.set_unique_key('WWA_app_vioation_content_info', 'url')
+    db.set_ensure_index('WWA_app_vioation_content_info', 'read_status')
+
     def begin_callback():
         log.info('\n********** WWA_APP begin **********')
-        db = MongoDB()
         db.delete('WWA_app_urls', {})
 
     def end_callback():

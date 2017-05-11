@@ -824,6 +824,8 @@ def add_WWA_search_app_info(table, site_id, url, title = '', summary = '', updat
     else:
         language = 603
 
+    title = tools.del_html_tag(title)
+
     gameApp_info_dict={
         'site_id': site_id,
         'url': url,

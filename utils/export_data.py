@@ -121,17 +121,22 @@ class ExportData():
 
                 elif value_types[i] == 'clob':
                     text = str(data[keys[i]]).replace("'", "''")
-                    values_ = tools.cut_string(text, 2000)
+                    if not text:
+                        sql += "'%s', "
+                        values.append(text)
+                        update_sql += aim_keys[i] + " = '%s', "%values[-1]
+                    else:
+                        values_ = tools.cut_string(text, 2000)
 
-                    clob_text = ''
-                    for value in values_:
-                        clob_text += "to_clob('%s') || "%value
+                        clob_text = ''
+                        for value in values_:
+                            clob_text += "to_clob('%s') || "%value
 
-                    clob_text = clob_text[:-len(' || ')]
-                    values.append(clob_text)
-                    sql += "%s, "
+                        clob_text = clob_text[:-len(' || ')]
+                        values.append(clob_text)
+                        sql += "%s, "
 
-                    update_sql += aim_keys[i] + " = %s, "%values[-1]
+                        update_sql += aim_keys[i] + " = %s, "%values[-1]
 
                 elif value_types[i] == 'int':
                     if isinstance(data[keys[i]], int):
