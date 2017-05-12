@@ -18,6 +18,8 @@ NAME = '微信'
 
 FILE_LOCAL_PATH = tools.get_conf_value('config.conf', 'files', 'wwa_save_path') + 'wechat/'
 
+mongodb = MongoDB()
+
 # 必须定义 添加网站信息
 @tools.run_safe_model(__name__)
 def add_site_info():
@@ -42,9 +44,25 @@ def add_root_url(parser_params = {}):
 
     for keyword in keywords:
         if keyword:
-            for page in range(1, 11):
+            url = 'http://weixin.sogou.com/weixin?query=%s&_sug_type_=&s_from=input&_sug_=y&type=1&page=1&ie=utf8'%keyword
+            if mongodb.find('WWA_wechat_account_url', {'url': url}):
+                continue
+            html, r = tools.get_html_by_requests(url)
+            # 判断是否存在公众号
+            not_page_tip = '/new/pc/images/bg_404_2.png'
+            if not_page_tip in html:
+                continue
+
+            # 取页码
+            regex = 'id="pagebar_container">.*>(\d*?)</a>.*?<a id="sogou_next"'
+            page_num = tools.get_info(html, regex, fetch_one = True)
+            page_num = int(page_num) if page_num else 1
+
+            for page in range(1, page_num + 1):
                 url = 'http://weixin.sogou.com/weixin?query=%s&_sug_type_=&s_from=input&_sug_=y&type=1&page=%d&ie=utf8'%(keyword, page)
                 base_parser.add_url('WWA_wechat_account_url', SITE_ID, url)
+
+            tools.delay_time()
 
 # 必须定义 解析网址
 def parser(url_info):
@@ -56,8 +74,20 @@ def parser(url_info):
     site_id = url_info['site_id']
     remark = url_info['remark']
 
+    headers = {
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36",
+        "Accept-Language": "zh-CN,zh;q=0.8",
+        "Accept-Encoding": "gzip, deflate, sdch",
+        "Host": "weixin.sogou.com",
+        "Cookie": "SUV=1493992505819275; SMYUV=1493992505820875; UM_distinctid=15bd8e481e362-01a3df9ec0e7c3-62101875-ffc00-15bd8e481e41a7; ABTEST=6|1494142883|v1; SUID=B0FC096F2A30990A00000000590ECFA3; SUID=9DFC19703108990A00000000590ECFA4; IPLOC=CN5000; weixinIndexVisited=1; sct=4; SNUID=491546AFD4D09BF330D5F1DDD538E592; ld=1kllllllll2B976wlllllV6vhyklllllWi5lXlllll9llllljklll5@@@@@@@@@@; pgv_pvi=7000283136; LSTMV=72%2C119; LCLKINT=2104; usid=NrHSHeDzIcL_NUlW; JSESSIONID=aaahNTEFt4OMA6LON4UUv",
+        "Connection": "keep-alive",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Cache-Control": "max-age=0"
+    }
+
     # 解析
-    html, request = tools.get_html_by_requests(root_url)
+    html, request = tools.get_html_by_requests(root_url, headers = headers)
     if not html:
         base_parser.update_url('urls', root_url, Constance.EXCEPTION)
         return
@@ -66,7 +96,7 @@ def parser(url_info):
     regex = '<!-- a -->(.*?)<!-- z -->'
     account_blocks = tools.get_info(html, regex)
 
-    # print(html)
+    print(html)
 
     # 文章数url
     regex = '<script>var account_anti_url = "(.*?)";</script>'
@@ -140,13 +170,21 @@ def parser(url_info):
 
 
 if __name__ == '__main__':
-    url_info = {
-            "_id" : "58c8a09b53446519a80d2ac6",
-            "status" : 2,
-            "site_id" : 3,
-            "url" : "http://weixin.sogou.com/weixin?query=重庆&_sug_type_=&s_from=input&_sug_=y&type=1&page=1&ie=utf8",
-            "depth" : 0,
-            "remark" : ''
-        }
+    # url_info = {
+    #         "_id" : "58c8a09b53446519a80d2ac6",
+    #         "status" : 2,
+    #         "site_id" : 3,
+    #         "url" : "http://weixin.sogou.com/weixin?query=重庆&_sug_type_=&s_from=input&_sug_=y&type=1&page=1&ie=utf8",
+    #         "depth" : 0,
+    #         "remark" : ''
+    #     }
 
-    parser(url_info)
+    # parser(url_info)
+    url = 'http://weixin.sogou.com/weixin?type=1&s_from=input&query=%E5%B0%8F%E7%BD%97&ie=utf8&_sug_=y&_sug_type_=&w=01019900&sut=3573&sst0=1494488263985&lkt=0%2C0%2C0'
+    regex = 'id="pagebar_container">.*>(\d*?)</a>.*?<a id="sogou_next"'
+    html, r = tools.get_html_by_requests(url)
+    page = tools.get_info(html, regex, fetch_one = True)
+    page = int(page) if page else 1
+
+    for i in range(1,page + 1):
+        print(i)

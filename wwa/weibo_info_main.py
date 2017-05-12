@@ -7,11 +7,13 @@ import utils.tools as tools
 from db.oracledb import OracleDB
 from utils.export_data import ExportData
 import time
+from db.mongodb import MongoDB
 
 # 需配置
 from wwa.parsers import weibo_info_parser
 def main():
     db = OracleDB()
+    mongodb = MongoDB()
 
     sql = 'select t.ID from TAB_MVMS_WEIBO_INFO t where monitor_status = 402'
     result = db.find(sql, fetch_one=False)
@@ -25,6 +27,7 @@ def main():
 
     def begin_callback():
         log.info('\n********** WWA_weibo_info begin **********')
+        mongodb.delete('WWA_weibo_info_urls')
 
 
     def end_callback():

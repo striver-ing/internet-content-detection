@@ -60,6 +60,7 @@ class ExportData():
 
         self._is_oracle = False
         self._export_count = 0
+        self._update_count = 0
         self._unique_key_mapping_source_key = unique_key_mapping_source_key
 
 
@@ -70,6 +71,7 @@ class ExportData():
             self._key_map = key_map
             self._unique_key = unique_key
             self._export_count = 0
+            self._update_count = 0
             self._unique_key_mapping_source_key = unique_key_mapping_source_key
             self._update_read_status = update_read_status
             self._condition = condition
@@ -85,6 +87,7 @@ class ExportData():
             self._key_map = key_map
             self._unique_key = unique_key
             self._export_count = 0
+            self._update_count = 0
             self._unique_key_mapping_source_key = unique_key_mapping_source_key
             self._update_read_status = update_read_status
             self._condition = condition
@@ -209,21 +212,29 @@ class ExportData():
 
             log.debug(sql)
             # tools.write_file(self._aim_table + '.txt', sql, 'w+')
-            if self._aim_db.add(sql):
+            def exception_callfunc(e):
+                if 'ORA-00001' in str(e):
+                    if self._update_read_status:
+                        self._mongodb.update(self._source_table, data, {'read_status':1})
+
+            if self._aim_db.add(sql, exception_callfunc):
                 self._export_count += 1
                 if self._update_read_status:
                     self._mongodb.update(self._source_table, data, {'read_status':1})
 
             elif self._unique_key_mapping_source_key:
                 log.debug(update_sql)
-                self._aim_db.update(update_sql)
-                self._export_count += 1
-                if self._update_read_status:
-                    self._mongodb.update(self._source_table, data, {'read_status':1})
+                if self._aim_db.update(update_sql):
+                    self._update_count += 1
+                    if self._update_read_status:
+                        self._mongodb.update(self._source_table, data, {'read_status':1})
 
 
 
-        log.debug('共导出%d条数据'%self._export_count)
+        log.debug('''
+            共导出%d条数据
+            共更新%d条数据
+            '''%(self._export_count, self._update_count))
 
     def close(self):
         self._aim_db.close()

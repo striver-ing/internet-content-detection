@@ -155,7 +155,7 @@ def parser(url_info):
             is_download = tools.download_file(image, local_image_path)
             if is_download:
                 content = content.replace(image, local_image_path)
-            tools.delay_time()
+            tools.delay_time(5)
 
         # 敏感事件
         sensitive_id = ''
@@ -225,7 +225,7 @@ def parser(url_info):
                 is_download = tools.download_file(image, local_image_path)
                 if is_download:
                     content = content.replace(image, local_image_path)
-                tools.delay_time()
+                tools.delay_time(5)
 
             # 敏感事件
             sensitive_id = ''

@@ -31,7 +31,7 @@ def main():
 
     def end_callback():
         log.info('\n********** WWA_wechat_article end **********')
-        export_data.main()
+        export_data.article_main()
 
     parser_params = {'keywords': keywords}
 

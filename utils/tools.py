@@ -668,7 +668,15 @@ def format_date(date, old_format = '', new_format = '%Y-%m-%d %H:%M:%S'):
         date_str = date
     return date_str
 
-def delay_time(sleep_time = 5):
+def delay_time(sleep_time = 60):
+    '''
+    @summary: 睡眠  默认1分钟
+    ---------
+    @param sleep_time: 以秒为单位
+    ---------
+    @result:
+    '''
+
     time.sleep(sleep_time)
 
 ################################################

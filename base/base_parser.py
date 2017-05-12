@@ -295,7 +295,8 @@ def add_content_info(table, site_id, url, title='', content='',
         'sexy_image_status':'',
         'sexy_image_url':'',
         'image_pron_status':0,
-        'task_id':task_id
+        'task_id':task_id,
+        'violate_type':task_id
     }
 
     db.add(table, content_info)
