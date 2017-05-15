@@ -49,12 +49,15 @@ class MysqlDB(Singleton):
 
         return result
 
-    def add(self, sql):
+    def add(self, sql, exception_callfunc = ''):
         try:
             self.cursor.execute(sql)
             self.conn.commit()
         except Exception as e:
             log.error(e)
+            if exception_callfunc:
+                exception_callfunc(e)
+
             return False
         else:
             return True

@@ -458,7 +458,7 @@ def write_file(filename, content, mode = 'w'):
     with open(filename, mode, encoding = 'utf-8') as file:
         file.writelines(content)
 
-def read_file(filename, readlines = False):
+def read_file(filename, readlines = False, encoding = 'utf-8'):
     '''
     @summary: 读文件
     ---------
@@ -469,7 +469,7 @@ def read_file(filename, readlines = False):
     '''
 
     content = ''
-    with open(filename, 'r', encoding = 'utf-8') as file:
+    with open(filename, 'r', encoding = encoding) as file:
         content = file.readlines() if readlines else file.read()
 
     return content
