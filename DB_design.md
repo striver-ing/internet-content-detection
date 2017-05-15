@@ -553,6 +553,7 @@ urls表 `PROGRAM_urls`
 |actors||||演员|
 |directors||||导演|
 |program_name||||节目名称|
+|program_url||||视频地址|
 |summary||||摘要|
 |image_url||||图片地址|
 
@@ -562,13 +563,12 @@ urls表 `PROGRAM_urls`
 |:-------------------|:-------|:-----|:--------- |:----|
 |_id||||集id|
 |program_id||||节目id|
-|program_episode|int|||当前集数|
+|episode_num|int|||当前集数|
 |time_length|str|||本集时长|
 |episode_name||||节目名称|
 |download_status||||下载状态|
 |download_url||||下载地址|
-|play_url||||播放地址|
-|program_url||||节目链接|
+|episode_url||||节目链接|
 |record_time||||记录时间|
 |summary||||简介|
 |image_url||||图片地址|

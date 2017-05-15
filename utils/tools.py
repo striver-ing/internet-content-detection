@@ -190,7 +190,6 @@ def get_full_url(root_url, sub_url):
     @result: 返回完整的url
     '''
 
-    # if sub_url.begin
     return urljoin(root_url, sub_url)
 
 def joint_url(url, params):

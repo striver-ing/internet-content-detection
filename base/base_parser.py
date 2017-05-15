@@ -631,40 +631,6 @@ def add_op_info(table, website_id, url ='', title='', release_time='', author=''
     }
     db.add(table, content_info_dict)
 
-def add_program_info(table, site_id, program_name, image_url = '', episode = '', directors = '', actors = '', summary = '', release_time = ''):
-    '''
-    @summary:
-    ---------
-    @param table:
-    @param site_id:
-    @param program_name:
-    @param image_url:
-    @param episode: 集数
-    @param directors: 导演
-    @param actors: 演员
-    @param summary: 简介
-    @param release_time:
-    ---------
-    @result:
-    '''
-    program_info = {
-        'site_id' : site_id,
-        'program_name' : program_name,
-        'image_url' : image_url,
-        'episode' : episode,
-        'directors' : directors,
-        'actors' : actors,
-        'summary' : summary,
-        'release_time' : release_time,
-        'read_status' : 0,
-        'record_time' : tools.get_current_date()
-    }
-
-    db.add(table, program_info)
-
-    return program_info['_id']
-
-
 # 两微一端
 
 def add_wwa_weibo_user_info(table, site_id, _id = '', name = '', url = '', image_url = '',
@@ -908,4 +874,79 @@ def add_wwa_app_content_info(table, site_id, title, summary, image_url, img_stor
     if sensitive_id or violate_id:
         content_info_dict['content_id'] = content_info_dict['_id']
         db.add('WWA_app_vioation_content_info', content_info_dict)
+
+# 下载视频
+def add_program_info(table, site_id, program_name, program_url, image_url = '', episode = '', directors = '', actors = '', summary = '', release_time = ''):
+    '''
+    @summary:
+    ---------
+    @param table:
+    @param site_id:
+    @param program_name:
+    @param program_url:
+    @param image_url:
+    @param episode: 集数
+    @param directors: 导演
+    @param actors: 演员
+    @param summary: 简介
+    @param release_time:
+    ---------
+    @result:
+    '''
+    program_info = {
+        'site_id' : site_id,
+        'program_name' : program_name,
+        'program_url' : program_url,
+        'image_url' : image_url,
+        'episode' : episode,
+        'directors' : directors,
+        'actors' : actors,
+        'summary' : summary,
+        'release_time' : release_time,
+        'read_status' : 0,
+        'record_time' : tools.get_current_date()
+    }
+
+    if db.add(table, program_info)
+        return program_info['_id']
+    else:
+        program_info = db.find(table, {'program_url' : program_url})
+        return program_info['_id']
+
+def add_program_episode_info(table, site_id, program_id, episode_num, time_length, episode_name, download_status, download_url, episode_url, summary, image_url):
+    '''
+    @summary:
+    ---------
+    @param table:
+    @param site_id:
+    @param program_id: 节目id
+    @param episode_num: 当前集数
+    @param time_length: 时长
+    @param episode_name: 节目名称
+    @param download_status: 下载状态
+    @param download_url: 下载地址
+    @param episode_url: 原文地址
+    @param summary: 简介
+    @param image_url: 图片地址
+    ---------
+    @result:
+    '''
+
+    episode_info = {
+        'site_id' : site_id,
+        'program_id' : program_id,
+        'episode_num' : episode_num,
+        'time_length' : time_length,
+        'episode_name' : episode_name,
+        'download_status' : download_status,
+        'download_url' : download_url,
+        'episode_url' : episode_url,
+        'summary' : summary,
+        'image_url' : image_url,
+        'read_status' : 0,
+        'record_time' : tools.get_current_date()
+    }
+
+    db.add(table, episode_info)
+
 
