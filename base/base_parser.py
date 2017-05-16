@@ -907,7 +907,7 @@ def add_program_info(table, site_id, program_name, program_url, image_url = '', 
         'record_time' : tools.get_current_date()
     }
 
-    if db.add(table, program_info)
+    if db.add(table, program_info):
         return program_info['_id']
     else:
         program_info = db.find(table, {'program_url' : program_url})

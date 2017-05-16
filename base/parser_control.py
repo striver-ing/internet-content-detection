@@ -38,7 +38,7 @@ class  PaserControl(threading.Thread):
                         if parser.SITE_ID == url['site_id']:
                             try:
                                 parser.parser(url)
-                                base_parser.update_url(self._tab_urls, url['url'], Constance.DONE)
+                                # base_parser.update_url(self._tab_urls, url['url'], Constance.DONE)
                             except Exception as e:
                                 log.error('''
                                     -------------- parser error -------------
