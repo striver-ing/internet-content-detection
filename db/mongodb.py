@@ -111,10 +111,7 @@ class MongoDB(Singleton):
         @result:
         '''
         try:
-            if not condition:
-                self._db[table].drop()
-            else:
-                self._db[table].remove(condition)
+            self._db[table].remove(condition)
         except Exception as e:
             log.error(e)
             return False

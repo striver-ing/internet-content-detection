@@ -8,7 +8,7 @@ import time
 def main():
     export_data = ExportData()
 
-    # 导出数据
+    # 导出部数据
     key_map = {
         'PROGRAM_ID' : 'int__id',
         'RELEASE_TIME' : 'date_release_time',
@@ -24,7 +24,7 @@ def main():
 
     export_data.export_to_oracle(source_table = 'PROGRAM_info', aim_table = 'tab_ntms_program_info', key_map = key_map, unique_key = 'PROGRAM_URL')
 
-    # 导出数据
+    # 导出集数据
     key_map = {
         'ID' : 'int__id',
         'PROGRAM_ID' : 'int_program_id',
@@ -37,7 +37,9 @@ def main():
         'EPISODE_URL' : 'str_episode_url',
         'UPDATE_TIME' : 'date_record_time',
         'SUMMARY' : 'str_summary',
-        'IMAGE_URL' : 'str_image_url'
+        'IMAGE_URL' : 'str_image_url',
+        'sto_path' : 'str_sto_path',
+        'sto_id' : 'int_sto_id'
     }
 
     export_data.export_to_oracle(source_table = 'PROGRAM_EPISODE_info', aim_table = 'tab_ntms_program_episode_info', key_map = key_map, unique_key = 'EPISODE_URL')

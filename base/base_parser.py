@@ -911,9 +911,9 @@ def add_program_info(table, site_id, program_name, program_url, image_url = '', 
         return program_info['_id']
     else:
         program_info = db.find(table, {'program_url' : program_url})
-        return program_info['_id']
+        return program_info[0]['_id']
 
-def add_program_episode_info(table, site_id, program_id, episode_num, time_length, episode_name, download_status, download_url, episode_url, summary, image_url):
+def add_program_episode_info(table, site_id, program_id, episode_num = '', time_length = '', episode_name = '', download_status = '', download_url = '', episode_url = '', summary = '', image_url = '', sto_path = ''):
     '''
     @summary:
     ---------
@@ -932,6 +932,9 @@ def add_program_episode_info(table, site_id, program_id, episode_num, time_lengt
     @result:
     '''
 
+    download_status = 101 if sto_path else 102
+    sto_id = 1 if sto_path else ''
+
     episode_info = {
         'site_id' : site_id,
         'program_id' : program_id,
@@ -944,7 +947,9 @@ def add_program_episode_info(table, site_id, program_id, episode_num, time_lengt
         'summary' : summary,
         'image_url' : image_url,
         'read_status' : 0,
-        'record_time' : tools.get_current_date()
+        'record_time' : tools.get_current_date(),
+        'sto_path' : sto_path,
+        'sto_id' : sto_id
     }
 
     db.add(table, episode_info)
