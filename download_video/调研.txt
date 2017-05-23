@@ -26,9 +26,20 @@ http://pcweb.api.mgtv.com/player/video?video_id=3886433
 http://www.mgtv.com/h/309427.html
 
 专辑详情页每集列表
+
 http://pcweb.api.mgtv.com/variety/showlist?collection_id=309437&callback=jQuery18208154070924712067_1494916661132&_=1494916661341
 
 http://pcweb.api.mgtv.com/variety/showlist?collection_id=295303&callback=jQuery18208154070924712067_1494916661133&_=1494916947252
+
+http://pcweb.api.mgtv.com/variety/showlist?collection_id=308703&month=201704&callback=jQuery18203296429043011804_1495006582982&_=1495006604325
+
+http://pcweb.api.mgtv.com/variety/showlist?collection_id=101575&callback=jQuery18203296429043011804_1495006582982&_=1495007069597
+
+http://pcweb.api.mgtv.com/variety/showlist?collection_id=101575&month=201611&callback=jQuery18203296429043011804_1495006582982&_=1495007112228
+
+collection_id= 节目专辑id
+callback 没毛卵用
+month 查看的月份
 
 
 *************************华丽的分割线*********************************

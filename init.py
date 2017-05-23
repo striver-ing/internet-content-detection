@@ -18,3 +18,4 @@ project_path = current_path[:current_path.find(PROJECT_NAME) + len(PROJECT_NAME)
 
 os.chdir(project_path) # 切换工作路经
 sys.path.append(project_path)
+sys.path.insert(1, project_path + '/you_get/src/')
