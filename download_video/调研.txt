@@ -52,6 +52,10 @@ http://www.le.com/ptv/vplay/25983957.html#vid=25983957
 1.取视频url
 http://player-pc.le.com/mms/out/video/playJson?id=25983957&platid=1&splatid=101&format=1&tkey=-1805670490&domain=www.le.com&dvtype=1300&devid=77dc98934fb3dc56d1b4ad4b795a3926&region=cn&source=1000&accessyx=1
 
+http://player-pc.le.com/mms/out/video/playJson?id=28986910&platid=1&splatid=101&format=1&tkey=-1805670490&domain=www.le.com&dvtype=1300&devid=77dc98934fb3dc56d1b4ad4b795a3926&region=cn&source=1000&accessyx=1
+
+http://player-pc.le.com/mms/out/video/playJson?id=28986910&platid=1&splatid=101&format=1&tkey=173958938&domain=www.le.com&dvtype=1000&devid=49BDB62DC27B044CCD48E49CCF38EAAE3B095825&region=cn&source=1000&accessyx=1
+
 dispatch":{
 "350":[
     "/vod/v2/MjEwLzIzLzQvbGV0di11dHMvMTQvdmVyXzAwXzIyLTEwNTQ3MDE2OTAtYXZjLTE5OTg4Mi1hYWMtMzIwMDYtNDM3MjAwLTEzMTU0MjQwLWFjYjZiNTVkOWVjN2U3YzRjNWNkM2FlYWZkYzNhYTgxLTE0NjgxNjk5Mzg0OTgubXA0?b=240&mmsid=60097766&tm=1491386362&key=a8a42363e9255552af6a349514dc7a1d&platid=1&splatid=101&playid=0&tss=0&vtype=21&cvid=1707897908202&payff=0&pip=38bcfa9bfe35cfdd6234ccc117707a8f",
@@ -62,6 +66,9 @@ dispatch":{
 
 取全部集信息
 http://d.api.m.le.com/card/dynamic?id=10024593&cid=2&vid=25983957&platform=pc&type=episode%2Cotherlist%2Crelalbum%2Crelvideo&isvip=0&callback=jQuery1710932222259075681_1491462721381&_=1491462721938
+
+
+http://d.api.m.le.com/card/dynamic?id=10036184&cid=2&vid=25983957&platform=pc&type=episode%2Cotherlist%2Crelalbum%2Crelvideo&isvip=0
 
 
 2. 拼接地址(todo)
@@ -78,3 +85,28 @@ http://play.g3proxy.lecloud.com/vod/v2/MTg2LzM4LzU5L2xldHYtdXRzLzE0L3Zlcl8wMF8yM
                     "186/2/88/letv-uts/14/ver_00_22-1054617626-avc-200229-aac-32003-951440-28662695-3978719cd9cf26fdf4dfcc67a3492b45-1468157375045.mp4"
 
 http://220.181.117.149/186/38/59/letv-uts/14/ver_00_22-1054617629-avc-800292-aac-64000-951440-103837400-9616703fe3d8d178a6619ba309ced7db-1468129857036_mp4/ver_00_22_39_204_2_1381612_73545036_0.ts?crypt=71aa7f2e743&b=872&nlh=4096&nlt=60&bf=68&p2p=1&video_type=mp4&termid=1&tss=ios&platid=1&splatid=101&its=0&qos=4&fcheck=0&amltag=100&mltag=100&proxy=1778917253&uid=1786315881.rp&keyitem=GOw_33YJAAbXYE-cnQwpfLlv_b2zAkYctFVqe5bsXQpaGNn3T1-vhw..&ntm=1491486600&nkey=1ef9234ba5845c0255ee2d6189358df6&nkey2=3603334058e90b262189c8d0f5f550fe&geo=CN-1-0-1&mmsid=59938331&tm=1491468125&key=835e1345dbd5f856321bc51121457792&playid=0&vtype=22&cvid=857780236704&payff=0&m3v=1&hwtype=un&ostype=Windows10&p1=1&p2=10&p3=-&tn=0.6299902028404176&vid=25960253&uuid=8CE11CB172C63CEF41F1018B3D71877DF2F12C1C_0&sign=letv&errc=0&gn=820&vrtmcd=109&buss=100&cips=106.121.4.105&ch=&appid=500&v=vod.4.2.11171200&rd=1491468287298
+
+
+
+http://125.78.253.36/250/5/14/letv-uts/14/ver_00_22-1102347853-avc-420873-aac-48000-127000-7639006-1f4fc4e55a42baf1c18d4ffccdcefb8c-1495422855269_mp4/ver_00_22_9_33_4_1140220_7138736_0.ts?mltag=100&platid=1&splatid=101&playid=0&geo=CN-1-0-1&tag=-&ch=&p1=1&p2=10&p3=-&tss=ios&b=480&bf=90&nlh=4096&path=&sign=letv&proxy=2102326419,462993491,1786224513&uuid=1EA4C475E5D3698FA75DDB270E1498D7FDC68283_0&ntm=1495548000&keyitem=GOw_33YJAAbXYE-cnQwpfLlv_b2zAkYctFVqe5bsXQpaGNn3T1-vhw..&its=0&nkey2=383f2324391c6f6185d4359eee434cc7&uid=1786309034.rp&qos=4&enckit=&m3v=1&token=&vid=29577801&liveid=&station=&app_name=&app_ver=&fcheck=0&pantm=&panuid=&pantoken=&cips=106.120.233.170&vod_live_path=&ledituid=&leditcid=&leditcip=&leditfl=&leditafl=&ajax=&lsbv=
+
+
+http://125.78.253.36/250/5/14/letv-uts/14/ver_00_22-1102347853-avc-420873-aac-48000-127000-7639006-1f4fc4e55a42baf1c18d4ffccdcefb8c-1495422855269.mp4
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+取节目信息
+http://list.le.com/apin/chandata.json?cs=2&o=20&p=1   p 为页数
+"aid":"10036184",   aid 为视频标识
+ 里面包含分集信息id
+
+
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ tengxun
+
+ 源代码中  r-props="{id: '5974';type: '3';}"
+ 节目专辑地址： http://v.qq.com/detail/5/6697.html  （拼接id）

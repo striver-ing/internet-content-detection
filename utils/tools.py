@@ -26,6 +26,7 @@ import os
 import execjs   # pip install PyExecJS
 import hashlib
 from pprint import pprint
+from pprint import pformat
 
 TIME_OUT = 30
 TIMER_TIME = 5
@@ -233,7 +234,7 @@ def quote_url(url):
 
 _regexs = {}
 # @log_function_time
-def get_info(html, regexs, allow_repeat = False, fetch_one = False):
+def get_info(html, regexs, allow_repeat = False, fetch_one = False, split = None):
     regexs = isinstance(regexs, str) and [regexs] or regexs
 
     infos = []
@@ -249,19 +250,20 @@ def get_info(html, regexs, allow_repeat = False, fetch_one = False):
                 if infos:
                     infos = infos.groups()
                 else:
-                    return ''
+                    continue
         else:
             infos = _regexs[regex].findall(str(html))
 
-        # infos = re.findall(regex,str(html),re.S)
-        # infos = re.compile(regexs, re.S).findall(str(html))
         if len(infos) > 0:
             break
 
     if fetch_one:
+        infos = infos if infos else ('',)
         return infos if len(infos) > 1 else infos[0]
     else:
-        return allow_repeat and infos or sorted(set(infos),key = infos.index)
+        infos = allow_repeat and infos or sorted(set(infos),key = infos.index)
+        infos = split.join(infos) if split else infos
+        return infos
 
 def get_domain(url):
     domain = ''
@@ -326,7 +328,11 @@ def get_json(json_str):
     @result: 返回json对象
     '''
 
-    return json.loads(json_str) if json_str else {}
+    try:
+        return json.loads(json_str) if json_str else {}
+    except Exception as e:
+        log.error(e)
+        return {}
 
 def dumps_json(json_):
     '''
@@ -344,7 +350,7 @@ def dumps_json(json_):
 
     except Exception as e:
         log.error(e)
-        json_ = str(json_)
+        json_ = pformat(json_)
 
     return json_
 
