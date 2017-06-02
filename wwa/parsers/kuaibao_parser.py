@@ -10,6 +10,7 @@ import random
 from db.mongodb import MongoDB
 import base.constance as Constance
 from db.oracledb import OracleDB
+import you_get.extractors.qq as qq
 
 db = MongoDB()
 oracledb = OracleDB()
@@ -157,12 +158,17 @@ def parser(url_info):
                 abstract = tools.get_json_value(news,'abstract')
                 original_url = tools.get_json_value(news,'url')
                 img_url = tools.get_json_value(news, 'thumbnails_qqnews')[0] if tools.get_json_value(news, 'thumbnails_qqnews') else ''
-                video_url = tools.get_json_value(news, 'video_channel.video.playurl')
-
+                video_frame_url = tools.get_json_value(news, 'video_channel.video.playurl')
                 # 取content
                 html = tools.get_html_by_urllib(original_url)
                 content = tools.get_tag(html, name = 'div', attrs = {'class':"main"}, find_all = False)
                 content = tools.del_html_tag(str(content))
+
+                # 解析视频真实地址
+                video_url = ''
+                if video_frame_url:
+                    video_vid = tools.get_info(html, 'vid\s*=\s*"\s*([^"]+)"', fetch_one = True)
+                    video_url = ''.join(qq.qq_download_by_vid(video_vid))
 
                 # 判断是否违规
                 # 敏感事件
