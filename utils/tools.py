@@ -349,7 +349,7 @@ def dumps_json(json_):
         json_ = json.dumps(json_, ensure_ascii=False, indent=4, skipkeys = True)
 
     except Exception as e:
-        log.error(e)
+        # log.error(e)
         json_ = pformat(json_)
 
     return json_

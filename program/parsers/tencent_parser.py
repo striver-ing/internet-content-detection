@@ -53,7 +53,7 @@ def add_root_url(parser_params = {}):
     #首页-综艺-腾讯出品
     root_url = 'http://v.qq.com/x/list/variety?offset=0&isource=2'
     page_url = 'http://v.qq.com/x/list/variety?offset=%d&isource=2'
-    inner_add_root_url(root_url, page_url, remark = {'classify' : '综艺'})
+    # inner_add_root_url(root_url, page_url, remark = {'classify' : '综艺'})
 
     # 首页-电视剧-腾讯出品（自制剧）
     root_url = 'http://v.qq.com/x/list/tv?sort=4&offset=0&iarea=-1&iyear=-1&itype=843'
@@ -192,6 +192,7 @@ def parser_program_info(url_info):
 def get_download_url(vid):
     '''
     @summary: 取电视剧的下载地址 参考http://www.jianshu.com/p/eae2b7077e04
+              vip 的取不了
     ---------
     @param vid: 分集id
     ---------
@@ -213,7 +214,7 @@ def get_download_url(vid):
         'fhdswitch': 0,
         'show1080p': 1,
     }
-    r = requests.get('http://h5vv.video.qq.com/getinfo', params=params).text
+    r = requests.get('http://h5vv.video.qq.com/getinfo', params=params, timeout = 30).text
     data_json = r[len('QZOutputJson='):-1]
 
     data = json.loads(data_json)
@@ -236,7 +237,7 @@ def get_download_url(vid):
                 'vt': 217,
                 'charge': 0,
             }
-            r = requests.get('http://h5vv.video.qq.com/getkey', params=params)
+            r = requests.get('http://h5vv.video.qq.com/getkey', params=params, timeout = 30)
             html = r.text[len('QZOutputJson='):-1]
             data = json.loads(html)
             url = '%s/%s?sdtfrom=v1010&vkey=%s' % (url_prefix, filename, data['key'])
@@ -292,9 +293,14 @@ def parser_episode_info(url_info):
         for episode in episodes:
             try:
                 image_url = episode['pic']
-                episode_url = episode['playUrl']
+                episode_url = episode['playUrl']  # http://v.qq.com/x/cover/3e70vfbgrss48n8/e00237dneke.html
                 episode_name = episode['title']
-                download_url = qq.qq_download(episode_url)
+                vid = episode_url[episode_url.rfind('/') + 1 : episode_url.rfind('.html')]
+                print('qq_download_by_vid  begin')
+                import time
+                b = time.time()
+                download_url = qq.qq_download_by_vid(vid)
+                print('qq_download_by_vid end time = %s'% str(time.time() - b))
                 download_url = '^_^'.join(download_url)
 
                 log.debug('''
@@ -339,20 +345,40 @@ if __name__ == '__main__':
     # }
 
     url_info = {
-        "_id" : "59294b795344657a5d17f3a7",
+        "_id" : "5930df66534465adadbf5594",
+        "depth" : 2,
+        "site_id" : 3,
+        "status" : 1,
+        "remark" : {
+            "classify" : "综艺",
+            "program_mongo_id" : "5930c86b53446538b6f28b3a"
+        },
+        "url" : "http://s.video.qq.com/get_playsource?id=1206&plat=2&type=4&data_type=3&video_type=10&year=2013&month=1&plname=qq&otype=json"
+    }
+
+    url_info = {
+        "_id" : "5930f6625344654e52620b22",
         "depth" : 2,
         "remark" : {
-            "program_mongo_id" : "59292236534465af6581fc11",
-            "classify" : "综艺"
+            "program_mongo_id" : "5930c87f53446538b6f28bd3",
+            "program_name" : "乡村爱情9（下）",
+            "episode_num" : "12",
+            "classify" : "电视剧"
         },
-        "status" : 0,
-        "site_id" : 5,
-        "url" : "http://s.video.qq.com/get_playsource?id=55308&plat=2&type=4&data_type=3&video_type=10&year=2017&month=5&plname=qq&otype=json"
+        "status" : 3,
+        "url" : "https://v.qq.com/x/cover/fd7wc830c0q11qb/y0022mrkify.html",
+        "site_id" : 3
     }
 
 
 
 
-    # parser(url_info)
-
+    parser(url_info)
+    # import time
+    # b = time.time()
+    # # http://v.qq.com/x/cover/buwi5zidaziteon/p0011qe94th.html
+    # download_url = qq.qq_download_by_vid('p0011qe94th')
+    # print('qq_download_by_vid end time = %s'% str(time.time() - b))
+    # download_url = '^_^'.join(download_url)
+    # print(download_url)
 

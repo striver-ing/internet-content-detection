@@ -111,7 +111,7 @@ class ExportData():
             value_types.append(temp_var[0])
             keys.append(temp_var[1])
 
-        datas = self._mongodb.find(self._source_table, condition = self._condition)
+        datas = self._mongodb.find(self._source_table, condition = self._condition, limit = 1)
         for data in datas:
             sql = 'insert into ' + self._aim_table + " (" + ', '.join(aim_keys) + ") values ("
             update_sql = 'update ' + self._aim_table + " set "
@@ -161,8 +161,9 @@ class ExportData():
                 elif value_types[i] == 'date':
                     values.append(data[keys[i]].replace('年', '-').replace('月', '-').replace('日', ''))
                     if self._is_oracle:
-                        sql += "to_date('%s','yyyy-mm-dd hh24:mi:ss'), "
-                        update_sql += aim_keys[i] + "= to_date('%s','yyyy-mm-dd hh24:mi:ss'), "%values[-1]
+                        format_date = 'yyyy-mm-dd hh24:mi:ss'[:len(values[-1]) if len(values[-1]) <= 10 else None]
+                        sql += "to_date('%s','{}'), ".format(format_date)
+                        update_sql += aim_keys[i] + "= to_date('%s','%s'), "%(values[-1], format_date)
                     else:
                         sql += "'%s', "
                         update_sql += aim_keys[i] + " = '%s', "%values[-1]
@@ -259,5 +260,11 @@ if __name__ == '__main__':
 
     # export = ExportData('VA_content_info', 'tab_ivms_program_info', key_map, 'program_url')
     # export.export_to_oracle()
+    format_date = 'yyyy-mm-dd hh24:mi:ss'
+    date_str = '2017'
+
+    print(len('yyyy-mm-dd'))
+    format_date = format_date[:len(date_str) if len(date_str) <= 10 else None]
+    print(format_date)
 
 

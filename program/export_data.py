@@ -22,7 +22,7 @@ def main():
         'PROGRAM_URL' : 'str_program_url'
     }
 
-    export_data.export_to_oracle(source_table = 'PROGRAM_info', aim_table = 'tab_ntms_program_info', key_map = key_map, unique_key = 'PROGRAM_URL')
+    export_data.export_to_oracle(source_table = 'PROGRAM_info', aim_table = 'tab_ntms_program_info', key_map = key_map, unique_key = 'PROGRAM_ID')
 
     # 导出集数据
     key_map = {
