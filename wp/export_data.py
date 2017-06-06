@@ -39,7 +39,7 @@ def main():
     }
 
     export_data = ExportData()
-    export_data.export_to_oracle(source_table = 'WP_content_info', aim_table = 'TAB_LCMS_PUBLICATION_INFO', key_map = key_map, unique_key = 'name', condition = {'read_status':0, 'image_pron_status':2})
+    export_data.export_to_oracle(source_table = 'WP_content_info', aim_table = 'TAB_LCMS_PUBLICATION_INFO', key_map = key_map, unique_key = 'name', unique_key_mapping_source_key = {'name' : 'str_title'})
 
     #导出分集信息
     key_map = {
@@ -53,7 +53,7 @@ def main():
         'release_time': 'date_release_time',
         'record_time': 'date_record_time'
     }
-    export_data.export_to_oracle(source_table = 'WP_content_episode_info', aim_table = 'tab_lcms_episode_info', key_map = key_map, unique_key = 'title')
+    export_data.export_to_oracle(source_table = 'WP_content_episode_info', aim_table = 'tab_lcms_episode_info', key_map = key_map, unique_key = 'title', unique_key_mapping_source_key = {'title' : 'str_title'})
 
 
     # 导出网站表

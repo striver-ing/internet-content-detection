@@ -200,7 +200,7 @@ def get_download_url(vid):
     '''
     urls = []
 
-    definition = 'sd' # 标清 'shd' 超清, 'hd' 高清, 'sd' 标清
+    definition = 'hd' # 标清 'shd' 超清, 'hd' 高清, 'sd' 标清
     params = {
         'isHLS': False,
         'charge': 0,
@@ -269,15 +269,17 @@ def parser_episode_info(url_info):
         vid = root_url[root_url.rfind('/') + 1 : root_url.rfind('.')]
         download_url = get_download_url(vid)
         download_url = '^_^'.join(download_url)
+        image_url = 'http://puui.qpic.cn/vpic/0/%s_160_90_3.jpg/0'%vid
 
         log.debug('''
                 episode_name  %s
                 episode_num   %s
                 episode_url   %s
+                image_url     %s
                 download_url  %s
-                '''%(episode_name, episode_num, episode_url, download_url))
+                '''%(episode_name, episode_num, episode_url, image_url, download_url))
 
-        base_parser.add_program_episode_info('PROGRAM_EPISODE_info', site_id, program_mongo_id, episode_num = episode_num, time_length = '', episode_name = episode_name, download_status = '', download_url = download_url, episode_url = episode_url, summary = '', image_url = '', sto_path = '')
+        base_parser.add_program_episode_info('PROGRAM_EPISODE_info', site_id, program_mongo_id, episode_num = episode_num, time_length = '', episode_name = episode_name, download_status = '', download_url = download_url, episode_url = episode_url, summary = '', image_url = image_url, sto_path = '')
 
     elif classify == '综艺':
         # 用youget 的qq
@@ -330,45 +332,45 @@ if __name__ == '__main__':
     }
     }
 
+    url_info = {
+        "_id" : "5927d8cb534465afd92d5efc",
+        "site_id" : 5,
+        "url" : "http://v.qq.com/x/cover/kvc22y4k7j3bt5l/p0344jmehks.html",
+        "depth" : 2,
+        "status" : 0,
+        "remark" : {
+            "classify" : "电视剧",
+            "program_mongo_id" : "5927d8cb534465afd92d5efb",
+            "episode_num" : "1",
+            'program_name' : '择天记'
+        }
+    }
+
     # url_info = {
-    #     "_id" : "5927d8cb534465afd92d5efc",
-    #     "site_id" : 5,
-    #     "url" : "http://v.qq.com/x/cover/kvc22y4k7j3bt5l/p0344jmehks.html",
+    #     "_id" : "5930df66534465adadbf5594",
     #     "depth" : 2,
-    #     "status" : 0,
+    #     "site_id" : 3,
+    #     "status" : 1,
     #     "remark" : {
-    #         "classify" : "电视剧",
-    #         "program_mongo_id" : "5927d8cb534465afd92d5efb",
-    #         "episode_num" : "1",
-    #         'program_name' : '择天记'
-    #     }
+    #         "classify" : "综艺",
+    #         "program_mongo_id" : "5930c86b53446538b6f28b3a"
+    #     },
+    #     "url" : "http://s.video.qq.com/get_playsource?id=1206&plat=2&type=4&data_type=3&video_type=10&year=2013&month=1&plname=qq&otype=json"
     # }
 
-    url_info = {
-        "_id" : "5930df66534465adadbf5594",
-        "depth" : 2,
-        "site_id" : 3,
-        "status" : 1,
-        "remark" : {
-            "classify" : "综艺",
-            "program_mongo_id" : "5930c86b53446538b6f28b3a"
-        },
-        "url" : "http://s.video.qq.com/get_playsource?id=1206&plat=2&type=4&data_type=3&video_type=10&year=2013&month=1&plname=qq&otype=json"
-    }
-
-    url_info = {
-        "_id" : "5930f6625344654e52620b22",
-        "depth" : 2,
-        "remark" : {
-            "program_mongo_id" : "5930c87f53446538b6f28bd3",
-            "program_name" : "乡村爱情9（下）",
-            "episode_num" : "12",
-            "classify" : "电视剧"
-        },
-        "status" : 3,
-        "url" : "https://v.qq.com/x/cover/fd7wc830c0q11qb/y0022mrkify.html",
-        "site_id" : 3
-    }
+    # url_info = {
+    #     "_id" : "5930f6625344654e52620b22",
+    #     "depth" : 2,
+    #     "remark" : {
+    #         "program_mongo_id" : "5930c87f53446538b6f28bd3",
+    #         "program_name" : "乡村爱情9（下）",
+    #         "episode_num" : "12",
+    #         "classify" : "电视剧"
+    #     },
+    #     "status" : 3,
+    #     "url" : "https://v.qq.com/x/cover/fd7wc830c0q11qb/y0022mrkify.html",
+    #     "site_id" : 3
+    # }
 
 
 

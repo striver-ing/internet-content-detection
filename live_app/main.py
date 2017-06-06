@@ -7,6 +7,7 @@ import utils.tools as tools
 from utils.export_data import ExportData
 import time
 from db.mongodb import MongoDB
+import live_app.export_data as export_data
 
 # 需配置
 from live_app.parsers import *
@@ -23,6 +24,7 @@ def main():
     def end_callback():
         # 更新关键词状态 做完
         log.info('\n********** live_app end **********')
+        export_data.main()
 
     # 配置spider
     spider = Spider(tab_urls = 'LiveApp_urls', tab_site = 'LiveApp_site_info', tab_content = 'LiveApp_anchor_info',

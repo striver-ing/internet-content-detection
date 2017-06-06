@@ -32,7 +32,7 @@ class ImagePornRecg(object):
 
 def main():
     image_porn_recg = ImagePornRecg()
-    result = image_porn_recg.image_predict('''https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3321587425,2008241233&fm=23&gp=0.jpg''')
+    result = image_porn_recg.image_predict('''D:/TEK-072.jpg''')
     image_porn_recg.close()
 
     print(result)

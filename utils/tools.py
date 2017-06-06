@@ -383,6 +383,10 @@ def get_json_value(json_object, key):
     else:
         return get_json_value(value, key)
 
+def to_chinese(unicode_str):
+    format_str = json.loads('{"chinese":"%s"}' % unicode_str)
+    return format_str['chinese']
+
 ##################################################
 def replace_str(source_str, regex, replace_str = ''):
     '''

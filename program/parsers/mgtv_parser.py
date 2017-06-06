@@ -203,7 +203,7 @@ def parser_episode_info(url_info):
     summary = episode_info.get('desc', '')
     time_length = episode_info.get('duration', '')
 
-    episode_download_url = episode_data.get('stream', [{'url':''}])[0].get('url')
+    episode_download_url = episode_data.get('stream', [{'url':''}, {'url':''}])[1].get('url')
     episode_download_url = 'http://disp.titan.mgtv.com' + episode_download_url
 
     episode_download_info = tools.get_json_by_requests(episode_download_url)

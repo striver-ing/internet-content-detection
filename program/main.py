@@ -5,7 +5,6 @@ from utils.log import log
 from base.spider import Spider
 import utils.tools as tools
 from utils.export_data import ExportData
-import time
 from db.mongodb import MongoDB
 
 # 需配置
@@ -29,9 +28,11 @@ def main():
 
     # 添加parser
     spider.add_parser(mgtv_parser)
-    spider.add_parser(news_v1_parser)
-    spider.add_parser(tencent_parser)
-    spider.add_parser(ku6_parser)
+    # spider.add_parser(news_v1_parser)
+    # # spider.add_parser(tencent_parser)
+    # # spider.add_parser(ku6_parser)
+    # spider.add_parser(youku_parser)
+    # spider.add_parser(iqiyi_parser)
 
     spider.start()
 

@@ -27,7 +27,7 @@ def main():
         'json_data_url': 'str_watched_count_url'
     }
 
-    export_data = ExportData(source_table = 'LiveApp_anchor_info', aim_table = 'tab_nbsp_anchor_info', key_map = key_map, update_read_status = False)#, unique_key_mapping_source_key = {'room_id':'int_room_id'})
+    export_data = ExportData(source_table = 'LiveApp_anchor_info', aim_table = 'tab_nbsp_anchor_info', key_map = key_map, update_read_status = False, unique_key_mapping_source_key = {'room_id':'int_room_id'})
     export_data.export_to_oracle()
 
     # 违规信息
@@ -41,7 +41,7 @@ def main():
         'VIOLATE_IMAGE_URL':'str_sexy_image_url'
     }
 
-    export_data = ExportData(source_table = 'LiveApp_anchor_info', aim_table = 'tab_nbsp_violate_anchor_info', key_map = key_map, update_read_status = True)#, unique_key_mapping_source_key = {'ANCHOR_ID':'int_room_id'})
+    export_data = ExportData(source_table = 'LiveApp_anchor_info', aim_table = 'tab_nbsp_violate_anchor_info', key_map = key_map, update_read_status = True, condition = {'violate_content' : {'$ne':''}, 'read_status':0}, unique_key_mapping_source_key = {'ANCHOR_ID':'int_room_id'})
     export_data.export_to_oracle()
 
 if __name__ == '__main__':

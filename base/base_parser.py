@@ -913,7 +913,7 @@ def add_program_info(table, site_id, program_name, program_url, image_url = '', 
         program_info = db.find(table, {'program_url' : program_url})
         return program_info[0]['_id']
 
-def add_program_episode_info(table, site_id, program_id, episode_num = '', time_length = '', episode_name = '', download_status = '', download_url = '', episode_url = '', summary = '', image_url = '', sto_path = ''):
+def add_program_episode_info(table, site_id, program_id, episode_num = '', time_length = '', episode_name = '', download_status = '', download_url = '', episode_url = '', summary = '', image_url = '', sto_path = '', play_count = ''):
     '''
     @summary:
     ---------
@@ -949,7 +949,8 @@ def add_program_episode_info(table, site_id, program_id, episode_num = '', time_
         'read_status' : 0,
         'record_time' : tools.get_current_date(),
         'sto_path' : sto_path,
-        'sto_id' : sto_id
+        'sto_id' : sto_id,
+        'play_count': play_count
     }
 
     db.add(table, episode_info)

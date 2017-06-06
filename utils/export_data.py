@@ -111,7 +111,7 @@ class ExportData():
             value_types.append(temp_var[0])
             keys.append(temp_var[1])
 
-        datas = self._mongodb.find(self._source_table, condition = self._condition, limit = 1)
+        datas = self._mongodb.find(self._source_table, condition = self._condition)
         for data in datas:
             sql = 'insert into ' + self._aim_table + " (" + ', '.join(aim_keys) + ") values ("
             update_sql = 'update ' + self._aim_table + " set "
@@ -209,7 +209,7 @@ class ExportData():
                 if source_key_types == 'str':
                     update_sql = update_sql[:-2] + " where %s = '%s'" %(aim_key, data[source_key])
                 elif source_key_types == 'int':
-                    update_sql = update_sql[:-2] + " where %s = %d" %(aim_key, data[source_key])
+                    update_sql = update_sql[:-2] + " where %s = %s" %(aim_key, data[source_key])
 
             log.debug(sql)
             # tools.write_file(self._aim_table + '.txt', sql, 'w+')
