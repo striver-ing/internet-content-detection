@@ -30,9 +30,9 @@ def main():
 
     # 添加parser
     spider.add_parser(dongmanla_parser)
-    spider.add_parser(zx_novel_parser)
+    # spider.add_parser(zx_novel_parser)
     # spider.add_parser(jisu_cartoon_parser)
-    spider.add_parser(ximalaya_parser)
+    # spider.add_parser(ximalaya_parser)
 
 
     spider.start()

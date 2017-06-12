@@ -124,13 +124,13 @@ def get_html_by_webdirver(url):
     return html and len(html) < 1024 * 1024 and html or None
 
 @log_function_time
-def get_html_by_requests(url, headers = '', code = 'utf-8'):
+def get_html_by_requests(url, headers = '', code = 'utf-8', data = None):
     html = None
     if not url.endswith('.exe') and not url.endswith('.EXE'):
         r = None
         try:
             if headers:
-                r = requests.get(url, headers = headers, timeout = TIME_OUT)
+                r = requests.get(url, headers = headers, timeout = TIME_OUT, data = data)
             else:
                 r = requests.get(url, timeout = TIME_OUT)
 

@@ -4,8 +4,13 @@ import init
 
 from utils.export_data import ExportData
 import time
+from db.oracledb import OracleDB
 
 def main():
+    db = OracleDB()
+    sql = 'update  tab_nbsp_anchor_info t set t.live_view = 0'
+    db.update(sql)
+
     # 导出数据
     # 主播信息
     key_map = {
@@ -27,7 +32,7 @@ def main():
         'json_data_url': 'str_watched_count_url'
     }
 
-    export_data = ExportData(source_table = 'LiveApp_anchor_info', aim_table = 'tab_nbsp_anchor_info', key_map = key_map, update_read_status = False, unique_key_mapping_source_key = {'room_id':'int_room_id'})
+    export_data = ExportData(source_table = 'LiveApp_anchor_info', aim_table = 'tab_nbsp_anchor_info', key_map = key_map, unique_key = 'room_id', update_read_status = False, unique_key_mapping_source_key = {'room_id':'int_room_id'})
     export_data.export_to_oracle()
 
     # 违规信息
@@ -41,7 +46,7 @@ def main():
         'VIOLATE_IMAGE_URL':'str_sexy_image_url'
     }
 
-    export_data = ExportData(source_table = 'LiveApp_anchor_info', aim_table = 'tab_nbsp_violate_anchor_info', key_map = key_map, update_read_status = True, condition = {'violate_content' : {'$ne':''}, 'read_status':0}, unique_key_mapping_source_key = {'ANCHOR_ID':'int_room_id'})
+    export_data = ExportData(source_table = 'LiveApp_anchor_info', aim_table = 'tab_nbsp_violate_anchor_info', key_map = key_map, unique_key = 'ANCHOR_ID', update_read_status = True, condition = {'violate_content' : {'$ne':''}, 'read_status':0}, unique_key_mapping_source_key = {'ANCHOR_ID':'int_room_id'})
     export_data.export_to_oracle()
 
 if __name__ == '__main__':
