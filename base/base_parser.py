@@ -63,6 +63,34 @@ def get_contained_key(title, content, key1, key2, key3):
 
     return ','.join(contained_key), contained_key_count
 
+
+def is_find(content, key):
+    '''
+    @summary: 判断content 是否包含key，白色情人节 不包含色情， 色情的电影包含色情，即有分词技术
+    ---------
+    @param content: 文本内容
+    @param key: 关键词
+    ---------
+    @result: True / False
+    '''
+
+    index = 0 # 开始寻找的下标
+
+    while True:
+        index = content.find(key, index)
+        if index == -1:
+            return False
+
+        text_range = index - 5 > 0 and index - 5 or 0, index + 5
+        temp_content = content[text_range[0]: text_range[1]]
+        cut_temp_content = cut_text.cut(temp_content)
+
+        for text in cut_temp_content:
+            if text.lower() == key.lower():
+                return True
+
+        index = text_range[1]
+
 def is_violate(content, key1 = [], key2 = [], key3 =[]):
     if not key1 and not key2:
         return False
@@ -72,7 +100,7 @@ def is_violate(content, key1 = [], key2 = [], key3 =[]):
             if not key:
                 continue
 
-            if key not in content:
+            if not key == content:
                 return False
         else:
             return True
@@ -82,7 +110,7 @@ def is_violate(content, key1 = [], key2 = [], key3 =[]):
             if not key:
                 continue
 
-            if key in content:
+            if key == content:
                 return True
         else:
             return False
@@ -92,18 +120,24 @@ def is_violate(content, key1 = [], key2 = [], key3 =[]):
             if not key:
                 continue
 
-            if key in content:
+            if key == content:
                 return False
         else:
             return True
 
     result = True
-    if key1:
-        result = check_key1(key1, content)
-    if key2:
-        result = result and check_key2(key2, content)
-    if key3:
-        result = result and check_key3(key3, content)
+    cut_content = cut_text.cut(content)
+
+    for content in cut_content:
+        if key1:
+            print(content)
+            result = check_key1(key1, content)
+        if key2:
+            result = result and check_key2(key2, content)
+        if key3:
+            result = result and check_key3(key3, content)
+        if result:
+            return result
 
     return result
 
@@ -376,8 +410,14 @@ def add_wp_content_info(table, site_id , title = '', article_type = '', url= ' '
         'data_type': data_type,
         'read_status': 0
     }
-    db.add(table, wp_content_info_dict)
-    return wp_content_info_dict['_id']
+
+    if db.add(table, wp_content_info_dict):
+        return wp_content_info_dict['_id']
+    else:
+        wp_content_info_dict = db.find(table, {'title' : title})
+        return wp_content_info_dict[0]['_id']
+
+
 
 def add_wp_content_episode_info(table, title = '', image_url = '', video_url = '',watched_count = '', play_length = '',
                                     comments_count = '',release_time = '', content_id = '', data_type = ''):
