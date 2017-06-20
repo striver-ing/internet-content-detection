@@ -108,6 +108,21 @@ data = {
     "locType": "city"
 }
 
+data = {
+    "locType": "city",
+    "page": 0,
+    "last_id": "20170620A00BE500",
+    "cachedCount": 0,
+    "cityName": "哈尔滨",
+    "cityId": "kb_location_harbin",
+    "provinceName": "黑龙江",
+    "uid": "6586AD26-34CC-49A8-A30F-A93410F22503",
+    "forward": "1",
+    "cityList": "哈尔滨",
+    "chlid": "kb_location_harbin",
+    "locMore": "1"
+}
+
 # 必须定义 添加网站信息
 @tools.run_safe_model(__name__)
 def add_site_info():

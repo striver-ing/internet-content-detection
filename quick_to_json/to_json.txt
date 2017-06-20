@@ -1,11 +1,12 @@
-Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
-Accept-Encoding:gzip, deflate, sdch
-Accept-Language:zh-CN,zh;q=0.8
-Cache-Control:max-age=0
-Cookie:__cfduid=def2cf42c876ac6b938f88940b073b4e91496920723; _ga=GA1.2.642244842.1496920728; _gid=GA1.2.719025060.1496920728; _gat=1
-Host:www.177pic.info
-If-Modified-Since:Thu, 08 Jun 2017 08:32:32 GMT
-Proxy-Connection:keep-alive
-Referer:http://www.177pic.info/html/2017/06/1412615.html
-Upgrade-Insecure-Requests:1
-User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36
+cityList    哈尔滨
+uid 6586AD26-34CC-49A8-A30F-A93410F22503
+chlid   kb_location_harbin
+cityName    哈尔滨
+last_id 20170620A00BE500
+locMore 1
+provinceName    黑龙江
+locType city
+page    1
+forward 1
+cityId  kb_location_harbin
+cachedCount 16
