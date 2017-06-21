@@ -10,6 +10,7 @@ import random
 from db.mongodb import MongoDB
 import base.constance as Constance
 from db.oracledb import OracleDB
+from wwa.config.headline_city import *
 
 db = MongoDB()
 oracledb = OracleDB()
@@ -76,82 +77,7 @@ def add_root_url(parser_params = {}):
 
     base_url = 'http://is.snssdk.com/api/news/feed/v51/'
 
-    params = {
-        "category": "news_local",
-        "concern_id": "",
-        "device_type": "iPhone 7 Plus",
-        "vid": "B0DB5DD0-FF94-4773-85B1-EFC11132C2A4",
-        "count": "20",
-        "city": "",
-        "last_refresh_sub_entrance_interval": "14",
-        "cp": "549a41818bF8Aq1",
-        "detail": "1",
-        "live_sdk_version": "1.6.5",
-        "ac": "WIFI",
-        "iid": "11053054609",
-        "version_code": "6.1.6",
-        "os_version": "10.3.2",
-        "ab_client": "a1,f2,f7,e1",
-        "device_id": "34633749953",
-        "refer": "1",
-        "app_name": "news_article",
-        "idfa": "D2E02B97-0F35-486F-9CD4-A2EC13BBC8FB",
-        "aid": "13",
-        "ab_version": "134942,139639,139544,122834,130106,123479,134128,136027,137117,139620,138673,139274,139576,136112,135623,138462,125503,139018,137072,125174,139007,136718,139850,137081,137990,139004,122948,31210,132635,135291,131207,139987,114338,138997,139501",
-        "idfv": "B0DB5DD0-FF94-4773-85B1-EFC11132C2A4",
-        "openudid": "7064ff7d773ef8efeb5d6a25f62cd3d85035674f",
-        "loc_mode": "0",
-        "user_city": "哈尔滨",
-        "ab_feature": "z1",
-        "LBS_status": "deny",
-        "max_behot_time": "1497919146",
-        "language": "zh-Hans-CN",
-        "device_platform": "iphone",
-        "resolution": "1242*2208",
-        "strict": "0",
-        "image": "1",
-        "ssmix": "a",
-        "channel": "App Store",
-        "tt_from": "load_more"
-    }
-    # params = {
-    #             'version_code'                       : '6.1.0',
-    #             'app_name'                           : 'news_article',
-    #             'vid'                                : 'B0DB5DD0-FF94-4773-85B1-EFC11132C2A4',
-    #             'device_id'                          : '34633749953',
-    #             'channel'                            : 'App Store',
-    #             'resolution'                         : '1242*2208',
-    #             'aid'                                : 13,
-    #             'ab_version'                         : '121237,123183,112577,122834,119378,113607,123189,123476,114105,123187,113608,116023,119889,115472,123489,123025,123178,122311,112578,115572,122589,123276,115776,122948,123126,31241,122932,121010,122992,114338',
-    #             'ab_feature'                         : 'z1',
-    #             'openudid'                           : '7064ff7d773ef8efeb5d6a25f62cd3d85035674f',
-    #             'live_sdk_version'                   : '1.6.5',
-    #             'idfv'                               : 'B0DB5DD0-FF94-4773-85_b1-EFC11132C2A4',
-    #             'ac'                                 : 'WIFI',
-    #             'os_version'                         : '10.3.1',
-    #             'ssmix'                              : 'a',
-    #             'device_platform'                    : 'iphone',
-    #             'iid'                                : 9891507523,
-    #             'ab_client'                          : 'a1,f2,f7,e1',
-    #             'device_type'                        : 'iPhone 7 Plus',
-    #             'idfa'                               : 'D2E02B97-0F35-486F-9CD4-A2EC13BBC8FB',
-    #             'LBS_status'                         : 'deny',
-    #             'category'                           : 'news_local',
-    #             'city'                               : '',
-    #             'concern_id'                         : '',
-    #             'count'                              : 20,
-    #             'cp'                                 : '51950c8381DCDq1',
-    #             'detail'                             : 1,
-    #             'image'                              : 1,
-    #             'language'                           : 'zh-Hans-CN',
-    #             'last_refresh_sub_entrance_interval' : 1482077184,
-    #             'loc_mode'                           : 0,
-    #             'max_behot_time'                     : 1481063762,
-    #             'refer'                              : 1,
-    #             'strict'                             : 0,
-    #             'tt_from'                            : 'load_more',
-    #             'user_city'                          : '重庆'
-    #     }
+    params = 北京
 
     time_interval = ONE_PAGE_TIME_INTERVAL
     content_released_time = tools.get_current_timestamp() - 86400 # 一天

@@ -824,6 +824,29 @@ def add_WWA_search_app_info(table, site_id, url, title = '', summary = '', updat
     @result:
     '''
 
+    # 过滤掉不符合的app
+    from db.oracledb import OracleDB
+    oracle_db = OracleDB()
+
+    sql = 'select keyword from TAB_MVMS_SEARCH_INFO t where search_type = 703'
+    results = oracle_db.find(sql)#[('天天快报,今日头条,黑龙江',)]
+
+    is_usefull = False
+
+    text_content = title + summary + update_info + author
+    for result in results:
+        keywords = result[0]
+        keywords = keywords.split(',')
+        for keyword in keywords:
+            if keyword in text_cluster:
+                is_usefull = True
+                break
+        if is_usefull:
+            break
+
+    if not is_usefull:
+        return
+
     if language == '中文':
         language = 601
     elif language == '英文':
