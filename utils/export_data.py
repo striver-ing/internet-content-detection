@@ -142,7 +142,7 @@ class ExportData():
                         update_sql += aim_keys[i] + " = %s, "%values[-1]
 
                 elif value_types[i] == 'int':
-                    if isinstance(data[keys[i]], int) or isinstance(data[keys[i]], float)::
+                    if isinstance(data[keys[i]], int) or isinstance(data[keys[i]], float):
                         values.append(data[keys[i]])
                         sql += '%s, '
                         update_sql += aim_keys[i] + " = %s, "%values[-1]

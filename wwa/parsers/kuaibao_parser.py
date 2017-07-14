@@ -213,6 +213,7 @@ def parser(url_info):
                     if not is_download:
                         img_name = ''
 
+                sexy_image_url = base_path + img_name if img_name else img_url
 
                 # 下载视频
                 video_name = ''
@@ -223,7 +224,7 @@ def parser(url_info):
                         video_name = ''
 
                 if original_url:
-                    base_parser.add_va_app_content_info('WWA_app_content_info', SITE_ID, title, abstract, img_url, img_name, original_url, release_time, video_url, video_name, content, column_id, is_download, sensitive_id, violate_id, STORAGE_ID)
+                    base_parser.add_wwa_app_content_info('WWA_app_content_info', SITE_ID, title, abstract, img_url, img_name, original_url, release_time, video_url, video_name, content, column_id, is_download, sensitive_id, violate_id, STORAGE_ID, sexy_image_url)
 
 
         except Exception as e:

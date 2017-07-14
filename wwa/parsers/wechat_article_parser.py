@@ -131,10 +131,13 @@ def parser(url_info):
         summary = tools.get_json_value(article, 'app_msg_ext_info.digest')
         image_url = tools.get_json_value(article, 'app_msg_ext_info.cover')
 
+        sexy_image_url = []
+
         # 下载图片
         local_image_url = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
         is_download = tools.download_file(image_url, local_image_url)
         local_image_url = local_image_url if is_download else ''
+        sexy_image_url.append(local_image_url)
 
         article_url = tools.get_json_value(article, 'app_msg_ext_info.content_url')
         article_url = tools.get_full_url('http://mp.weixin.qq.com', article_url)
@@ -155,6 +158,7 @@ def parser(url_info):
             is_download = tools.download_file(image, local_image_path)
             if is_download:
                 content = content.replace(image, local_image_path)
+                sexy_image_url.append(local_image_path)
             tools.delay_time(5)
 
         # 敏感事件
@@ -183,19 +187,20 @@ def parser(url_info):
                 violate_id = _id
                 break
 
-            log.debug('''
-                标题         %s
-                简介         %s
-                图片地址     %s
-                文章地址     %s
-                发布时间     %s
-                内容         %s
-                本地贴图地址 %s
-                违规状态     %s
-                敏感事件     %s
-                '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id, sensitive_id))
+        log.debug('''
+            标题         %s
+            简介         %s
+            图片地址     %s
+            文章地址     %s
+            发布时间     %s
+            内容         %s
+            本地贴图地址 %s
+            违规状态     %s
+            敏感事件     %s
+            图片鉴别地址 %s
+            '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id, sensitive_id, sexy_image_url))
 
-        base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id, sensitive_id = sensitive_id)
+        base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id, sensitive_id = sensitive_id, sexy_image_url = sexy_image_url)
 
         # 同一天发布的
         oneday_article_list = article.get('app_msg_ext_info', {}).get('multi_app_msg_item_list', [])
@@ -204,10 +209,13 @@ def parser(url_info):
             summary = tools.get_json_value(article, 'digest')
             image_url = tools.get_json_value(article, 'cover')
 
+            sexy_image_url = []
+
             # 下载图片
             local_image_url = FILE_LOCAL_PATH + 'images/' + tools.get_current_date(date_format = '%Y-%m-%d') + "/" + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
             is_download = tools.download_file(image_url, local_image_url)
             local_image_url = local_image_url if is_download else ''
+            sexy_image_url.append(local_image_url)
 
             article_url = tools.get_json_value(article, 'content_url')
             article_url = tools.get_full_url('http://mp.weixin.qq.com', article_url)
@@ -225,6 +233,7 @@ def parser(url_info):
                 is_download = tools.download_file(image, local_image_path)
                 if is_download:
                     content = content.replace(image, local_image_path)
+                    sexy_image_url.append(local_image_path)
                 tools.delay_time(5)
 
             # 敏感事件
@@ -263,9 +272,10 @@ def parser(url_info):
             本地贴图地址 %s
             违规状态     %s
             敏感事件     %s
-            '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id, sensitive_id))
+            图片鉴别地址 %s
+            '''%(title, summary, image_url, article_url, release_time, content, local_image_url, violate_id, sensitive_id, sexy_image_url))
 
-            base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id, sensitive_id = sensitive_id)
+            base_parser.add_wechat_content_info('WWA_wechat_article', site_id, official_accounts_id, title, summary, image_url, article_url, release_time, content, video_url = '', local_image_url = local_image_url, violate_status = violate_id, sensitive_id = sensitive_id, sexy_image_url = sexy_image_url)
 
     base_parser.update_url('WWA_wechat_article_url', root_url, Constance.DONE)
     tools.delay_time()

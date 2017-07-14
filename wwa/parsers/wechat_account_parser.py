@@ -96,7 +96,7 @@ def parser(url_info):
     regex = '<!-- a -->(.*?)<!-- z -->'
     account_blocks = tools.get_info(html, regex)
 
-    print(html)
+    # print(html)
 
     # 文章数url
     regex = '<script>var account_anti_url = "(.*?)";</script>'
@@ -106,6 +106,15 @@ def parser(url_info):
 
     for account_block in account_blocks:
         # print(account_block)
+        regex = '<a.*?account_name.*?>(.*?)</a>'
+        name = tools.get_info(account_block, regex, fetch_one = True)
+        name = tools.del_html_tag(name)
+
+        is_have = mongodb.find('WWA_wechat_official_accounts', {'name' : name})
+        if is_have:
+            log.debug(name + " 已存在")
+            continue
+
         regex = '<div class="img-box">.*?<img src="(.*?)"'
         image_url = tools.get_info(account_block, regex, fetch_one = True)
 
@@ -114,9 +123,6 @@ def parser(url_info):
         is_download = tools.download_file(image_url, local_image_url)
         local_image_url = local_image_url if is_download else ''
 
-        regex = '<a.*?account_name.*?>(.*?)</a>'
-        name = tools.get_info(account_block, regex, fetch_one = True)
-        name = tools.del_html_tag(name)
 
         regex = '<p class="tit">.*?(<i></i>).*?<p class="info">'
         is_verified = 102 if tools.get_info(account_block, regex, fetch_one = True) else 101
@@ -163,7 +169,7 @@ def parser(url_info):
             本地二维码          %s
             '''%(name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url))
 
-        base_parser.add_wechat_accout_info('WWA_wechat_official_accounts', site_id, name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url)
+        base_parser.add_wechat_account_info('WWA_wechat_official_accounts', site_id, name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url)
 
     base_parser.update_url('WWA_wechat_account_url', root_url, Constance.DONE)
     tools.delay_time()

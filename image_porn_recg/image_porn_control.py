@@ -42,10 +42,10 @@ class ImagePornControl(threading.Thread):
 
             for image in images:
                 try:
-                    image_urls = image['image_url'].split(',')
+                    image_urls = image['sexy_image_url']
+                    image_urls = image_urls if isinstance(image_urls, list) else [image_urls]
 
                     sexy_image_status = [] # 检测结果
-                    sexy_image_url    = [] # 对应的照片url
 
                     for image_url in image_urls:
                         try:
@@ -59,12 +59,10 @@ class ImagePornControl(threading.Thread):
                                 '''%(image_url, result))
 
                             sexy_image_status.append(str(result))
-                            sexy_image_url.append(image_url)
 
                     sexy_image_status = ','.join(sexy_image_status)
-                    sexy_image_url    = ','.join(sexy_image_url)
 
-                    self._db.update(self._tab_images, {'_id':image['_id']}, {'image_pron_status':Constance.DONE, 'sexy_image_status':sexy_image_status, 'sexy_image_url':sexy_image_url})
+                    self._db.update(self._tab_images, {'_id':image['_id']}, {'image_pron_status':Constance.DONE, 'sexy_image_status':sexy_image_status})
 
                 except Exception as e:
                     raise

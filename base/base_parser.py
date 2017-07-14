@@ -752,13 +752,16 @@ def add_wwa_weibo_user_info(table, site_id, _id = '', name = '', url = '', image
         'fans_count': fans_count,
         'follow_count': follow_count,
         'read_status': 0,
-        'record_time': tools.get_current_date()
+        'record_time': tools.get_current_date(),
+        'sexy_image_url':image_url,
+        'sexy_image_status' : '',
+        'image_pron_status' : 0
     }
     db.add(table, user_info)
 
 def add_wwa_weibo_info_info(table, site_id, url = '', weibo_id = '', release_time = '', come_from = '',
                                content = '', image_url = '', video_url = '', transpond_count = '', praise_count = '',
-                               violate_id = '', sensitive_id = ''):
+                               violate_id = '', sensitive_id = '', sexy_image_url = ''):
     '''
     @summary:
     ---------
@@ -791,11 +794,14 @@ def add_wwa_weibo_info_info(table, site_id, url = '', weibo_id = '', release_tim
         'read_status': 0,
         'violate_id': violate_id,
         'record_time': tools.get_current_date(),
-        'sensitive_id' : sensitive_id
+        'sensitive_id' : sensitive_id,
+        'sexy_image_url' : sexy_image_url,
+        'sexy_image_status' : '',
+        'image_pron_status' : 0
     }
     db.add(table, user_info)
 
-def add_wechat_accout_info(table, site_id, name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url):
+def add_wechat_account_info(table, site_id, name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url):
     account_info = {
         'name' : name,
         'account_id' : account_id,
@@ -810,13 +816,19 @@ def add_wechat_accout_info(table, site_id, name, account_id, account_url, image_
         'local_barcode_url' : local_barcode_url,
         'read_status' : 0,
         'record_time' : tools.get_current_date(),
+        'sexy_image_url' : local_image_url,
+        'sexy_image_status' : '',
+        'image_pron_status' : 0
     }
 
     if not db.add(table, account_info):
         account_info.pop('_id')
+        account_info.pop('image_pron_status')
+        account_info.pop('sexy_image_status')
+        account_info.pop('sexy_image_url')
         db.update(table, old_value = {'account_id' : account_id}, new_value = account_info)
 
-def add_wechat_content_info(table, site_id, official_accounts_id, title, summary = '', image_url = '', article_url = '', release_time = '', content = '', video_url = '', violate_status = '', local_image_url = '', sensitive_id = ''):
+def add_wechat_content_info(table, site_id, official_accounts_id, title, summary = '', image_url = '', article_url = '', release_time = '', content = '', video_url = '', violate_status = '', local_image_url = '', sensitive_id = '', sexy_image_url = ''):
 
     content_info = {
         'site_id' : site_id,
@@ -832,7 +844,11 @@ def add_wechat_content_info(table, site_id, official_accounts_id, title, summary
         'read_status' : 0,
         'violate_status' : violate_status,
         'local_image_url' : local_image_url,
-        'sensitive_id' : sensitive_id
+        'sensitive_id' : sensitive_id,
+        'sexy_image_url' : sexy_image_url,
+        'sexy_image_status' : '',
+        'image_pron_status' : 0
+
     }
 
     db.add(table, content_info)
@@ -926,7 +942,7 @@ def add_WWA_search_app_info(table, site_id, url, title = '', summary = '', updat
     db.add(table, gameApp_info_dict)
 
 
-def add_wwa_app_content_info(table, site_id, title, summary, image_url, img_stor_path, url, release_time, video_url, video_stor_path, content, column_id, is_download, sensitive_id, violate_id, storage_id):
+def add_wwa_app_content_info(table, site_id, title, summary, image_url, img_stor_path, url, release_time, video_url, video_stor_path, content, column_id, is_download, sensitive_id, violate_id, storage_id, sexy_image_url = ''):
     '''
     @summary:
     ---------
@@ -969,11 +985,11 @@ def add_wwa_app_content_info(table, site_id, title, summary, image_url, img_stor
         'storage_id':storage_id,
         'site_id':site_id,
         'record_time':tools.get_current_date(),
-        'sexy_image_status': '',
-        'sexy_image_url': '',
-        'image_pron_status': 0,
         'read_status':0,
-        'is_audio':is_audio
+        'is_audio':is_audio,
+        'sexy_image_url': sexy_image_url,
+        'sexy_image_status': '',
+        'image_pron_status': 0
     }
 
     db.add(table, content_info_dict)

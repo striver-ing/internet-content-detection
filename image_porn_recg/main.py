@@ -18,6 +18,11 @@ import utils.tools as tools
 
 
 def main():
+    # 需要图片鉴黄的表需要加上一下三个字段
+    # * sexy_image_status   淫秽色情图像，多个逗号分隔
+    # * sexy_image_url      淫秽色情图像地址，多个逗号分隔
+    # * image_pron_status   图片扫描状态
+
     porn_thread_count = int(tools.get_conf_value('../config.conf', "image_porn", "porn_thread_count"))
 
     image_tables = tools.get_conf_value('../config.conf', "image_porn", "image_tables")

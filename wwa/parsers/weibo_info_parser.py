@@ -105,6 +105,8 @@ def parser(url_info):
             # content = tools.del_html_tag(content)
             content = content.replace('\\', '')
 
+            sexy_image_url = []
+
             regexs = ['"pic_ids": \[(.*?)\],']
             image_url = ''.join(tools.get_info(origin_html, regexs))
             image_url = tools.del_html_tag(image_url).replace('\"', '').replace('\\n', '')
@@ -112,6 +114,8 @@ def parser(url_info):
                 image_url = image_url.split(',')
                 for i in range(len(image_url)):
                     image_url[i] = 'http://wx2.sinaimg.cn/large/' + image_url[i] + '.jpg'
+
+                sexy_image_url = image_url
                 image_url = ','.join(image_url)
             regexs = ['"stream_url": "(.*?)"']
             video_url = ''.join(tools.get_info(origin_html, regexs))
@@ -164,13 +168,14 @@ def parser(url_info):
                       转发数：       %s
                       点赞数：       %s
                       违规id：       %s
-                      敏感事件      %s
+                      敏感事件       %s
+                      图像鉴别地址   %s
                      ''' % (url, weibo_id, release_time, come_from, content, image_url, video_url,
-                            transpond_count, praise_count, violate_id, sensitive_id))
+                            transpond_count, praise_count, violate_id, sensitive_id, sexy_image_url))
 
             if content:
                 base_parser.add_wwa_weibo_info_info('WWA_weibo_info_info', SITE_ID, url, weibo_id, release_time, come_from,
-                                                    content, image_url, video_url, transpond_count, praise_count, violate_id, sensitive_id = sensitive_id)
+                                                    content, image_url, video_url, transpond_count, praise_count, violate_id, sensitive_id = sensitive_id, sexy_image_url =sexy_image_url)
         tools.delay_time()
 
     base_parser.update_url('WWA_weibo_info_urls', root_url, Constance.DONE)
