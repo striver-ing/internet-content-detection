@@ -142,10 +142,10 @@ class ExportData():
                         update_sql += aim_keys[i] + " = %s, "%values[-1]
 
                 elif value_types[i] == 'int':
-                    if isinstance(data[keys[i]], int):
+                    if isinstance(data[keys[i]], int) or isinstance(data[keys[i]], float)::
                         values.append(data[keys[i]])
-                        sql += '%d, '
-                        update_sql += aim_keys[i] + " = %d, "%values[-1]
+                        sql += '%s, '
+                        update_sql += aim_keys[i] + " = %s, "%values[-1]
                     elif isinstance(data[keys[i]], str):
                         sql += '%s, '
                         if data[keys[i]]:
@@ -155,8 +155,8 @@ class ExportData():
                         update_sql += aim_keys[i] + " = %s, "%values[-1]
                     else:  # _id
                         values.append(int(str(data[keys[i]])[-6:], 16))
-                        sql += '%d, '
-                        update_sql += aim_keys[i] + " = %d, "%values[-1]
+                        sql += '%s, '
+                        update_sql += aim_keys[i] + " = %s, "%values[-1]
 
                 elif value_types[i] == 'date':
                     values.append(data[keys[i]].replace('年', '-').replace('月', '-').replace('日', ''))
@@ -181,8 +181,8 @@ class ExportData():
                 elif value_types[i] == 'sint':
                     value = self._oracledb.find(keys[i], fetch_one = True)[0]
                     values.append(value)
-                    sql += '%d, '
-                    update_sql += aim_keys[i] + " = %d, "%value
+                    sql += '%s, '
+                    update_sql += aim_keys[i] + " = %s, "%value
 
                 elif value_types[i] == 'sstr':
                     value = self._oracledb.find(keys[i], fetch_one = True)[0]
@@ -233,8 +233,8 @@ class ExportData():
 
 
         log.debug('''
-            共导出%d条数据
-            共更新%d条数据
+            共导出%s条数据
+            共更新%s条数据
             '''%(self._export_count, self._update_count))
 
     def close(self):
@@ -252,7 +252,7 @@ if __name__ == '__main__':
         'release_date': 'date_release_time',
         'image_url': 'str_image_url',
         'program_content':'str_content',
-        'task_id': 'vint_%d'%task_id,
+        'task_id': 'vint_%s'%task_id,
         'keyword':'str_keyword',
         'keyword_count':'int_keyword_count',
         'check_status':'vint_202'

@@ -718,9 +718,20 @@ def get_base64(secret, message):
 ##################################################
 
 def cut_string(text, length):
+    '''
+    @summary: 将文本按指定长度拆分
+    ---------
+    @param text: 文本
+    @param length: 拆分长度
+    ---------
+    @result: 返回按指定长度拆分后形成的list
+    '''
+
     text_list = re.findall('.{%d}'%length, text, re.S)
     leave_text = text[len(text_list) * length:]
     if leave_text:
         text_list.append(leave_text)
 
     return text_list
+
+##################################################

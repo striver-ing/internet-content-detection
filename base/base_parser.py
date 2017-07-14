@@ -91,6 +91,55 @@ def is_find(content, key):
 
         index = text_range[1]
 
+# def is_violate(content, key1 = [], key2 = [], key3 =[]):
+#     if not key1 and not key2:
+#         return False
+
+#     def check_key1(keys, content):
+#         for key in keys:
+#             if not key:
+#                 continue
+
+#             if not key == content:
+#                 return False
+#         else:
+#             return True
+
+#     def check_key2(keys, content):
+#         for key in keys:
+#             if not key:
+#                 continue
+
+#             if key == content:
+#                 return True
+#         else:
+#             return False
+
+#     def check_key3(keys, content):
+#         for key in keys:
+#             if not key:
+#                 continue
+
+#             if key == content:
+#                 return False
+#         else:
+#             return True
+
+#     result = True
+#     cut_content = cut_text.cut(content)
+
+#     for content in cut_content:
+#         if key1:
+#             result = check_key1(key1, content)
+#         if key2:
+#             result = result and check_key2(key2, content)
+#         if key3:
+#             result = result and check_key3(key3, content)
+#         if result:
+#             return result
+
+#     return result
+
 def is_violate(content, key1 = [], key2 = [], key3 =[]):
     if not key1 and not key2:
         return False
@@ -100,7 +149,7 @@ def is_violate(content, key1 = [], key2 = [], key3 =[]):
             if not key:
                 continue
 
-            if not key == content:
+            if not key in content:
                 return False
         else:
             return True
@@ -110,7 +159,7 @@ def is_violate(content, key1 = [], key2 = [], key3 =[]):
             if not key:
                 continue
 
-            if key == content:
+            if key in content:
                 return True
         else:
             return False
@@ -120,24 +169,19 @@ def is_violate(content, key1 = [], key2 = [], key3 =[]):
             if not key:
                 continue
 
-            if key == content:
+            if key in content:
                 return False
         else:
             return True
 
     result = True
-    cut_content = cut_text.cut(content)
 
-    for content in cut_content:
-        if key1:
-            print(content)
-            result = check_key1(key1, content)
-        if key2:
-            result = result and check_key2(key2, content)
-        if key3:
-            result = result and check_key3(key3, content)
-        if result:
-            return result
+    if key1:
+        result = check_key1(key1, content)
+    if key2:
+        result = result and check_key2(key2, content)
+    if key3:
+        result = result and check_key3(key3, content)
 
     return result
 
@@ -1017,5 +1061,23 @@ def add_program_episode_info(table, site_id, program_id, episode_num = '', time_
     }
 
     db.add(table, episode_info)
+
+
+def add_proxies_info(table, site_id, ip, port, connect_type, anonymous_type, speed, alive_length):
+    proxies_info = {
+        'site_id' : site_id,
+        'ip' : ip,
+        'port' : port,
+        'connect_type' : connect_type,
+        'anonymous_type' : anonymous_type,
+        'speed' : speed,
+        'alive_length' : alive_length,
+        'read_status' : 0,
+        'record_time' : tools.get_current_date(),
+        'check_time' : '',
+        'is_available' : False
+    }
+
+    db.add(table, proxies_info)
 
 
