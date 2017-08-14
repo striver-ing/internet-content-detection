@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
 sys.path.append('../../')
+import init
 
 import base.base_parser as base_parser
-import init
 import utils.tools as tools
 from utils.log import log
 import random

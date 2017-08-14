@@ -45,3 +45,19 @@
     "locMore": "1",
     "cityName": ""
 }
+
+浙江 = {
+    "last_id": "20170807A04ROR00",
+    "locType": "city",
+    "cachedCount": 0,
+    "chlid": "kb_location_hangzhou",
+    "locMore": "1",
+    "manualRefresh": "1",
+    "cityName": "杭州",
+    "forward": "1",
+    "cityList": "杭州",
+    "provinceName": "浙江",
+    "cityId": "kb_location_hangzhou",
+    "page": 0,
+    "uid": "6586AD26-34CC-49A8-A30F-A93410F22503"
+}

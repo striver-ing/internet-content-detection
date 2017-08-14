@@ -15,6 +15,7 @@ from tld import get_tld
 from urllib import request
 from urllib.parse import urljoin
 from selenium import webdriver
+from selenium.webdriver.common.proxy import ProxyType
 import requests
 import time
 from bs4 import BeautifulSoup
@@ -23,6 +24,7 @@ import functools
 import datetime
 import time
 import os
+import sys
 import execjs   # pip install PyExecJS
 import hashlib
 from pprint import pprint
@@ -81,7 +83,7 @@ def get_html_auto_deal_code(url):
 
 # import chardet
 @log_function_time
-def get_html_by_urllib(url, code = 'utf-8'):
+def get_html_by_urllib(url, code = 'utf-8', headers = {}, proxies = {}):
     html = None
     if not url.endswith('.exe') and not url.endswith('.EXE'):
         page = None
@@ -92,7 +94,13 @@ def get_html_by_urllib(url, code = 'utf-8'):
                 if response:
                     response.close()
 
-            page = request.urlopen(quote(url,safe='/:?=&'), timeout = TIME_OUT)
+            if proxies:
+                proxy_support = request.ProxyHandler(proxies)
+                opener = request.build_opener(proxy_support)
+                page = opener.open(quote(url,safe='/:?=&'), timeout = TIME_OUT)
+
+            else:
+                page = request.urlopen(quote(url,safe='/:?=&'), timeout = TIME_OUT)
             # 设置定时器 防止在read时卡死
             t = Timer(TIMER_TIME, timeout_handler, [page])
             t.start()
@@ -109,12 +117,21 @@ def get_html_by_urllib(url, code = 'utf-8'):
 
     return html and len(html) < 1024 * 1024 and html or None
 
-
 @log_function_time
-def get_html_by_webdirver(url):
+def get_html_by_webdirver(url, proxies = ''):
     html = None
     try:
+
         driver = webdriver.PhantomJS()
+
+        if proxies:
+            proxy=webdriver.Proxy()
+            proxy.proxy_type=ProxyType.MANUAL
+            proxy.http_proxy= proxies  #'220.248.229.45:3128'
+            #将代理设置添加到webdriver.DesiredCapabilities.PHANTOMJS中
+            proxy.add_to_capabilities(webdriver.DesiredCapabilities.PHANTOMJS)
+            driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
+
         driver.get(url)
         # time.sleep(10)
         html = driver.page_source
@@ -124,15 +141,15 @@ def get_html_by_webdirver(url):
     return html and len(html) < 1024 * 1024 and html or None
 
 @log_function_time
-def get_html_by_requests(url, headers = '', code = 'utf-8', data = None):
+def get_html_by_requests(url, headers = '', code = 'utf-8', data = None, proxies = {}):
     html = None
     if not url.endswith('.exe') and not url.endswith('.EXE'):
         r = None
         try:
-            if headers:
-                r = requests.get(url, headers = headers, timeout = TIME_OUT, data = data)
+            if data:
+                r = requests.post(url, headers = headers, timeout = TIME_OUT, data = data, proxies = proxies)
             else:
-                r = requests.get(url, timeout = TIME_OUT)
+                r = requests.get(url, headers = headers, timeout = TIME_OUT, proxies = proxies)
 
             if code:
                 r.encoding = code
@@ -146,15 +163,15 @@ def get_html_by_requests(url, headers = '', code = 'utf-8', data = None):
     return html and len(html) < 1024 * 1024 and html or None, r
 
 
-def get_json_by_requests(url, params = None, headers = '', data = None):
+def get_json_by_requests(url, params = None, headers = '', data = None, proxies = {}):
     json = {}
     response = None
     try:
         #response = requests.get(url, params = params)
         if data:
-            response = requests.post(url, headers = headers, data = data, params = params, timeout = TIME_OUT)
+            response = requests.post(url, headers = headers, data = data, params = params, timeout = TIME_OUT, proxies = proxies)
         else:
-            response = requests.get(url, headers=headers, params = params, timeout=TIME_OUT)
+            response = requests.get(url, headers=headers, params = params, timeout=TIME_OUT, proxies = proxies)
         response.encoding = 'utf-8'
         json = response.json()
     except Exception as e:
@@ -272,6 +289,20 @@ def get_domain(url):
     except Exception as e:
         log.debug(e)
     return domain
+
+# def get_domain(url):
+#     proto, rest = urllib.parse.splittype(url)
+#     domain, rest = urllib.parse.splithost(rest)
+#     return domain
+
+def get_ip(domain):
+    import socket
+    ip = socket.getaddrinfo(domain, 'http')[0][4][0]
+    return ip
+
+def ip_to_num(ip):
+    ip_num = socket.ntohl(struct.unpack("I", socket.inet_aton(str(ip)))[0])
+    return ip_num
 
 def get_tag(html, name = None, attrs = {}, find_all = True):
     try:
@@ -513,7 +544,9 @@ def download_file(url, base_path, filename = '', call_func = ''):
         percent = 100.0 * blocknum * blocksize / totalsize
         if percent > 100:
             percent = 100
-        print ('%.2f%%' % percent)
+        # print ('进度条 %.2f%%' % percent, end = '\r')
+        sys.stdout.write('进度条 %.2f%%' % percent + "\r")
+        sys.stdout.flush()
 
     if url:
         try:

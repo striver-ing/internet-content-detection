@@ -14,6 +14,7 @@ import base.constance as Constance
 import utils.tools as tools
 from db.mongodb import MongoDB
 from text_cluster.cut_text import CutText
+import random
 
 db = MongoDB()
 cut_text = CutText()
@@ -146,16 +147,18 @@ def is_violate(content, key1 = [], key2 = [], key3 =[]):
 
     def check_key1(keys, content):
         for key in keys:
+            key = key.strip() if key else ''
             if not key:
                 continue
 
-            if not key in content:
+            if key not in content:
                 return False
         else:
             return True
 
     def check_key2(keys, content):
         for key in keys:
+            key = key.strip() if key else ''
             if not key:
                 continue
 
@@ -166,6 +169,7 @@ def is_violate(content, key1 = [], key2 = [], key3 =[]):
 
     def check_key3(keys, content):
         for key in keys:
+            key = key.strip() if key else ''
             if not key:
                 continue
 
@@ -184,6 +188,25 @@ def is_violate(content, key1 = [], key2 = [], key3 =[]):
         result = result and check_key3(key3, content)
 
     return result
+
+def get_proxies():
+    '''
+    @summary: 获取 需要运行IPPProxyPool
+    ---------
+    @param :
+    ---------
+    @result:
+    '''
+
+    proxies, r = tools.get_html_by_requests('http://127.0.0.1:8000/?types=0&count=50')
+    proxies = eval(proxies)
+    proxie = random.choice(proxies)
+
+    ip = proxie[0]
+    port = proxie[1]
+    user_agent = random.choice(Constance.USER_AGENTS)
+
+    return ip, port, user_agent
 
 def is_have_video_by_site(url):
     '''
@@ -258,12 +281,12 @@ def get_site_id(table, site_name):
     else:
         raise AttributeError('%s表中无%s信息'%(table, site_name))
 
-def add_url(table, site_id, url, depth = 0, remark = '', status = Constance.TODO):
-    url_dict = {'site_id':site_id, 'url':url, 'depth':depth, 'remark':remark, 'status':status}
+def add_url(table, site_id, url, depth = 0, remark = '', status = Constance.TODO, retry_times = 0):
+    url_dict = {'site_id':site_id, 'url':url, 'depth':depth, 'remark':remark, 'status':status, 'retry_times' : retry_times}
     return db.add(table, url_dict)
 
-def update_url(table, url, status):
-    db.update(table, {'url':url}, {'status':status})
+def update_url(table, url, status, retry_times = 0):
+    db.update(table, {'url':url}, {'status':status, 'retry_times':retry_times})
 
 def add_website_info(table, site_id, url, name, domain = '', ip = '', address = '', video_license = '', public_safety = '', icp = ''):
     '''

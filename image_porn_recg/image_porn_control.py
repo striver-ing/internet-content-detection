@@ -55,7 +55,7 @@ class ImagePornControl(threading.Thread):
                         else:
                             log.debug('''
                                 image_url :%s
-                                result    :%d
+                                result    :%s
                                 '''%(image_url, result))
 
                             sexy_image_status.append(str(result))

@@ -28,6 +28,8 @@ class ImagePornRecg(object):
 
     # @tools.log_function_time
     def image_predict(self, image_url):
+        if not image_url:
+            return -1
         # 如果是网络图片 先下载 识别 然后删除
         if image_url.startswith('http'):
             local_image_path = TEMP_IMAGE_SAVE_PATH + tools.get_current_date(date_format = '%Y%m%d%H%M%S.%f') + '.jpg'
@@ -43,6 +45,8 @@ class ImagePornRecg(object):
             image_url = jpg_image_url if is_success else image_url
             result = ImagePornRecg.__image_porn_dll.Pic_Predict(image_url, self._porn_image_index)
 
+        else:
+            result = ImagePornRecg.__image_porn_dll.Pic_Predict(image_url, self._porn_image_index)
         return result
 
     def close(self):

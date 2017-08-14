@@ -38,7 +38,7 @@ class OracleDB(Singleton):
 
         if not hasattr(self,'conn'):
             try:
-                self.conn = cx_Oracle.connect(user_name, user_pass, '%s:%d/%s'%(ip, port, db))
+                self.conn = cx_Oracle.connect(user_name, user_pass, '%s:%d/%s'%(ip, port, db), threaded=True,events = True)
                 self.cursor = self.conn.cursor()
             except Exception as e:
                 raise
@@ -119,3 +119,19 @@ class OracleDB(Singleton):
 
         self.cursor.close()
         self.conn.close()
+
+if __name__ == '__main__':
+    # 多线程测试
+    import threading
+
+    db = OracleDB()
+    sql = 'select count(*) from v$process'
+
+    result = threading.Thread(target = db.find, args = (sql,)).start()
+    print(result)
+
+    result = threading.Thread(target = db.find, args = ('select * from tab_mvms_violation_knowledge',)).start()
+    print(result)
+
+    result = threading.Thread(target = db.find, args = (sql,)).start()
+    print(result)
