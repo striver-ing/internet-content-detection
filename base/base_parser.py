@@ -1022,7 +1022,7 @@ def add_wwa_app_content_info(table, site_id, title, summary, image_url, img_stor
         db.add('WWA_app_vioation_content_info', content_info_dict)
 
 # 下载视频
-def add_program_info(table, site_id, program_name, program_url, image_url = '', episode = '', directors = '', actors = '', summary = '', release_time = ''):
+def add_program_info(table, site_id, program_name, program_url, image_url = '', episode = '', directors = '', actors = '', summary = '', release_time = '', _id = ''):
     '''
     @summary:
     ---------
@@ -1053,11 +1053,18 @@ def add_program_info(table, site_id, program_name, program_url, image_url = '', 
         'record_time' : tools.get_current_date()
     }
 
+    if _id:
+        program_info['_id'] = _id
+
     if db.add(table, program_info):
         return program_info['_id']
     else:
-        program_info = db.find(table, {'program_url' : program_url})
-        return program_info[0]['_id']
+        return _id if _id else db.find(table, {'program_url' : program_url})[0]['_id']
+        # if _id:
+        #     return _id
+        # else:
+        #     program_info = db.find(table, {'program_url' : program_url})
+        #     return program_info[0]['_id']
 
 def add_program_episode_info(table, site_id, program_id, episode_num = '', time_length = '', episode_name = '', download_status = '', download_url = '', episode_url = '', summary = '', image_url = '', sto_path = '', play_count = ''):
     '''

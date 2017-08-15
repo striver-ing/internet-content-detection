@@ -5,6 +5,7 @@ from utils.log import log
 from base.spider import Spider
 import utils.tools as tools
 from utils.export_data import ExportData
+import time
 from db.mongodb import MongoDB
 
 # 需配置
@@ -17,24 +18,34 @@ def main():
     def begin_callback():
         log.info('\n********** program begin **********')
         db.delete('PROGRAM_urls')
-        # db.update('PROGRAM_urls', {'status' : 1}, {'status' : 0})
 
     def end_callback():
         log.info('\n********** program end **********')
 
 
     # 配置spider
-    spider = Spider(tab_urls = 'PROGRAM_urls', tab_site = 'PROGRAM_site_info', tab_content = 'PROGRAM_info', content_unique_key = 'program_url', parser_count = 1, begin_callback = begin_callback, end_callback = end_callback, parser_params = {})
+    spider = Spider(tab_urls = 'PROGRAM_urls', tab_site = 'PROGRAM_site_info', tab_content = 'PROGRAM_info', content_unique_key = 'program_url', parser_count = 10, begin_callback = begin_callback, end_callback = end_callback, parser_params = {})
 
     # 添加parser
     spider.add_parser(mgtv_parser)
+    #spider.add_parser(headline_parser)
     # spider.add_parser(news_v1_parser)
-    # # spider.add_parser(tencent_parser)
-    # # spider.add_parser(ku6_parser)
-    # spider.add_parser(youku_parser)
-    # spider.add_parser(iqiyi_parser)
+    spider.add_parser(ku6_parser)
 
+    # spider.add_parser(mgtv_parser)
+    spider.add_parser(news_v1_parser)
+    # spider.add_parser(tencent_parser)
+    # spider.add_parser(ku6_parser)
+    spider.add_parser(youku_parser)
+    spider.add_parser(iqiyi_parser)
+
+    # spider.add_parser(mgtv_parser)
+    # spider.add_parser(news_v1_parser)
+    # spider.add_parser(ku6_parser)
+    spider.add_parser(sohu_parser)
+    # spider.add_parser(letv_parser)
     spider.start()
+
 
 if __name__ == '__main__':
     main()

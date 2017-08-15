@@ -190,7 +190,6 @@ def get_all_hot():
     datas = json['data']
 
     hot_count = 0
-    message_count = 0
     # 相关新闻获取url
     root_url = 'http://192.168.60.38:8001/hotspot_al/interface/getHotRelateInfo?ids=%s'
     for data in datas:
@@ -198,30 +197,28 @@ def get_all_hot():
         hot_id = oracledb.find(sql)[0][0]
 
         def export_callback(execute_type, sql):
-                if execute_type != ExportData.EXCEPTION:
-                    global message_count
+            if execute_type != ExportData.EXCEPTION:
+                infoIds = data['infoIds']
+                url = root_url%infoIds
+                json = tools.get_json_by_requests(url, headers = HEADERS)
+                articles = json['data']
 
-                    infoIds = data['infoIds']
-                    url = root_url%infoIds
-                    json = tools.get_json_by_requests(url, headers = HEADERS)
-                    articles = json['data']
+                key_map = {
+                    'id':'int_dataId',
+                    'content':'clob_content',
+                    'url':'str_url',
+                    'website_name':'str_site',
+                    'image_url':'str_picture',
+                    'release_time':'date_pubtime',
+                    'keywords':'str_keywords',
+                    'emotion':'str_emotion',
+                    'host': 'str_site',
+                    'title': 'str_title',
+                    'info_type': 'int_type',
+                    'hot_id':"vint_%d"%hot_id
+                }
 
-                    key_map = {
-                        'id':'int_dataId',
-                        'content':'clob_content',
-                        'url':'str_url',
-                        'website_name':'str_site',
-                        'image_url':'str_picture',
-                        'release_time':'date_pubtime',
-                        'keywords':'str_keywords',
-                        'emotion':'str_emotion',
-                        'host': 'str_site',
-                        'title': 'str_title',
-                        'info_type': 'int_type',
-                        'hot_id':"vint_%d"%hot_id
-                    }
-
-                    message_count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = articles)
+                export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = articles, unique_key_mapping_source_key = {'url': 'str_url'})
 
         # 导出全国热点数据
 
@@ -231,14 +228,14 @@ def get_all_hot():
             'hot':'int_hot',
             'hot_type':'vint_0'
         }
+        print(data['kw'])
 
-        hot_count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_HOT_INFO', unique_key = 'title', datas = data)
+        hot_count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_HOT_INFO', unique_key = 'title', datas = data, callback = export_callback)
 
 
     log.info('''
         共导出%d条全网热点
-        共导出%d条相关新闻
-        '''%(hot_count, message_count))
+        '''%(hot_count))
 
 def main():
     get_about_me_hot()

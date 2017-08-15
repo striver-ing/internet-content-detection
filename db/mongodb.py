@@ -76,7 +76,7 @@ class MongoDB(Singleton):
         try:
             self._db[table].save(key_value)
         except Exception as e:
-            # log.error(e)
+            log.error(e)
             return False
         else:
             return True
