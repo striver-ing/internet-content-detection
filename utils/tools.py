@@ -249,6 +249,7 @@ def quote_url(url):
 
     return urllib.parse.quote(url)
 
+
 _regexs = {}
 # @log_function_time
 def get_info(html, regexs, allow_repeat = False, fetch_one = False, split = None):

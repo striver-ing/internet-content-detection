@@ -68,42 +68,47 @@ class ExportData():
         self._datas = datas
 
         self._is_oracle = False
+        self._is_set_unique_key = False
         self._export_count = 0
         self._update_count = 0
         self._unique_key_mapping_source_key = unique_key_mapping_source_key
 
 
     def export_to_oracle(self, source_table = '', aim_table = '', key_map = '', unique_key = None, unique_key_mapping_source_key = None, update_read_status = True, condition = {'read_status':0}, datas = [], callback = ''):
-        if source_table or datas:
-            self._source_table = source_table
-            self._aim_table = aim_table
-            self._key_map = key_map
-            self._unique_key = unique_key
-            self._export_count = 0
-            self._update_count = 0
-            self._unique_key_mapping_source_key = unique_key_mapping_source_key
-            self._update_read_status = update_read_status if not datas else False
-            self._condition = condition
-            self._datas = datas
-            self._callback = callback
+        if self._aim_table != aim_table:
+            self._is_set_unique_key = False
+
+        self._source_table = source_table
+        self._aim_table = aim_table
+        self._key_map = key_map
+        self._unique_key = unique_key
+        self._export_count = 0
+        self._update_count = 0
+        self._unique_key_mapping_source_key = unique_key_mapping_source_key
+        self._update_read_status = update_read_status if not datas else False
+        self._condition = condition
+        self._datas = datas
+        self._callback = callback
 
         self._aim_db = OracleDB()
         self._is_oracle = True
         return self.__export()
 
     def export_to_mysql(self, source_table = '', aim_table = '', key_map = '', unique_key = None, unique_key_mapping_source_key = None, update_read_status = True, condition = {'read_status':0}, datas = [], callback = ''):
-        if source_table or datas:
-            self._source_table = source_table
-            self._aim_table = aim_table
-            self._key_map = key_map
-            self._unique_key = unique_key
-            self._export_count = 0
-            self._update_count = 0
-            self._unique_key_mapping_source_key = unique_key_mapping_source_key
-            self._update_read_status = update_read_status if not datas else False
-            self._condition = condition
-            self._datas = datas
-            self._callback = callback
+        if self._aim_table != aim_table:
+            self._is_set_unique_key = False
+
+        self._source_table = source_table
+        self._aim_table = aim_table
+        self._key_map = key_map
+        self._unique_key = unique_key
+        self._export_count = 0
+        self._update_count = 0
+        self._unique_key_mapping_source_key = unique_key_mapping_source_key
+        self._update_read_status = update_read_status if not datas else False
+        self._condition = condition
+        self._datas = datas
+        self._callback = callback
 
         self._aim_db = MysqlDB()
         return self.__export()
@@ -243,8 +248,9 @@ class ExportData():
 
     # @tools.run_safe_model(__name__)
     def __export(self):
-        if self._unique_key:
+        if self._unique_key and not self._is_set_unique_key:
             self._aim_db.set_unique_key(self._aim_table, self._unique_key)
+            self._is_set_unique_key = True
 
         datas = self._mongodb.find(self._source_table, condition = self._condition) if self._mongodb else (self._datas if isinstance(self._datas, list) else [self._datas])
         for data in datas:
