@@ -10,9 +10,10 @@ import random
 from db.mongodb import MongoDB
 import base.constance as Constance
 from db.oracledb import OracleDB
+import you_get.extractors.qq as qq
 
 db = MongoDB()
-#oracledb = OracleDB()
+oracledb = OracleDB()
 
 # 必须定义 网站id
 SITE_ID = 2
@@ -165,37 +166,42 @@ def parser(url_info):
                 abstract = tools.get_json_value(news,'abstract')
                 original_url = tools.get_json_value(news,'url')
                 img_url = tools.get_json_value(news, 'thumbnails_qqnews')[0] if tools.get_json_value(news, 'thumbnails_qqnews') else ''
-                video_url = tools.get_json_value(news, 'video_channel.video.playurl')
-
+                video_frame_url = tools.get_json_value(news, 'video_channel.video.playurl')
                 # 取content
                 html = tools.get_html_by_urllib(original_url)
                 content = tools.get_tag(html, name = 'div', attrs = {'class':"main"}, find_all = False)
                 content = tools.del_html_tag(str(content))
 
+                # 解析视频真实地址
+                video_url = ''
+                if video_frame_url:
+                    video_vid = tools.get_info(html, 'vid\s*=\s*"\s*([^"]+)"', fetch_one = True)
+                    video_url = ''.join(qq.qq_download_by_vid(video_vid))
+
                 # 判断是否违规
                 # 敏感事件
                 sensitive_id = ''
-                # sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
-                # for sensitive_event_info in sensitive_event_infos:
-                #     _id = sensitive_event_info[0]
-                #     keyword1 = sensitive_event_info[3].split(' ') if sensitive_event_info[3] else []
-                #     keyword2 = sensitive_event_info[4].split(' ') if sensitive_event_info[4] else []
-                #     keyword3 = sensitive_event_info[5].split(' ') if sensitive_event_info[5] else []
-				#
-                #     if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
-                #         sensitive_id = _id
+                sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
+                for sensitive_event_info in sensitive_event_infos:
+                    _id = sensitive_event_info[0]
+                    keyword1 = sensitive_event_info[3].split(' ') if sensitive_event_info[3] else []
+                    keyword2 = sensitive_event_info[4].split(' ') if sensitive_event_info[4] else []
+                    keyword3 = sensitive_event_info[5].split(' ') if sensitive_event_info[5] else []
+
+                    if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
+                        sensitive_id = _id
 
                 # 违规事件
                 violate_id = ''
-                # vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
-                # for vioation_knowledge_info in vioation_knowledge_infos:
-                #     _id = vioation_knowledge_info[0]
-                #     keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
-                #     keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
-                #     keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
-				#
-                #     if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
-                #         violate_id = _id
+                vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
+                for vioation_knowledge_info in vioation_knowledge_infos:
+                    _id = vioation_knowledge_info[0]
+                    keyword1 = vioation_knowledge_info[2].split(' ') if vioation_knowledge_info[2] else []
+                    keyword2 = vioation_knowledge_info[3].split(' ') if vioation_knowledge_info[3] else []
+                    keyword3 = vioation_knowledge_info[4].split(' ') if vioation_knowledge_info[4] else []
+
+                    if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
+                        violate_id = _id
 
 
                 log.debug('''

@@ -59,7 +59,7 @@ def get_about_me_message(keywords, hot_id):
             def export_callback(execute_type, sql):
                 if execute_type != ExportData.EXCEPTION:
                     # 计算权重
-                    url = 'http://192.168.60.30:8080/related_sort?article_id=%d'%article_id
+                    url = 'http://192.168.60.30:8080/related_sort?article_id=%d&clue_ids=%s&may_invalid=%s'%(article_id, msg['cluesIds'], msg['mayInvalid'] or '0')
                     tools.get_html_by_requests(url)
 
                     for clues_id in clues_ids.split(','):
@@ -79,7 +79,7 @@ def get_about_me_message(keywords, hot_id):
                 'clues_ids': 'str_cluesIds',
                 'comment_count': 'int_commtcount',
                 'content': 'clob_content',
-                'emotion': 'int_emotion',
+                'emotion': 'vint_%s'%(msg['emotion'] or 3),
                 'host': 'str_host',
                 'keywords': 'str_keywords',
                 'image_url': 'str_picture',
@@ -95,7 +95,7 @@ def get_about_me_message(keywords, hot_id):
                 'KEYWORD_CLUES_ID':'str_keywordAndIds',
                 'hot_id':"vint_%d"%hot_id,
                 'keywords_count':'vint_%d'%len(msg['keywords'].split(',')),
-                'is_vip':'vint_%d'%vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])
+                'is_vip':'vint_%d'%vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])or vip_checked.is_vip(msg['author'])
             }
 
             count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = msg, callback = export_callback, unique_key_mapping_source_key = {'url': 'str_url'})
@@ -148,13 +148,14 @@ def get_about_me_hot():
         def export_callback(execute_type, sql):
             print(ExportData.EXCEPTION)
             if execute_type != ExportData.EXCEPTION:
-                # 计算权重
-                url = 'http://192.168.60.30:8080/related_sort?hot_id=%d'%hot_id
-                tools.get_html_by_requests(url)
 
                 # 取涉我舆情
                 get_about_me_message(hot_info['kg'], hot_id)
 
+                # 计算权重
+                # print('计算权重', hot_id)
+                url = 'http://192.168.60.30:8080/related_sort?hot_id=%d&hot_value=%s&clues_id=%s'%(hot_id, hot_info['hot'], hot_info['clues_id'])
+                tools.get_html_by_requests(url)
 
         key_map = {
             'id':'vint_%d'%hot_id,
@@ -228,7 +229,7 @@ def get_all_hot():
             'hot':'int_hot',
             'hot_type':'vint_0'
         }
-        print(data['kw'])
+        # print(data['kw'])
 
         hot_count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_HOT_INFO', unique_key = 'title', datas = data, callback = export_callback)
 

@@ -12,6 +12,9 @@ import init
 import cx_Oracle
 import utils.tools as tools
 from utils.log import log
+import datetime
+import os
+os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8' # 防止查出的中文乱码
 
 STOP_ORCL = False #禁用oracle
 
@@ -38,14 +41,27 @@ class OracleDB(Singleton):
 
         if not hasattr(self,'conn'):
             try:
-                self.conn = cx_Oracle.connect(user_name, user_pass, '%s:%d/%s'%(ip, port, db), threaded=True,events = True)
+                self.conn = cx_Oracle.connect(user_name, user_pass, '%s:%d/%s'%(ip, port, db))#, threaded=True,events = True)
                 self.cursor = self.conn.cursor()
             except Exception as e:
                 raise
             else:
                 log.debug('连接到数据库 %s'%db)
 
-    def find(self, sql, fetch_one = False):
+    def __cover_clob_to_str(self, datas):
+        for i in range(len(datas)):
+            temp_data = []
+            for data in datas[i]:
+                if isinstance(data, cx_Oracle.LOB) or isinstance(data, datetime.datetime):
+                    data = str(data)
+                temp_data.append(data)
+
+            datas[i] = temp_data
+
+        return datas
+
+
+    def find(self, sql, fetch_one = False, to_json = False):
         if STOP_ORCL:
             return []
 
@@ -54,6 +70,12 @@ class OracleDB(Singleton):
             result =  self.cursor.execute(sql).fetchone()
         else:
             result =  self.cursor.execute(sql).fetchall()
+
+        result = self.__cover_clob_to_str(result)
+        if to_json:
+            columns = [i[0] for i in self.cursor.description]
+            # print(','.join(columns))
+            result = [dict(zip(columns, r)) for r in result]
 
         return result
 
@@ -122,16 +144,22 @@ class OracleDB(Singleton):
 
 if __name__ == '__main__':
     # 多线程测试
-    import threading
+    # import threading
 
     db = OracleDB()
-    sql = 'select count(*) from v$process'
+    # sql = 'select count(*) from v$process'
 
-    result = threading.Thread(target = db.find, args = (sql,)).start()
-    print(result)
+    # result = threading.Thread(target = db.find, args = (sql,)).start()
+    # print(result)
 
-    result = threading.Thread(target = db.find, args = ('select * from tab_mvms_violation_knowledge',)).start()
-    print(result)
+    # result = threading.Thread(target = db.find, args = ('select * from tab_mvms_violation_knowledge',)).start()
+    # print(result)
 
-    result = threading.Thread(target = db.find, args = (sql,)).start()
+    # result = threading.Thread(target = db.find, args = (sql,)).start()
+    # print(result)
+    # db.find("select ID,TITLE,to_char(CONTENT) as CONTENT,URL,WEBSITE_NAME,IMAGE_URL,to_char(RELEASE_TIME, 'yyyy-mm-dd hh24:mi:ss') as RELEASE_TIME,to_char(RECORD_TIME, 'yyyy-mm-dd hh24:mi:ss') as RECORD_TIME,CLUES_IDS,KEYWORDS,EMOTION,REVIEW_COUNT,ACCOUNT,UUID,COMMENT_COUNT,AUTHOR,INFO_TYPE,UP_COUNT,KEYWORDS_COUNT,HOST,HOT_ID,MAY_INVALID,KEYWORD_CLUES_ID,WEIGHT,IS_VIP from TAB_IOPM_ARTICLE_INFO t where rownum <= 5", to_json = True)
+
+
+    sql = "select * from TAB_IOPM_ARTICLE_INFO"
+    result = db.find(sql, to_json = True)
     print(result)

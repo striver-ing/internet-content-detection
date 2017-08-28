@@ -350,6 +350,16 @@ def is_have_chinese(content):
     chinese_word = get_info(content, regex)
     return chinese_word and True or False
 
+def get_chinese_word(content):
+    regex = '[\u4e00-\u9fa5]+'
+    chinese_word = get_info(content, regex)
+    return chinese_word
+
+def get_english_words(content):
+    regex = '[a-zA-Z]+'
+    english_words = get_info(content, regex)
+    return english_words or ''
+
 ##################################################
 def get_json(json_str):
     '''
@@ -381,7 +391,7 @@ def dumps_json(json_):
         json_ = json.dumps(json_, ensure_ascii=False, indent=4, skipkeys = True)
 
     except Exception as e:
-        # log.error(e)
+        log.error(e)
         json_ = pformat(json_)
 
     return json_
@@ -510,8 +520,11 @@ def read_file(filename, readlines = False, encoding = 'utf-8'):
     '''
 
     content = ''
-    with open(filename, 'r', encoding = encoding) as file:
-        content = file.readlines() if readlines else file.read()
+    try:
+        with open(filename, 'r', encoding = encoding) as file:
+            content = file.readlines() if readlines else file.read()
+    except Exception as e:
+        log.error(e)
 
     return content
 

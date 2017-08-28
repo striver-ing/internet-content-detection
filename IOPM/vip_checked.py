@@ -40,21 +40,18 @@ class VipChecked(Singleton):
 
         # print(self._vip_sites)
 
-    def is_vip(self, url = '', name = ''):
+    def is_vip(self, content):
         is_vip = False
         for site in self._vip_sites:
-            if url:
-                is_vip = site in url
-
-            elif name:
-                is_vip = name in site
+            is_vip = (content or False) and ((site in content) or (content in site))
 
             if is_vip:
+                # print(site)
                 break
 
         return is_vip
 
 if __name__ == '__main__':
     vip_checked = VipChecked()
-    is_vip = vip_checked.is_vip(name = '光明日报')
+    is_vip = vip_checked.is_vip('http://mp.weixin.qq.com/s?__biz=MzAxNDI5NTY2NQ==&mid=2650646782&idx=2&sn=00cfa2dac81ec96c1731482bbe7dc821&scene=0#wechat_redirect')
     print(is_vip)

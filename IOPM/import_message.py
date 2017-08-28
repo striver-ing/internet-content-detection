@@ -29,6 +29,8 @@ db = OracleDB()
 export_data = ExportData()
 vip_checked = VipChecked()
 
+STO_PER_SYNC_TIME = '.sync_time'
+
 def get_url(time_lenght = 60):
     '''
     @summary:
@@ -39,9 +41,12 @@ def get_url(time_lenght = 60):
     '''
 
     current_date = tools.get_current_date()
-    per_date = tools.timestamp_to_date(tools.get_current_timestamp() - time_lenght * 60)
+    per_date = tools.read_file(STO_PER_SYNC_TIME) or tools.timestamp_to_date(tools.get_current_timestamp() - time_lenght * 60)
 
-    root_url = 'http://192.168.60.38:8001/hotspot_al/interface/getCluesDataSearchInfo?pageNo=%d&pageSize=100&sTime={per_date}&eTime={current_date}'.format(per_date = per_date, current_date = current_date)
+    tools.write_file(STO_PER_SYNC_TIME, current_date)
+
+    # root_url = 'http://192.168.60.38:8001/hotspot_al/interface/getCluesDataSearchInfo?pageNo=%d&pageSize=100&sTime={per_date}&eTime={current_date}'.format(per_date = per_date, current_date = current_date)
+    root_url = 'http://192.168.60.38:8001/hotspot_al/interface/getCluesDataSearchInfo?pageNo=%d&pageSize=100&updateSTime={per_date}&updateETime={current_date}&sort=5&isDesc=0'.format(per_date = per_date, current_date = current_date)
     return root_url
 
 def get_datas(root_url):
@@ -70,7 +75,7 @@ def get_datas(root_url):
             def export_callback(execute_type, sql):
                 if execute_type != ExportData.EXCEPTION:
                     # 计算权重
-                    url = 'http://192.168.60.30:8080/related_sort?article_id=%d'%article_id
+                    url = 'http://192.168.60.30:8080/related_sort?article_id=%d&clue_ids=%s&may_invalid=%s'%(article_id, msg['cluesIds'], msg['mayInvalid'] or '0')
                     tools.get_html_by_requests(url)
 
                     for clues_id in clues_ids.split(','):
@@ -91,7 +96,7 @@ def get_datas(root_url):
                 'clues_ids': 'str_cluesIds',
                 'comment_count': 'int_commtcount',
                 'content': 'clob_content',
-                'emotion': 'int_emotion',
+                'emotion': 'vint_%s'%(msg['emotion'] or 3),
                 'host': 'str_host',
                 'keywords': 'str_keywords',
                 'image_url': 'str_picture',
@@ -106,16 +111,16 @@ def get_datas(root_url):
                 'MAY_INVALID':'int_mayInvalid',
                 'KEYWORD_CLUES_ID':'str_keywordAndIds',
                 'keywords_count':'vint_%d'%len(msg['keywords'].split(',')),
-                'is_vip':'vint_%d'%vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])
+                'is_vip':'vint_%d'%vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])or vip_checked.is_vip(msg['author'])
             }
 
-            export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = msg, callback = export_callback)
+            export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = msg, callback = export_callback, unique_key_mapping_source_key = {'url': 'str_url'})
             count += 1
 
         page += 1
 
 def main():
-    url = get_url()
+    url = get_url(time_lenght = 60)
     print(url)
     get_datas(url)
 
