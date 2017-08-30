@@ -31,9 +31,9 @@ class SyncES():
     def export_to_es(self, table, data, data_id):
         self._es.add(table = table, data = data, data_id = data_id)
 
-    def sync_data(self, sql, table, step = 20):
+    def sync_data(self, table, step = 20):
         '''
-        @summary:
+        @summary: 需要先把id设为主键
         ---------
         @param sql:
         @param table:
@@ -43,10 +43,10 @@ class SyncES():
         '''
 
         max_id = self._max_id.get(table, 0)
-        sql = sql.replace(table, '%s t order by id'%table)
+        self._db.set_primary_key(table)
 
         while True:
-            inner_sql = 'select * from (%s) where id > %d and rownum <= %d'%(sql, max_id, step)
+            inner_sql = 'select * from %s where id > %d and rownum <= %d order by id'%(table, max_id, step)
             datas = sync_es.get_data(inner_sql)
 
             if not datas:
@@ -72,9 +72,7 @@ if __name__ == '__main__':
     sync_es = SyncES()
 
     # 同步舆情数据
-    sql = "select * from TAB_IOPM_ARTICLE_INFO"
-    sync_es.sync_data(sql = sql, table = 'TAB_IOPM_ARTICLE_INFO')
+    sync_es.sync_data(table = 'TAB_IOPM_ARTICLE_INFO')
 
     # 同步热点数据
-    sql = "select * from TAB_IOPM_HOT_INFO"
-    sync_es.sync_data(sql = sql, table = 'TAB_IOPM_HOT_INFO')
+    sync_es.sync_data(table = 'TAB_IOPM_HOT_INFO')

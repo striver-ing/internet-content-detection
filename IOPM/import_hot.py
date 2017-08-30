@@ -13,6 +13,7 @@ import utils.tools as tools
 from utils.log import log
 from utils.export_data import ExportData
 from db.oracledb import OracleDB
+from db.elastic_search import ES
 from IOPM.vip_checked import VipChecked
 
 HEADERS = {
@@ -27,6 +28,7 @@ HEADERS = {
 }
 
 oracledb = OracleDB()
+es = ES()
 export_data = ExportData()
 vip_checked = VipChecked()
 
@@ -35,6 +37,7 @@ def get_about_me_message(keywords, hot_id):
 
     count = 0
     page = 1
+    hot_is_vip = False
     while True:
         url = root_url%(page,keywords)
 
@@ -56,21 +59,22 @@ def get_about_me_message(keywords, hot_id):
             article_id = oracledb.find(sql)[0][0]
 
             # 同步线索与文章的中间表
-            def export_callback(execute_type, sql):
+            def export_callback(execute_type, sql, data_json):
                 if execute_type != ExportData.EXCEPTION:
-                    # 计算权重
-                    url = 'http://192.168.60.30:8080/related_sort?article_id=%d&clue_ids=%s&may_invalid=%s'%(article_id, msg['cluesIds'], msg['mayInvalid'] or '0')
-                    tools.get_html_by_requests(url)
-
                     for clues_id in clues_ids.split(','):
                         key_map = {
                             'id':'vint_sequence.nextval',
                             'article_id':'vint_%d'%article_id,
                             'clues_id':'vint_%s'%clues_id
                         }
-                        export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_CLUES_SRC', unique_key = 'url', datas = [{}])
+                        export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_CLUES_SRC', unique_key = 'url', datas = [{}], sync_to_es = True)
 
+            # 计算权重
+            url = 'http://192.168.60.30:8080/related_sort?article_id=%d&clue_ids=%s&may_invalid=%s'%(article_id, msg['cluesIds'], msg['mayInvalid'] or '0')
+            weight = tools.get_json_by_requests(url).get('weight', 0)
 
+            is_vip = vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])or vip_checked.is_vip(msg['author'])
+            hot_is_vip = hot_is_vip if hot_is_vip else is_vip
 
             key_map = {
                 'id':'vint_%d'%article_id,
@@ -95,12 +99,16 @@ def get_about_me_message(keywords, hot_id):
                 'KEYWORD_CLUES_ID':'str_keywordAndIds',
                 'hot_id':"vint_%d"%hot_id,
                 'keywords_count':'vint_%d'%len(msg['keywords'].split(',')),
-                'is_vip':'vint_%d'%vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])or vip_checked.is_vip(msg['author'])
+                'is_vip':'vint_%d'%is_vip,
+                'weight':'vint_%s'%weight,
+                'record_time':'vdate_%s'%tools.get_current_date()
             }
 
-            count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = msg, callback = export_callback, unique_key_mapping_source_key = {'url': 'str_url'})
+            count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = msg, callback = export_callback, unique_key_mapping_source_key = {'url': 'str_url'}, sync_to_es = True)
 
         page += 1
+
+    return hot_is_vip
 
 def update_about_me_message_hot_id():
     sql = 'select t.id, t.keywords from TAB_IOPM_HOT_INFO t where t.hot_type != 0'
@@ -121,6 +129,7 @@ def get_about_me_hot():
     @result:
     '''
     url = 'http://192.168.60.38:8001/hotspot_al/interface/getHotAnalysis_self'
+    # url = 'http://192.168.60.38:8001/hotspot_al/interface/getHotAnalysis_self?period=7'
     json = tools.get_json_by_requests(url, headers = HEADERS)
     # print(json)
 
@@ -128,34 +137,33 @@ def get_about_me_hot():
     datas = json['data']
     for data in datas:
         clues_id = list(data.keys())[0]
-        sql = 'select t.name from TAB_IOPM_CLUES t where id = ' + clues_id
-        name = oracledb.find(sql)[0][0]
-
         hot_infos = data[clues_id]['data']
         for hot_info in hot_infos:
             kw = hot_info['kw']
             hot = hot_info['hot']
             kg = hot_info['kg']
-            hot_list.append({'clues_id':clues_id, 'kw':kw, 'hot':hot, 'name':name, 'kg':kg})
+            hot_list.append({'clues_id':clues_id, 'kw':kw, 'hot':hot, 'kg':kg})
 
     about_me_hot_count = 0
     for hot_info in hot_list:
-        print(hot_info['name'], ':', hot_info['kw'], hot_info['hot'])
+        print(hot_info['kw'], hot_info['hot'])
 
         sql = 'select sequence.nextval from dual'
         hot_id = oracledb.find(sql)[0][0]
 
-        def export_callback(execute_type, sql):
-            print(ExportData.EXCEPTION)
+        def export_callback(execute_type, sql, data_json):
             if execute_type != ExportData.EXCEPTION:
 
                 # 取涉我舆情
-                get_about_me_message(hot_info['kg'], hot_id)
+                hot_is_vip = get_about_me_message(hot_info['kg'], hot_id)
 
                 # 计算权重
-                # print('计算权重', hot_id)
-                url = 'http://192.168.60.30:8080/related_sort?hot_id=%d&hot_value=%s&clues_id=%s'%(hot_id, hot_info['hot'], hot_info['clues_id'])
-                tools.get_html_by_requests(url)
+                url = 'http://192.168.60.30:8080/related_sort?hot_id=%d&hot_value=%s&clues_id=%s&is_update_db=1'%(hot_id, hot_info['hot'], hot_info['clues_id'])
+                weight = tools.get_json_by_requests(url).get('weight', 0)
+                # 同步到es
+                data_json['weight'] = weight
+                data_json['is_vip'] = hot_is_vip
+                es.add(table = 'TAB_IOPM_HOT_INFO', data = data_json, data_id = data_json.get("ID"))
 
         key_map = {
             'id':'vint_%d'%hot_id,
@@ -163,7 +171,8 @@ def get_about_me_hot():
             'hot':'int_hot',
             'clues_id':'int_clues_id',
             'keywords':'str_kg',
-            'hot_type':'vint_1'
+            'hot_type':'vint_1',
+            'record_time':'vdate_%s'%tools.get_current_date()
         }
 
         about_me_hot_count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_HOT_INFO', unique_key = 'title', datas = hot_info, callback = export_callback)
@@ -194,15 +203,43 @@ def get_all_hot():
     # 相关新闻获取url
     root_url = 'http://192.168.60.38:8001/hotspot_al/interface/getHotRelateInfo?ids=%s'
     for data in datas:
-        sql = 'select SEQ_IOPM_ARTICLE.nextval from dual'
-        hot_id = oracledb.find(sql)[0][0]
+        sql = 'select sequence.nextval, SEQ_IOPM_ARTICLE.nextval from dual'
+        result = oracledb.find(sql)[0]
+        hot_id = result[0]
+        article_id = result[1]
 
-        def export_callback(execute_type, sql):
+        def export_callback(execute_type, sql, data_json):
             if execute_type != ExportData.EXCEPTION:
                 infoIds = data['infoIds']
                 url = root_url%infoIds
                 json = tools.get_json_by_requests(url, headers = HEADERS)
                 articles = json['data']
+
+                # "EMOTION": 'vint_3',
+                # "ACCOUNT": null,
+                # "WEIGHT": 0,
+                # "TITLE": "str_title",
+                # "URL": "str_url",
+                # "MAY_INVALID": ,
+                # "CLUES_IDS": "",
+                # "WEBSITE_NAME": "str_site",
+                # "KEYWORDS_COUNT": 1,
+                # "HOST": "str_site",
+                # "INFO_TYPE": 'int_type',
+                # "COMMENT_COUNT": null,
+                # "HOT_ID": "vint_%d"%hot_id,
+                # "REVIEW_COUNT": null,
+                # "UUID": "73ec16038e074530ff109e3cfad2594c",
+                # "ID": 'vint_%d'%article_id,
+                # "IS_VIP": null,
+                # "IMAGE_URL": 'str_picture',
+                # "KEYWORDS": "str_keywords",
+                # "KEYWORD_CLUES_ID": "{"中央电视台":"88758"}",
+                # "RELEASE_TIME": "date_pubtime",
+                # "AUTHOR": "江门日报",
+                # "CONTENT": "clob_content",
+                # "RECORD_TIME": 'vdate_%s'%tools.get_current_date(),
+                # "UP_COUNT": 'vint_null'
 
                 key_map = {
                     'id':'int_dataId',
@@ -216,10 +253,11 @@ def get_all_hot():
                     'host': 'str_site',
                     'title': 'str_title',
                     'info_type': 'int_type',
-                    'hot_id':"vint_%d"%hot_id
+                    'hot_id':"vint_%d"%hot_id,
+                    'record_time':'vdate_%s'%tools.get_current_date()
                 }
 
-                export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = articles, unique_key_mapping_source_key = {'url': 'str_url'})
+                export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = articles, unique_key_mapping_source_key = {'url': 'str_url'}, sync_to_es = True)
 
         # 导出全国热点数据
 
@@ -227,11 +265,12 @@ def get_all_hot():
             'id':'vint_%d'%hot_id,
             'title':'str_kw',
             'hot':'int_hot',
-            'hot_type':'vint_0'
+            'hot_type':'vint_0',
+            'record_time':'vdate_%s'%tools.get_current_date()
         }
         # print(data['kw'])
 
-        hot_count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_HOT_INFO', unique_key = 'title', datas = data, callback = export_callback)
+        hot_count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_HOT_INFO', unique_key = 'title', datas = data, callback = export_callback, sync_to_es = True)
 
 
     log.info('''

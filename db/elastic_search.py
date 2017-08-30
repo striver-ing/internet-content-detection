@@ -14,6 +14,9 @@ import utils.tools as tools
 from elasticsearch import Elasticsearch
 from utils.log import log
 
+IP = tools.get_conf_value('config.conf', 'elasticsearch', 'ip')
+PORT = int(tools.get_conf_value('config.conf', 'elasticsearch', 'port'))
+
 class Singleton(object):
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls,'_inst'):
@@ -22,11 +25,11 @@ class Singleton(object):
         return cls._inst
 
 class ES(Singleton):
-    def __init__(self, ip = '127.0.0.1', port = 9200):
+    def __init__(self, ip = IP, port = PORT):
         super(ES, self).__init__()
         if not hasattr(self,'_es'):
             try:
-                self._es = Elasticsearch([{'host':ip,'port':port}])
+                self._es = Elasticsearch([{'host':ip, 'port':port}])
             except Exception as e:
                 raise
             else:
@@ -98,54 +101,60 @@ class ES(Singleton):
             return datas
 
 if __name__ == '__main__':
-    es = ES('192.168.60.40')
-    # es.add('test', {'dong':'傻'})
-    # datas = es.get('tab_iopm_article_info', 14488)
-    # print(datas)
+    # es = ES('192.168.60.40')
+    es = ES()
+    # es.add('test', {'dong':'傻', 'haha':None, 'lala':True})
+    # # datas = es.get('tab_iopm_article_info', 14488)
+    # # print(datas)
 
     body = {
         "query" : {
-            "match" : {
-                "TITLE" : "吴京"
+            # "match_all" : {
+            #     # "TITLE" : "吴京"
+            # }
+
+            'match':{
+                'INFO_TYPE':3
             }
         }
     }
 
 
-    body = {
-        "query":{
-            "multi_match":{
-                "query":"战狼",
-                "fields":["TITLE","CONTENT"]
-            }
-        },
+    # body = {
+    #     "query":{
+    #         "multi_match":{
+    #             "query":"战狼",
+    #             "fields":["TITLE","CONTENT"]
+    #         }
+    #     },
 
-        "range":{
-            "release_time":{
-                "gt":'2017-08-22'
-            }
-        }
-    }
+    #     "range":{
+    #         "release_time":{
+    #             "gt":'2017-08-22'
+    #         }
+    #     }
+    # }
 
-    body = {
-        "query":{
-            "filtered":{
-                "filter":{
-                    "range":{
-                        "release_time":{
-                            "gt":'2017-08-22'
-                        }
-                    }
-                },
-                "query":{
-                    "multi_match":{
-                        "query":"战狼",
-                        "fields":["TITLE","CONTENT"]
-                    }
-                }
-            }
-        }
-    }
+    # body = {
+    #     "query":{
+    #         "filtered":{
+    #             "filter":{
+    #                 "range":{
+    #                     "release_time":{
+    #                         "gt":'2017-08-22'
+    #                     }
+    #                 }
+    #             },
+    #             "query":{
+    #                 "multi_match":{
+    #                     "query":"战狼",
+    #                     "fields":["TITLE","CONTENT"]
+    #                 }
+    #             }
+    #         }
+    #     }
+    # }
 
     datas = es.search('tab_iopm_article_info', body)
-    print(datas)
+    print('\n'*3)
+    print(tools.dumps_json(datas))

@@ -135,6 +135,23 @@ class OracleDB(Singleton):
         else:
             log.debug('%s表创建唯一索引成功 索引为 %s'%(table, key))
 
+    def set_primary_key(self, table, key = "ID"):
+        if STOP_ORCL:
+            return
+
+        try:
+            sql = 'alter table {table_name} add constraint pk_{key} primary key ({key})'.format(table_name = table, key = key)
+            print(sql)
+            self.cursor.execute(sql)
+            self.conn.commit()
+
+        except Exception as e:
+            log.error(table + ' ' + str(e) + ' key = '+ key)
+        else:
+            log.debug('%s表创建主键成功 主键为 %s'%(table, key))
+
+
+
     def close(self):
         if STOP_ORCL:
             return
@@ -147,7 +164,10 @@ if __name__ == '__main__':
     # import threading
 
     db = OracleDB()
+    # sql = "select t.id from TAB_IOPM_ARTICLE_INFO t where url = 'http://weibo.com/5717375748/Fg0f537Dp'"
+    # print(db.find(sql))
     # sql = 'select count(*) from v$process'
+    db.set_primary_key('TAB_IOPM_ARTICLE_COMMENT_INFO')
 
     # result = threading.Thread(target = db.find, args = (sql,)).start()
     # print(result)
@@ -159,7 +179,17 @@ if __name__ == '__main__':
     # print(result)
     # db.find("select ID,TITLE,to_char(CONTENT) as CONTENT,URL,WEBSITE_NAME,IMAGE_URL,to_char(RELEASE_TIME, 'yyyy-mm-dd hh24:mi:ss') as RELEASE_TIME,to_char(RECORD_TIME, 'yyyy-mm-dd hh24:mi:ss') as RECORD_TIME,CLUES_IDS,KEYWORDS,EMOTION,REVIEW_COUNT,ACCOUNT,UUID,COMMENT_COUNT,AUTHOR,INFO_TYPE,UP_COUNT,KEYWORDS_COUNT,HOST,HOT_ID,MAY_INVALID,KEYWORD_CLUES_ID,WEIGHT,IS_VIP from TAB_IOPM_ARTICLE_INFO t where rownum <= 5", to_json = True)
 
+    # sql = '''select id from tab_iopm_article_info where id  not in (
+    # select min(id) from TAB_IOPM_ARTICLE_INFO t group by title ,t.website_name)
+    # '''
+    # resluts = db.find(sql)
+    # print(resluts)
 
-    sql = "select * from TAB_IOPM_ARTICLE_INFO"
-    result = db.find(sql, to_json = True)
-    print(result)
+    # for result in resluts:
+    #     sql = 'delete from tab_iopm_article_info where id = %s'%result[0]
+    #     db.delete(sql)
+
+
+
+#     delete from tab_iopm_article_info where id  not in (
+# select min(id) from TAB_IOPM_ARTICLE_INFO t group by title ,t.website_name)
