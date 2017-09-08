@@ -32,12 +32,32 @@ es = ES()
 export_data = ExportData()
 vip_checked = VipChecked()
 
+def get_interaction_count(comment_count, review_count, transmit_count, up_count):
+    '''
+    @summary: 计算互动量
+    ---------
+    @param comment_count:
+    @param review_count:
+    @param transmit_count:
+    @param up_count:
+    ---------
+    @result:
+    '''
+    comment_count = comment_count or 0
+    review_count = review_count or 0
+    transmit_count = transmit_count or 0
+    up_count = up_count or 0
+
+    return int(comment_count) + int(review_count) + int(transmit_count) + int(up_count)
+
 def get_about_me_message(keywords, hot_id):
     root_url = 'http://192.168.60.38:8001/hotspot_al/interface/getCluesDataSearchInfo?pageNo=%d&pageSize=100&hotKeywords=%s'
 
     count = 0
     page = 1
-    hot_is_vip = False
+    hot_vip_article_count = 0
+    negative_emotion_count = 0
+    article_clues_ids = set()
     while True:
         url = root_url%(page,keywords)
 
@@ -53,6 +73,7 @@ def get_about_me_message(keywords, hot_id):
 
             weight = 0 # 权重
             clues_ids = msg['cluesIds']
+            article_clues_ids.add(clues_ids)
 
             # 取id
             sql = 'select SEQ_IOPM_ARTICLE.nextval from dual'
@@ -67,14 +88,21 @@ def get_about_me_message(keywords, hot_id):
                             'article_id':'vint_%d'%article_id,
                             'clues_id':'vint_%s'%clues_id
                         }
-                        export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_CLUES_SRC', unique_key = 'url', datas = [{}], sync_to_es = True)
+                        export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_CLUES_SRC', datas = [{}], sync_to_es = True)
+
+            is_negative_emotion = (msg['emotion'] == 2) and 1 or 0
+            is_vip = vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])or vip_checked.is_vip(msg['author'])
 
             # 计算权重
-            url = 'http://192.168.60.30:8080/related_sort?article_id=%d&clue_ids=%s&may_invalid=%s'%(article_id, msg['cluesIds'], msg['mayInvalid'] or '0')
+            print('===============================')
+            url = IOPM_SERVICE_ADDRESS + '/related_sort?article_id=%d&clues_ids=%s&may_invalid=%s&vip_count=%s&negative_emotion_count=%s'%(article_id, msg['cluesIds'], msg['mayInvalid'] or '0', is_vip and 1 or 0, is_negative_emotion)
             weight = tools.get_json_by_requests(url).get('weight', 0)
+            print(url)
+            print('-------------------------------')
 
-            is_vip = vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])or vip_checked.is_vip(msg['author'])
-            hot_is_vip = hot_is_vip if hot_is_vip else is_vip
+            # 热点相关统计
+            hot_vip_article_count += 1 if is_vip else 0
+            negative_emotion_count += is_negative_emotion
 
             key_map = {
                 'id':'vint_%d'%article_id,
@@ -101,14 +129,16 @@ def get_about_me_message(keywords, hot_id):
                 'keywords_count':'vint_%d'%len(msg['keywords'].split(',')),
                 'is_vip':'vint_%d'%is_vip,
                 'weight':'vint_%s'%weight,
-                'record_time':'vdate_%s'%tools.get_current_date()
+                'record_time':'vdate_%s'%tools.get_current_date(),
+                'transmit_count':'str_forwardcount',
+                'INTERACTION_COUNT':'vint_%s'%get_interaction_count(msg['commtcount'], msg['reviewCount'], msg['forwardcount'], msg['upCount'])
             }
 
             count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = msg, callback = export_callback, unique_key_mapping_source_key = {'url': 'str_url'}, sync_to_es = True)
 
         page += 1
 
-    return hot_is_vip
+    return hot_vip_article_count, negative_emotion_count, count, ','.join(article_clues_ids)
 
 def update_about_me_message_hot_id():
     sql = 'select t.id, t.keywords from TAB_IOPM_HOT_INFO t where t.hot_type != 0'
@@ -155,15 +185,26 @@ def get_about_me_hot():
             if execute_type != ExportData.EXCEPTION:
 
                 # 取涉我舆情
-                hot_is_vip = get_about_me_message(hot_info['kg'], hot_id)
-
+                hot_vip_article_count, negative_emotion_count, article_count, article_clues_ids = get_about_me_message(hot_info['kg'], hot_id)
+                print('====================')
                 # 计算权重
-                url = 'http://192.168.60.30:8080/related_sort?hot_id=%d&hot_value=%s&clues_id=%s&is_update_db=1'%(hot_id, hot_info['hot'], hot_info['clues_id'])
+                url = IOPM_SERVICE_ADDRESS + '/related_sort?hot_id=%d&hot_value=%s&clues_ids=%s&article_count=%s&vip_count=%s&negative_emotion_count=%s'%(hot_id, hot_info['hot'], article_clues_ids, article_count, hot_vip_article_count, negative_emotion_count)
                 weight = tools.get_json_by_requests(url).get('weight', 0)
+                print(url)
+                print('----------------------------')
+
                 # 同步到es
                 data_json['weight'] = weight
-                data_json['is_vip'] = hot_is_vip
+                data_json['is_vip'] = hot_vip_article_count
+                data_json['negative_emotion_count'] = negative_emotion_count
+                data_json['article_count'] = article_count
+                data_json['article_clues_ids'] = article_clues_ids
                 es.add(table = 'TAB_IOPM_HOT_INFO', data = data_json, data_id = data_json.get("ID"))
+
+                # 更新oracle 数据库里的数据
+                sql = 'update tab_iopm_hot_info set is_vip = %s, weight= %s, negative_emotion_count = %s, article_count = %s, article_clues_ids = %s where id = %s'%(hot_vip_article_count, weight, negative_emotion_count,  article_count, article_clues_ids, data_json["ID"])
+
+                oracledb.update(sql)
 
         key_map = {
             'id':'vint_%d'%hot_id,
@@ -178,12 +219,12 @@ def get_about_me_hot():
         about_me_hot_count += export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_HOT_INFO', unique_key = 'title', datas = hot_info, callback = export_callback)
 
     # 更新vip热点
-    sql = '''
-    update tab_iopm_hot_info set is_vip = 1 where id in (
-         select distinct(hot_id) from TAB_IOPM_ARTICLE_INFO where is_vip != 0
-        )
-    '''
-    oracledb.update(sql)
+    # sql = '''
+    # update tab_iopm_hot_info set is_vip = 1 where id in (
+    #      select distinct(hot_id) from TAB_IOPM_ARTICLE_INFO where is_vip != 0
+    #     )
+    # '''
+    # oracledb.update(sql)
     print('共导出%d 条涉我热点'%about_me_hot_count)
 
 def get_all_hot():

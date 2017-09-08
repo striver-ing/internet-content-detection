@@ -19,7 +19,7 @@ STO_MAX_ID_FILE = '.max_id'
 
 class SyncES():
     def __init__(self):
-        self._es = ES(ip = '192.168.60.40', port = 9200)
+        self._es = ES()
         self._db = OracleDB()
 
         self._max_id = tools.read_file(STO_MAX_ID_FILE)

@@ -30,6 +30,7 @@ export_data = ExportData()
 vip_checked = VipChecked()
 
 STO_PER_SYNC_TIME = '.sync_time'
+IOPM_SERVICE_ADDRESS = 'http://localhost:8080'
 
 def get_url(time_lenght = 60):
     '''
@@ -47,6 +48,25 @@ def get_url(time_lenght = 60):
 
     root_url = 'http://192.168.60.38:8001/hotspot_al/interface/getCluesDataSearchInfo?pageNo=%d&pageSize=100&updateSTime={per_date}&updateETime={current_date}&sort=5&isDesc=0'.format(per_date = per_date, current_date = current_date)
     return root_url
+
+def get_interaction_count(comment_count, review_count, transmit_count, up_count):
+    '''
+    @summary: 计算互动量
+    ---------
+    @param comment_count:
+    @param review_count:
+    @param transmit_count:
+    @param up_count:
+    ---------
+    @result:
+    '''
+    comment_count = comment_count or 0
+    review_count = review_count or 0
+    transmit_count = transmit_count or 0
+    up_count = up_count or 0
+
+    return int(comment_count) + int(review_count) + int(transmit_count) + int(up_count)
+
 
 def get_datas(root_url):
     count = 0
@@ -83,9 +103,16 @@ def get_datas(root_url):
                         }
                         export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_CLUES_SRC', datas = [{}], sync_to_es = True)
 
+            is_negative_emotion = (msg['emotion'] == 2) and 1 or 0
+            is_vip = vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])or vip_checked.is_vip(msg['author'])
+
             # 计算权重
-            url = 'http://192.168.60.30:8080/related_sort?article_id=%d&clue_ids=%s&may_invalid=%s'%(article_id, msg['cluesIds'], msg['mayInvalid'] or '0')
+            print('===============================')
+            url = IOPM_SERVICE_ADDRESS + '/related_sort?article_id=%d&clues_ids=%s&may_invalid=%s&vip_count=%s&negative_emotion_count=%s'%(article_id, msg['cluesIds'], msg['mayInvalid'] or '0', is_vip and 1 or 0, is_negative_emotion)
             weight = tools.get_json_by_requests(url).get('weight', 0)
+            print(url)
+            print('----------------------------')
+
 
             key_map = {
                 'id':'vint_%d'%article_id,
@@ -111,7 +138,9 @@ def get_datas(root_url):
                 'keywords_count':'vint_%d'%len(msg['keywords'].split(',')),
                 'is_vip':'vint_%d'%vip_checked.is_vip(msg['url']) or vip_checked.is_vip(msg['websiteName'])or vip_checked.is_vip(msg['author']),
                 'weight':'vint_%s'%weight,
-                'record_time':'vdate_%s'%tools.get_current_date()
+                'record_time':'vdate_%s'%tools.get_current_date(),
+                'transmit_count':'str_forwardcount',
+                'INTERACTION_COUNT':'vint_%s'%get_interaction_count(msg['commtcount'], msg['reviewCount'], msg['forwardcount'], msg['upCount'])
             }
 
             export_data.export_to_oracle(key_map = key_map, aim_table = 'TAB_IOPM_ARTICLE_INFO', unique_key = 'url', datas = msg, callback = export_callback, unique_key_mapping_source_key = {'url': 'str_url'}, sync_to_es = True)
@@ -126,3 +155,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # url = 'http://localhost:8080/related_sort?article_id=2283936&clues_ids=273&may_invalid=0&vip_count=1&negative_emotion_count=0'
+    # weight = tools.get_json_by_requests(url).get('weight', 0)
+    # print(weight)

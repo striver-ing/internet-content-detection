@@ -1010,7 +1010,7 @@ def add_wwa_app_content_info(table, site_id, title, summary, image_url, img_stor
         'record_time':tools.get_current_date(),
         'read_status':0,
         'is_audio':is_audio,
-        'sexy_image_url': sexy_image_url,
+        'sexy_image_url': sexy_image_url,  # 需要鉴黄的图片地址 多个以列表的形式赋值
         'sexy_image_status': '',
         'image_pron_status': 0
     }

@@ -79,14 +79,14 @@ def get_logger(name = 'log.log', path = ''):
 
     return logger
 
-# logging.disable(logging.DEBUG) # 关闭所有log
+logging.disable(logging.DEBUG) # 关闭所有log
 
 # 不让 requests打印debug日志 看着乱
-logging.getLogger("requests").setLevel(logging.WARNING)
-logging.getLogger("selenium.webdriver.remote.remote_connection").setLevel(logging.WARNING)
-logging.getLogger("selenium.webdriver.remote").setLevel(logging.WARNING)
-logging.getLogger("selenium.webdriver").setLevel(logging.WARNING)
-logging.getLogger("selenium").setLevel(logging.WARNING)
+# logging.getLogger("requests").setLevel(logging.WARNING)
+# logging.getLogger("selenium.webdriver.remote.remote_connection").setLevel(logging.WARNING)
+# logging.getLogger("selenium.webdriver.remote").setLevel(logging.WARNING)
+# logging.getLogger("selenium.webdriver").setLevel(logging.WARNING)
+# logging.getLogger("selenium").setLevel(logging.WARNING)
 
 # print(logging.Logger.manager.loggerDict) # 取使用debug模块的name
 

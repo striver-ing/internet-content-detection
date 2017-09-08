@@ -14,8 +14,7 @@ import utils.tools as tools
 from elasticsearch import Elasticsearch
 from utils.log import log
 
-IP = tools.get_conf_value('config.conf', 'elasticsearch', 'ip')
-PORT = int(tools.get_conf_value('config.conf', 'elasticsearch', 'port'))
+ADDRESS = tools.get_conf_value('config.conf', 'elasticsearch', 'address')
 
 class Singleton(object):
     def __new__(cls, *args, **kwargs):
@@ -25,11 +24,11 @@ class Singleton(object):
         return cls._inst
 
 class ES(Singleton):
-    def __init__(self, ip = IP, port = PORT):
+    def __init__(self, address = ADDRESS):
         super(ES, self).__init__()
         if not hasattr(self,'_es'):
             try:
-                self._es = Elasticsearch([{'host':ip, 'port':port}])
+                self._es = Elasticsearch(address.split(','))
             except Exception as e:
                 raise
             else:

@@ -59,7 +59,7 @@ class Prpcrypt():
 
 
 if __name__ == '__main__':
-    keys = '你好'
+    keys = 'pattek.com.cn'
 
     text = "测试"
 

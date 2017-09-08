@@ -66,16 +66,23 @@ class OracleDB(Singleton):
             return []
 
         result = []
-        if fetch_one:
-            result =  self.cursor.execute(sql).fetchone()
-        else:
-            result =  self.cursor.execute(sql).fetchall()
+        try:
+            if fetch_one:
+                result =  self.cursor.execute(sql).fetchone()
+            else:
+                result =  self.cursor.execute(sql).fetchall()
 
-        result = self.__cover_clob_to_str(result)
-        if to_json:
-            columns = [i[0] for i in self.cursor.description]
-            # print(','.join(columns))
-            result = [dict(zip(columns, r)) for r in result]
+            result = self.__cover_clob_to_str(result)
+            if to_json:
+                columns = [i[0] for i in self.cursor.description]
+                # print(','.join(columns))
+                result = [dict(zip(columns, r)) for r in result]
+        except Exception as e:
+            log.error('''
+                -----错误-----
+                sql ： %s
+                error：%s
+                '''%(sql, str(e)))
 
         return result
 
