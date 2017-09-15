@@ -31,6 +31,7 @@ oracledb = OracleDB()
 es = ES()
 export_data = ExportData()
 vip_checked = VipChecked()
+IOPM_SERVICE_ADDRESS = 'http://localhost:8080'
 
 def get_interaction_count(comment_count, review_count, transmit_count, up_count):
     '''
@@ -202,8 +203,7 @@ def get_about_me_hot():
                 es.add(table = 'TAB_IOPM_HOT_INFO', data = data_json, data_id = data_json.get("ID"))
 
                 # 更新oracle 数据库里的数据
-                sql = 'update tab_iopm_hot_info set is_vip = %s, weight= %s, negative_emotion_count = %s, article_count = %s, article_clues_ids = %s where id = %s'%(hot_vip_article_count, weight, negative_emotion_count,  article_count, article_clues_ids, data_json["ID"])
-
+                sql = "update tab_iopm_hot_info set is_vip = %s, weight= %s, negative_emotion_count = %s, article_count = %s, article_clues_ids = '%s' where id = %s"%(hot_vip_article_count, weight, negative_emotion_count,  article_count, article_clues_ids, data_json["ID"])
                 oracledb.update(sql)
 
         key_map = {
