@@ -79,21 +79,21 @@ def get_logger(name = 'log.log', path = ''):
 
     return logger
 
-logging.disable(logging.DEBUG) # 关闭所有log
+# logging.disable(logging.DEBUG) # 关闭所有log
 
 # 不让 requests打印debug日志 看着乱
-# logging.getLogger("requests").setLevel(logging.WARNING)
-# logging.getLogger("selenium.webdriver.remote.remote_connection").setLevel(logging.WARNING)
-# logging.getLogger("selenium.webdriver.remote").setLevel(logging.WARNING)
-# logging.getLogger("selenium.webdriver").setLevel(logging.WARNING)
-# logging.getLogger("selenium").setLevel(logging.WARNING)
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("selenium.webdriver.remote.remote_connection").setLevel(logging.WARNING)
+logging.getLogger("selenium.webdriver.remote").setLevel(logging.WARNING)
+logging.getLogger("selenium.webdriver").setLevel(logging.WARNING)
+logging.getLogger("selenium").setLevel(logging.WARNING)
 
 # print(logging.Logger.manager.loggerDict) # 取使用debug模块的name
 
 #日志级别大小关系为：critical > error > warning > info > debug
 
 import os
-PROJECT_NAME = 'iopm-service'
+PROJECT_NAME = 'internet-content-detection'
 CURRENT_PATH = os.getcwd()
 PROJECT_PATH = CURRENT_PATH[:CURRENT_PATH.find(PROJECT_NAME) + len(PROJECT_NAME)]
 log= get_logger(PROJECT_NAME + '.log', PROJECT_PATH + '\\log\\')

@@ -40,47 +40,50 @@ def add_root_url(parser_params = {}):
         parser_params : %s
         '''%str(parser_params))
 
-    keywords = parser_params['keywords']
+    result_list = parser_params['result_list']
+    for result in result_list:
+        monitor_type = result[1]
+        keywords = result[0].split(',')
+        for keyword in keywords:
+            if keyword:
+                url = 'http://weixin.sogou.com/weixin?query=%s&_sug_type_=&s_from=input&_sug_=y&type=1&page=1&ie=utf8'%keyword
+                if mongodb.find('WWA_wechat_account_url', {'url': url}):
+                    continue
 
-    for keyword in keywords:
-        if keyword:
-            url = 'http://weixin.sogou.com/weixin?query=%s&_sug_type_=&s_from=input&_sug_=y&type=1&page=1&ie=utf8'%keyword
-            if mongodb.find('WWA_wechat_account_url', {'url': url}):
-                continue
+                headers = {
+                    "Upgrade-Insecure-Requests": "1",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
+                    "Cache-Control": "max-age=0",
+                    "Connection": "keep-alive",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+                    "Accept-Language": "zh-CN,zh;q=0.8",
+                    "Accept-Encoding": "gzip, deflate",
+                    "Cookie": "wuid=AAGPF/32GQAAAAqLFD2BdAAAGwY=; CXID=A468F618D67D4868DC83E6061B1B3CCC; ABTEST=0|1500285612|v1; weixinIndexVisited=1; SUV=006317867B7CC4C5596C8AAD6B089707; SUIR=0A14ACB4D0CA9B50A8ABB33CD0CA69FA; ld=ekllllllll2BbH49lllllVOm1tylllll1kecBlllll9lllll9Zlll5@@@@@@@@@@; ad=AZllllllll2Bzw7GlllllVOeQA6lllll1kectkllll9lllllVqxlw@@@@@@@@@@@; SUID=72780CD23D148B0A59688B0C0002AD65; IPLOC=CN1100; sct=11; SNUID=B4B50E097177247B9A6BE55E72153425; JSESSIONID=aaaVCfkabuJQTfaNW5f1v",
+                    "Host": "weixin.sogou.com"
+                }
+                proxies = base_parser.get_proxies()
+                headers["User-Agent"] = base_parser.get_user_agent()
 
-            headers = {
-                "Upgrade-Insecure-Requests": "1",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
-                "Cache-Control": "max-age=0",
-                "Connection": "keep-alive",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-                "Accept-Language": "zh-CN,zh;q=0.8",
-                "Accept-Encoding": "gzip, deflate",
-                "Cookie": "wuid=AAGPF/32GQAAAAqLFD2BdAAAGwY=; CXID=A468F618D67D4868DC83E6061B1B3CCC; ABTEST=0|1500285612|v1; weixinIndexVisited=1; SUV=006317867B7CC4C5596C8AAD6B089707; SUIR=0A14ACB4D0CA9B50A8ABB33CD0CA69FA; ld=ekllllllll2BbH49lllllVOm1tylllll1kecBlllll9lllll9Zlll5@@@@@@@@@@; ad=AZllllllll2Bzw7GlllllVOeQA6lllll1kectkllll9lllllVqxlw@@@@@@@@@@@; SUID=72780CD23D148B0A59688B0C0002AD65; IPLOC=CN1100; sct=11; SNUID=B4B50E097177247B9A6BE55E72153425; JSESSIONID=aaaVCfkabuJQTfaNW5f1v",
-                "Host": "weixin.sogou.com"
-            }
-            ip, port, user_agent = base_parser.get_proxies()
-            headers["User-Agent"] = user_agent
+                html, r = tools.get_html_by_requests(url, headers = headers, proxies = proxies)
+                # 判断是否存在公众号
+                not_page_tip = '/new/pc/images/bg_404_2.png'
+                if not_page_tip in html:
+                    continue
 
-            html, r = tools.get_html_by_requests(url, headers = headers, proxies = proxies)
-            # 判断是否存在公众号
-            not_page_tip = '/new/pc/images/bg_404_2.png'
-            if not_page_tip in html:
-                continue
+                # 取页码
+                regex = 'id="pagebar_container">.*>(\d*?)</a>.*?<a id="sogou_next"'
+                page_num = tools.get_info(html, regex, fetch_one = True)
+                page_num = int(page_num) if page_num else 1
 
-            # 取页码
-            regex = 'id="pagebar_container">.*>(\d*?)</a>.*?<a id="sogou_next"'
-            page_num = tools.get_info(html, regex, fetch_one = True)
-            page_num = int(page_num) if page_num else 1
+                for page in range(1, page_num + 1):
+                    url = 'http://weixin.sogou.com/weixin?query=%s&_sug_type_=&s_from=input&_sug_=y&type=1&page=%d&ie=utf8'%(keyword, page)
+                    base_parser.add_url('WWA_wechat_account_url', SITE_ID, url, remark=monitor_type)
 
-            for page in range(1, page_num + 1):
-                url = 'http://weixin.sogou.com/weixin?query=%s&_sug_type_=&s_from=input&_sug_=y&type=1&page=%d&ie=utf8'%(keyword, page)
-                base_parser.add_url('WWA_wechat_account_url', SITE_ID, url)
-
-            tools.delay_time()
+            # tools.delay_time()
 
 # 必须定义 解析网址
 def parser(url_info):
+    monitor_type = url_info['remark']
     url_info['_id'] = str(url_info['_id'])
     log.debug('处理 \n' + tools.dumps_json(url_info))
 
@@ -102,9 +105,8 @@ def parser(url_info):
         "Host": "weixin.sogou.com"
     }
 
-    ip, port, user_agent = base_parser.get_proxies()
-    headers["User-Agent"] = user_agent
-    proxies = {'http':"http://{ip}:{port}".format(ip = ip, port = port), 'https':"https://{ip}:{port}".format(ip = ip, port = port)}
+    proxies = base_parser.get_proxies()
+    headers["User-Agent"] = base_parser.get_user_agent()
     # 解析
     html, request = tools.get_html_by_requests(root_url, headers = headers, proxies = proxies)
     if not html:
@@ -113,7 +115,10 @@ def parser(url_info):
 
     regex = '<input type=text name="c" value="" placeholder="(.*?)" id="seccodeInput">'
     check_info = tools.get_info(html, regex, fetch_one = True)
-    log.debug('取公众号列表' + check_info)
+    log.debug('''取公众号列表%s
+                 url:%s
+              '''%(check_info, root_url)
+              )
 
     # 公众号信息块
     regex = '<!-- a -->(.*?)<!-- z -->'
@@ -192,9 +197,10 @@ def parser(url_info):
             是否加V（是否认证） %s
             二维码              %s
             本地二维码          %s
-            '''%(name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url))
+            监测类型            %s
+            '''%(name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url, monitor_type))
 
-        base_parser.add_wechat_account_info('WWA_wechat_official_accounts', site_id, name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url)
+        base_parser.add_wechat_account_info('WWA_wechat_official_accounts', site_id, name, account_id, account_url, image_url, local_image_url, article_count, summary, certification, is_verified, barcode_url, local_barcode_url, monitor_type)
 
     base_parser.update_url('WWA_wechat_account_url', root_url, Constance.DONE)
     tools.delay_time()

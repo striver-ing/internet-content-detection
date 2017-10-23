@@ -198,15 +198,24 @@ def get_proxies():
     @result:
     '''
 
-    proxies, r = tools.get_html_by_requests('http://127.0.0.1:8000/?types=0&count=50')
-    proxies = eval(proxies)
-    proxie = random.choice(proxies)
+    try:
+        proxies, r = tools.get_html_by_requests('http://127.0.0.1:8000/?types=0&count=50')
+        proxies = eval(proxies)
+        proxie = random.choice(proxies)
 
-    ip = proxie[0]
-    port = proxie[1]
-    user_agent = random.choice(Constance.USER_AGENTS)
+        ip = proxie[0]
+        port = proxie[1]
 
-    return ip, port, user_agent
+        return {'http':"http://{ip}:{port}".format(ip = ip, port = port), 'https':"https://{ip}:{port}".format(ip = ip, port = port)}
+
+    except:
+        return {}
+
+def get_user_agent():
+    try:
+        return  random.choice(Constance.USER_AGENTS)
+    except:
+        return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36"
 
 def is_have_video_by_site(url):
     '''
@@ -921,7 +930,7 @@ def add_WWA_search_app_info(table, site_id, url, title = '', summary = '', updat
         keywords = result[0]
         keywords = keywords.split(',')
         for keyword in keywords:
-            if keyword in text_cluster:
+            if keyword in text_content:
                 is_usefull = True
                 break
         if is_usefull:

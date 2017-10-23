@@ -71,11 +71,24 @@ def get_interaction_count(comment_count, review_count, transmit_count, up_count)
 def get_datas(root_url):
     count = 0
     page = 1
+    retry_times = 0
+    max_retry_times = 5
+
     while True:
         url = root_url%page
         print(url)
 
         datas = tools.get_json_by_requests(url, headers = HEADERS)
+        if not datas:
+            if retry_times > max_retry_times:
+                break
+            else:
+                retry_times += 1
+                tools.delay_time(2)
+                continue
+        else:
+            retry_times = 0
+
         if datas['message'] == '查询记录为0':
             print('每页100条  第%d页无数据 共导出 %d 条数据'%(page, count))
             break

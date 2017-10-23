@@ -133,8 +133,8 @@ def get_html_by_webdirver(url, proxies = ''):
             driver.start_session(webdriver.DesiredCapabilities.PHANTOMJS)
 
         driver.get(url)
-        # time.sleep(10)
         html = driver.page_source
+        # driver.save_screenshot('1.png')   #截图保存
         driver.close()
     except Exception as e:
         log.error(e)
@@ -724,7 +724,7 @@ def format_date(date, old_format = '', new_format = '%Y-%m-%d %H:%M:%S'):
         date_str = date
     return date_str
 
-def delay_time(sleep_time = 60):
+def delay_time(sleep_time = 160):
     '''
     @summary: 睡眠  默认1分钟
     ---------

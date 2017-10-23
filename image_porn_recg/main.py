@@ -9,6 +9,7 @@ Created on 2017-03-01 09:44
 
 from image_porn_control import ImagePornControl
 from image_collector import Collector
+import time
 
 import sys
 sys.path.append('../')
@@ -54,4 +55,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    while True:
+        main()
+        time.sleep(60)

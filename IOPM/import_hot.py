@@ -58,11 +58,23 @@ def get_about_me_message(keywords, hot_id):
     page = 1
     hot_vip_article_count = 0
     negative_emotion_count = 0
+    retry_times = 0
+    max_retry_times = 5
     article_clues_ids = set()
     while True:
         url = root_url%(page,keywords)
 
         datas = tools.get_json_by_requests(url, headers = HEADERS)
+        if not datas:
+            if retry_times > max_retry_times:
+                break
+            else:
+                retry_times += 1
+                tools.delay_time(2)
+                continue
+        else:
+            retry_times = 0
+
         if datas['message'] == '查询记录为0':
             print('每页100条  第%d页无数据 共导出 %d 条数据'%(page, count))
             break
@@ -195,11 +207,11 @@ def get_about_me_hot():
                 print('----------------------------')
 
                 # 同步到es
-                data_json['weight'] = weight
-                data_json['is_vip'] = hot_vip_article_count
-                data_json['negative_emotion_count'] = negative_emotion_count
-                data_json['article_count'] = article_count
-                data_json['article_clues_ids'] = article_clues_ids
+                data_json['WEIGHT'] = weight
+                data_json['IS_VIP'] = hot_vip_article_count
+                data_json['NEGATIVE_EMOTION_COUNT'] = negative_emotion_count
+                data_json['ARTICLE_COUNT'] = article_count
+                data_json['ARTICLE_CLUES_IDS'] = article_clues_ids
                 es.add(table = 'TAB_IOPM_HOT_INFO', data = data_json, data_id = data_json.get("ID"))
 
                 # 更新oracle 数据库里的数据

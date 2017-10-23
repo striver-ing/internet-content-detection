@@ -100,20 +100,32 @@ class ES(Singleton):
             return datas
 
 if __name__ == '__main__':
-    # es = ES('192.168.60.40')
-    es = ES()
-    # es.add('test', {'dong':'傻', 'haha':None, 'lala':True})
+    es = ES('localhost:9200')
+    # { "create": { "_index": "index1", "_type": "resource", "_id": 1 } }
+    # { "title": "周星驰最新电影" }
+    # { "create": { "_index": "index1", "_type": "resource", "_id": 2 } }
+    # { "title": "周星驰最好看的新电影" }
+    # { "create": { "_index": "index1", "_type": "resource", "_id": 3 } }
+    # { "title": "周星驰最新电影，最好，新电影" }
+    # { "create": { "_index": "index1", "_type": "resource", "_id": 4 } }
+    # { "title": "最最最最好的新新新新电影" }
+    # { "create": { "_index": "index1", "_type": "resource", "_id": 5 } }
+    # { "title": "I'm not happy about the foxes" }
+
+    # es = ES()
+    es.add('myindex', {'RECORD_TIME':'2017-08-22 08:19:23', 'TITLE':'最最最最好的新新新新电影'})
+    es.add('myindex', {'RECORD_TIME':'2017-08-22 08:19:23', 'TITLE':'周星驰最新电影，最好，新电影'})
     # # datas = es.get('tab_iopm_article_info', 14488)
     # # print(datas)
 
     body = {
         "query" : {
             # "match_all" : {
-            #     # "TITLE" : "吴京"
+            #     "TITLE" : "最新"
             # }
 
             'match':{
-                'INFO_TYPE':3
+                "TITLE" : "最新"
             }
         }
     }
@@ -154,6 +166,6 @@ if __name__ == '__main__':
     #     }
     # }
 
-    datas = es.search('tab_iopm_article_info', body)
+    datas = es.search('myindex', body)
     print('\n'*3)
     print(tools.dumps_json(datas))

@@ -1,0 +1,240 @@
+curl -XPUT "http://localhost:9200/tab_iopm_hot_info" -d'  
+{
+    "settings":{
+        "number_of_shards":3,
+        "number_of_replicas":1
+    },
+    "mappings":{
+        "tab_iopm_hot_info":{
+            "properties":{
+                "RECORD_TIME":{
+                    "type" :   "date",
+                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+                },
+                "IS_VIP":{
+                    "type":"boolean"
+                },
+                "NEGATIVE_EMOTION_COUNT":{
+                    "type":"long"
+                },
+                "CLUES_ID":{
+                    "type":"long"
+                },
+                "IS_VIP":{
+                    "type":"long"
+                },
+                "WEIGHT":{
+                    "type":"long"
+                },
+                "HOT":{
+                    "type":"long"
+                },
+                "ARTICLE_CLUES_IDS":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "HOT_TYPE":{
+                    "type":"long"
+                },
+                "ARTICLE_COUNT":{
+                    "type":"long"
+                },
+                "TITLE":{
+                    "type":"string",
+                    "analyzer":"ik_max_word"
+                },
+                "ID":{
+                    "type":"long"
+                },
+                "WEIGHT":{
+                    "type":"long"
+                },
+                "KEYWORDS":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                }
+            }
+        }
+    }
+}'
+
+
+curl -XPUT "http://localhost:9200/tab_iopm_article_info" -d'
+{
+    "settings":{
+        "number_of_shards":3,
+        "number_of_replicas":1
+    },
+    "mappings":{
+        "tab_iopm_article_info":{
+            "properties":{
+                "EMOTION":{
+                    "type":"long"
+                },
+                "HOST":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "AUTHOR":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "URL":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "WEBSITE_NAME":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "ACCOUNT":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "REVIEW_COUNT":{
+                    "type":"long"
+                },
+                "KEYWORDS_COUNT":{
+                    "type":"long"
+                },
+                "RELEASE_TIME":{
+                    "type" :   "date",
+                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+                },
+                "CONTENT":{
+                    "type":"string",
+                    "analyzer":"ik_max_word"
+                },
+                "ID":{
+                    "type":"long"
+                },
+                "UUID":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "WEIGHT":{
+                    "type":"double"
+                },
+                "CLUES_IDS":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "UP_COUNT":{
+                    "type":"long"
+                },
+                "INTERACTION_COUNT":{
+                    "type":"long"
+                },
+                "RECORD_TIME":{
+                    "type":"date",
+                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+                },
+                "COMMENT_COUNT":{
+                    "type":"long"
+                },
+                "IS_VIP":{
+                    "type":"long"
+                },
+                "INFO_TYPE":{
+                    "type":"long"
+                },
+                "HOT_ID":{
+                    "type":"long"
+                },
+                "KEYWORD_CLUES_ID":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "MAY_INVALID":{
+                    "type":"long"
+                },
+                "TITLE":{
+                    "type":"string",
+                    "analyzer":"ik_max_word"
+                },
+                "KEYWORDS":{
+                    "type":"string",
+                    "index": "not_analyzed"
+                },
+                "TRANSMIT_COUNT":{
+                    "type":"long"
+                },
+                "ZERO_ID":{
+                  "type":"string",
+                  "index": "not_analyzed"
+                },
+                "FIRST_ID":{
+                  "type":"string",
+                  "index": "not_analyzed"
+                },
+                "SECOND_ID":{
+                  "type":"string",
+                  "index": "not_analyzed"
+                }
+            }
+        }
+    }
+}'
+
+
+
+curl -XPUT "http://localhost:9200/tab_iopm_clues" -d'
+{
+    "settings":{
+        "number_of_shards":3,
+        "number_of_replicas":1
+    },
+    "mappings":{
+        "tab_iopm_clues":{
+            "properties":{
+                "FIRST_ID":{
+                    "type":"long"
+                },
+                "RECORD_TIME":{
+                    "type" :   "date",
+                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+                },
+                "SECOND_ID":{
+                    "type":"long"
+                },
+                "ZERO_ID":{
+                    "type":"long"
+                },
+                "ID":{
+                    "type":"long"
+                },
+                "UPDATE_TIME":{
+                    "type" :   "date",
+                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+                },
+                "WEIGHT":{
+                    "type":"double"
+                },
+                "KEYWORD2":{
+                    "type":"string",
+                    "analyzer":"ik_max_word"
+                },
+                "KEYWORD1":{
+                    "type":"string",
+                    "analyzer":"ik_max_word"
+                },
+                "KEYWORD3":{
+                    "type":"string",
+                    "analyzer":"ik_max_word"
+                },
+                "NAME":{
+                    "type":"string",
+                    "analyzer":"ik_max_word"
+                }
+            }
+        }
+    }
+}'
+
+curl -XPUT "http://localhost:9200/tab_iopm_article_clues_src" -d'
+{
+    "settings":{
+        "number_of_shards":3,
+        "number_of_replicas":1
+    }
+}'

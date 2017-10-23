@@ -15,15 +15,15 @@ def main():
     db = OracleDB()
     mongodb = MongoDB()
 
-    sql = 'select t.ID from TAB_MVMS_WEIBO_INFO t where monitor_status = 402'
-    result = db.find(sql, fetch_one=False)
-    if not result:
+    sql = 'select t.ID, t.monitor_type from TAB_MVMS_WEIBO_INFO t where monitor_status = 402'
+    result_list = db.find(sql, fetch_one=False)
+    if not result_list:
         log.debug('无任务 结束')
         return
 
-    parser_params = []
-    for i in result:
-        parser_params.extend(str(i[0]).split(','))
+    parser_params = result_list
+    # for i in result:
+    #     parser_params.extend(str(i[0]).split(','))
 
     def begin_callback():
         log.info('\n********** WWA_weibo_info begin **********')

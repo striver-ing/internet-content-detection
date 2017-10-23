@@ -61,3 +61,27 @@
     "page": 0,
     "uid": "6586AD26-34CC-49A8-A30F-A93410F22503"
 }
+
+泸州 = {
+    "adcode": "110114",
+    "loc_name": "",
+    "loc_addr": "",
+    "locMore": "1",
+    "forward": "1",
+    "loc_busi_cgy": "",
+    "page": 0,  # 翻页
+    "cachedCount": 0,  #缓存数 每一次取到的条目叠加
+    "loc_busi_dis": "419",
+    "cityId": "city279",
+    "chlid": "city279",
+    "provinceName": "四川",
+    "cityList": "泸州",
+    "loc_busi_id": "1860975694553074438",
+    "lat": "0",
+    "cityName": "泸州",
+    "last_id": "",
+    "uid": "6586AD26-34CC-49A8-A30F-A93410F22503",
+    "locType": "city",
+    "lon": "0",
+    "loc_busi_name": ""
+}

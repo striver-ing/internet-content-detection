@@ -25,17 +25,18 @@ def get_release_time(mblog):
         timeStr = tools.time.strftime("%Y-%m-%d", ltime)
         if tools.re.compile('今天').findall(release_time):
             release_time = release_time.replace('今天', '%s' % timeStr)
-        # if re.compile('小时前').findall(release_time):
-        #     nhours = re.compile('(\d+)小时前').findall(release_time)
-        #     hours_ago = (datetime.datetime.now() - datetime.timedelta(hours=int(nhours[0])))
-        #     release_time = hours_ago.strftime("%Y-%m-%d %H:%M")
+        elif tools.re.compile('小时前').findall(release_time):
+            nhours = tools.re.compile('(\d+)小时前').findall(release_time)
+            hours_ago = (tools.datetime.datetime.now() - tools.datetime.timedelta(hours=int(nhours[0])))
+            release_time = hours_ago.strftime("%Y-%m-%d %H:%M")
         elif tools.re.compile('分钟前').findall(release_time):
             nminutes = tools.re.compile('(\d+)分钟前').findall(release_time)
             minutes_ago = (tools.datetime.datetime.now() - tools.datetime.timedelta(minutes=int(nminutes[0])))
             release_time = minutes_ago.strftime("%Y-%m-%d %H:%M")
         else:
-            if len(release_time)<=14:
-                release_time = '%s-%s'%(timeStr[0:4],release_time)
+            pass
+            # if len(release_time)<=14:
+            #     release_time = '%s-%s'%(timeStr[0:4],release_time)
     except:
         release_time = ''
     finally:
@@ -62,21 +63,25 @@ def add_root_url(parser_params):
         添加根url
         parser_params : %s
         '''%str(parser_params))
-    for search_keyword in parser_params:
-        remark = search_keyword
-        if not search_keyword:
-            continue
-        containerid = '230413'+search_keyword
+    for result in parser_params:
+        monitor_type = result[1]
+        keywords = str(result[0]).split(',')
 
-        weibo_content_url = 'http://m.weibo.cn/api/container/getIndex?containerid=%s_-_WEIBO_SECOND_PROFILE_WEIBO&page_type=03'% containerid
-        base_parser.add_url('WWA_weibo_info_urls', SITE_ID, weibo_content_url, remark=remark)
+        for search_keyword in keywords:
+            if not search_keyword:
+                continue
+            containerid = '230413'+search_keyword
+
+            weibo_content_url = 'http://m.weibo.cn/api/container/getIndex?containerid=%s_-_WEIBO_SECOND_PROFILE_WEIBO&page_type=03'% containerid
+            base_parser.add_url('WWA_weibo_info_urls', SITE_ID, weibo_content_url, remark={'search_keyword':search_keyword, 'monitor_type':monitor_type})
 
 def parser(url_info):
     url_info['_id'] = str(url_info['_id'])
     log.debug('处理 \n' + tools.dumps_json(url_info))
 
     root_url = url_info['url']
-    weibo_id = url_info['remark']
+    weibo_id = url_info['remark']['search_keyword']
+    monitor_type = url_info['remark']['monitor_type']
 
     for i in range(1, 100):
         weibo_content_url = root_url + '&page=%d' % i
@@ -93,9 +98,8 @@ def parser(url_info):
             "Connection": "keep-alive",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
         }
-        ip, port, user_agent = base_parser.get_proxies()
-        headers["User-Agent"] = user_agent
-        # proxies = {'http':"http://{ip}:{port}".format(ip = ip, port = port), 'https':"https://{ip}:{port}".format(ip = ip, port = port)}
+        proxies = base_parser.get_proxies()
+        headers["User-Agent"] = base_parser.get_user_agent()
         proxies = {}
         html = tools.get_json_by_requests(weibo_content_url, headers = headers, proxies = proxies)
 
@@ -123,9 +127,8 @@ def parser(url_info):
                 "Upgrade-Insecure-Requests": "1",
                 "Connection": "keep-alive"
             }
-            ip, port, user_agent = base_parser.get_proxies()
-            headers["User-Agent"] = user_agent
-            # proxies = {'http':"http://{ip}:{port}".format(ip = ip, port = port), 'https':"https://{ip}:{port}".format(ip = ip, port = port)}
+            proxies = base_parser.get_proxies()
+            headers["User-Agent"] = base_parser.get_user_agent()
             proxies = {}
             origin_html, r = tools.get_html_by_requests(url, headers = headers, proxies = proxies)
             if not origin_html:
@@ -155,31 +158,34 @@ def parser(url_info):
             transpond_count = tools.get_json_value(mblog, 'reposts_count')
             praise_count = tools.get_json_value(mblog, 'attitudes_count')
 
+
             # 敏感事件
             sensitive_id = ''
-            sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
-            for sensitive_event_info in sensitive_event_infos:
-                _id = sensitive_event_info[0]
-                keyword1 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
-                keyword2 = sensitive_event_info[4].split(',') if sensitive_event_info[4] else []
-                keyword3 = sensitive_event_info[5].split(',') if sensitive_event_info[5] else []
+            if monitor_type == 1 or monitor_type == 2:
+                sensitive_event_infos = oracledb.find('select t.id, t.keyword1, t.keyword2, t.keyword3 from tab_mvms_sensitive_event t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time')
+                for sensitive_event_info in sensitive_event_infos:
+                    _id = sensitive_event_info[0]
+                    keyword1 = sensitive_event_info[1].split(',') if sensitive_event_info[1] else []
+                    keyword2 = sensitive_event_info[2].split(',') if sensitive_event_info[2] else []
+                    keyword3 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
 
-                if base_parser.is_violate(content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
-                    sensitive_id = _id
-                    break
+                    if base_parser.is_violate(content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
+                        sensitive_id = _id
+                        break
 
             # 违规事件
             violate_id = ''
-            vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
-            for vioation_knowledge_info in vioation_knowledge_infos:
-                _id = vioation_knowledge_info[0]
-                keyword1 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
-                keyword2 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
-                keyword3 = vioation_knowledge_info[4].split(',') if vioation_knowledge_info[4] else []
+            if monitor_type == 0 or monitor_type == 2:
+                vioation_knowledge_infos = oracledb.find('select t.id, t.keyword1, t.keyword2, t.keyword3 from tab_mvms_violation_knowledge t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time')
+                for vioation_knowledge_info in vioation_knowledge_infos:
+                    _id = vioation_knowledge_info[0]
+                    keyword1 = vioation_knowledge_info[1].split(',') if vioation_knowledge_info[1] else []
+                    keyword2 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
+                    keyword3 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
 
-                if base_parser.is_violate(content, key1=keyword1, key2=keyword2, key3=keyword3):
-                    violate_id = _id
-                    break
+                    if base_parser.is_violate(content, key1=keyword1, key2=keyword2, key3=keyword3):
+                        violate_id = _id
+                        break
 
             # 下载视频
             is_mp4 = tools.is_file(video_url, 'mp4')

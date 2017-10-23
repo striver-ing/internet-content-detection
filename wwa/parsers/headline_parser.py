@@ -77,10 +77,10 @@ def add_root_url(parser_params = {}):
 
     base_url = 'http://is.snssdk.com/api/news/feed/v51/'
 
-    params = 北京
+    params = 泸州
 
     time_interval = ONE_PAGE_TIME_INTERVAL
-    content_released_time = tools.get_current_timestamp() - 86400 # 一天
+    content_released_time = tools.get_current_timestamp() - 86400 * 30 # 一天
     current_timestamp = tools.get_current_timestamp()
 
     max_behot_time = current_timestamp
@@ -186,12 +186,12 @@ def parser(url_info):
 
         # 敏感事件
         sensitive_id = ''
-        sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
+        sensitive_event_infos = oracledb.find('select t.id, t.keyword1, t.keyword2, t.keyword3 from tab_mvms_sensitive_event t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time')
         for sensitive_event_info in sensitive_event_infos:
             _id = sensitive_event_info[0]
-            keyword1 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
-            keyword2 = sensitive_event_info[4].split(',') if sensitive_event_info[4] else []
-            keyword3 = sensitive_event_info[5].split(',') if sensitive_event_info[5] else []
+            keyword1 = sensitive_event_info[1].split(',') if sensitive_event_info[1] else []
+            keyword2 = sensitive_event_info[2].split(',') if sensitive_event_info[2] else []
+            keyword3 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
 
             if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
                 sensitive_id = _id
@@ -199,17 +199,17 @@ def parser(url_info):
 
         # 违规事件
         violate_id = ''
-        vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
+        vioation_knowledge_infos = oracledb.find('select t.id, t.keyword1, t.keyword2, t.keyword3 from tab_mvms_violation_knowledge t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time')
         for vioation_knowledge_info in vioation_knowledge_infos:
             _id = vioation_knowledge_info[0]
-            keyword1 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
-            keyword2 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
-            keyword3 = vioation_knowledge_info[4].split(',') if vioation_knowledge_info[4] else []
+            keyword1 = vioation_knowledge_info[1].split(',') if vioation_knowledge_info[1] else []
+            keyword2 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
+            keyword3 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
+
 
             if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
                 violate_id = _id
                 break
-
 
         log.debug('''
             title:          %s

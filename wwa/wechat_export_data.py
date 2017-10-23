@@ -23,6 +23,7 @@ def account_main():
         'LOCAL_IMAGE_URL' : 'str_local_image_url',
         'ACCOUNT_URL' : 'str_account_url',
         # 'MONITOR_STATUS' : 'vint_401',
+        'monitor_type': 'int_monitor_type',
         'SUMMARY' : 'str_summary',
         'SEXY_IMAGE_STATUS':'str_sexy_image_status'
     }

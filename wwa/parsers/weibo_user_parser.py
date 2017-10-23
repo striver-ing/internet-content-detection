@@ -30,13 +30,17 @@ def add_root_url(parser_params):
         添加根url
         parser_params : %s
         ''' % str(parser_params))
-    for search_keyword in parser_params:
-        remark = search_keyword
-        if not search_keyword:
-            continue
-        search_keyword = tools.quote(search_keyword, safe='/:?=&%')
-        url = 'http://m.weibo.cn/api/container/getIndex?type=user&containerid=100103type%3D3%26q%3D' + search_keyword
-        base_parser.add_url('WWA_weibo_user_urls', SITE_ID, url, remark=remark)
+
+    result_list = parser_params['result_list']
+    for result in result_list:
+        monitor_type = result[1]
+        keywords = str(result[0]).split(',')
+        for search_keyword in keywords:
+            if not search_keyword:
+                continue
+            search_keyword = tools.quote(search_keyword, safe='/:?=&%')
+            url = 'http://m.weibo.cn/api/container/getIndex?type=user&containerid=100103type%3D3%26q%3D' + search_keyword
+            base_parser.add_url('WWA_weibo_user_urls', SITE_ID, url, remark=monitor_type)
 
 
 def parser(url_info):
@@ -44,6 +48,8 @@ def parser(url_info):
     log.debug('处理 \n' + tools.dumps_json(url_info))
 
     root_url = url_info['url']
+    monitor_type = url_info['remark']
+
     for i in range(2, 100):
         list_url = root_url + '&page=%d' % i
         html = tools.get_json_by_requests(list_url)
@@ -104,10 +110,11 @@ def parser(url_info):
                          简介：       %s
                          粉丝数：     %s
                          关注数：     %s
+                         监测状态：   %s
                         ''' % (_id, name, url, image_url, verified_reason, is_verified_reason, area, sex,
-                               summary, fans_count, follow_count))
+                               summary, fans_count, follow_count, monitor_type))
             base_parser.add_wwa_weibo_user_info('WWA_weibo_user_info', SITE_ID, _id, name, url, image_url, verified_reason,
-                                                is_verified_reason, area, sex, summary, fans_count, follow_count)
+                                                is_verified_reason, area, sex, summary, fans_count, follow_count, monitor_type)
         tools.delay_time()
     base_parser.update_url('WWA_weibo_user_urls', root_url, Constance.DONE)
     tools.delay_time()

@@ -15,15 +15,16 @@ import wwa.wechat_export_data as export_data
 
 def main():
     oracledb = OracleDB()
-    sql = 'select t.KEYWORD from TAB_MVMS_SEARCH_INFO t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time  and search_type = 701'
-    result_list = oracledb.find(sql)
+    sql = 'select t.KEYWORD, t.monitor_type from TAB_MVMS_SEARCH_INFO t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time  and search_type = 701'
+    result_list = oracledb.find(sql)#[(keys, monitor_type),()]
     if not result_list:
         log.debug('无任务 结束')
         return
 
-    keywords = []
-    for result in result_list:
-        keywords.extend(result[0].split(','))
+    # print(result_list)
+    # keywords = []
+    # for result in result_list:
+    #     keywords.extend(result[0].split(','))
 
     def begin_callback():
         log.info('\n********** WWA_wechat_account begin **********')
@@ -34,7 +35,7 @@ def main():
         log.info('\n********** WWA_wechat_account end **********')
         export_data.account_main()
 
-    parser_params = {'keywords': keywords}
+    parser_params = {'result_list': result_list}
 
     # 配置spider
     spider = Spider(tab_urls = 'WWA_wechat_account_url', tab_site = 'WWA_wechat_site_info', tab_content = 'WWA_wechat_official_accounts', content_unique_key = 'account_id', parser_count = 1, begin_callback = begin_callback, end_callback = end_callback, parser_params = parser_params)

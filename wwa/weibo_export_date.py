@@ -19,7 +19,8 @@ def user_main():
         'image_url': 'str_image_url',
         'monitor_status': 'vint_401',
         'SEARCH_TYPE' : 'vint_702',
-        'region' : 'str_area'
+        'region' : 'str_area',
+        'monitor_type': 'int_monitor_type'
     }
 
     export = ExportData('WWA_weibo_user_info', 'tab_mvms_weibo_info', key_map, 'account_url')

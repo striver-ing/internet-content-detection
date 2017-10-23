@@ -1,13 +1,8 @@
-cachedCount 16
-chlid   kb_location_hangzhou
-cityId  kb_location_hangzhou
-cityList    杭州
-cityName    杭州
-forward 1
-last_id 20170807A04ROR00
-locMore 1
-locType city
-manualRefresh   1
-page    1
-provinceName    浙江
-uid 6586AD26-34CC-49A8-A30F-A93410F22503
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+Accept-Encoding:gzip, deflate
+Accept-Language:zh-CN,zh;q=0.8
+Connection:keep-alive
+Cookie:pt2gguin=o0564773807; RK=XamCbgaLPk; ptcz=3f1bc0ae2092f554560e7365edf1517904b2d40d5844cb059b4bc9527d29c264; pac_uid=1_564773807; pgv_pvid=6790225732; o_cookie=564773807; pgv_pvi=7767423210; pgv_info=ssi=s5322290800
+Host:mp.weixin.qq.com
+Upgrade-Insecure-Requests:1
+User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36

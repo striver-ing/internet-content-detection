@@ -24,7 +24,7 @@ class ExportData():
     UPDATE = 2
     EXCEPTION = 3
 
-    def __init__(self, source_table = '', aim_table = '', key_map = '', unique_key = None, unique_key_mapping_source_key = None, update_read_status = True, condition = {'read_status':0}, datas = [], callback = ''):
+    def __init__(self, source_table = '', aim_table = '', key_map = '', unique_key = None, unique_key_mapping_source_key = None, update_read_status = True, condition = {'read_status':0}, datas = [], callback = '', sync_to_es = False):
         '''
         @summary: 初始化
         ---------
@@ -68,8 +68,11 @@ class ExportData():
 
         self._mongodb = MongoDB() if self._source_table else ''
         self._datas = datas
+        self._sync_to_es = sync_to_es
+        self._callback = callback
 
         self._is_oracle = False
+        self._is_set_unique_key = False
         self._is_set_unique_key = False
         self._export_count = 0
         self._update_count = 0
@@ -77,27 +80,29 @@ class ExportData():
 
 
     def export_to_oracle(self, source_table = '', aim_table = '', key_map = '', unique_key = None, unique_key_mapping_source_key = None, update_read_status = True, condition = {'read_status':0}, datas = [], callback = '', sync_to_es = False):
-        if self._aim_table != aim_table:
-            self._is_set_unique_key = False
+        if aim_table:
+            if self._aim_table != aim_table:
+                self._is_set_unique_key = False
+                self._es = ES() if sync_to_es else ''
+                self._mongodb = MongoDB() if source_table else ''
 
-        self._source_table = source_table
-        self._aim_table = aim_table
-        self._key_map = key_map
-        self._unique_key = unique_key
-        self._export_count = 0
-        self._update_count = 0
-        self._unique_key_mapping_source_key = unique_key_mapping_source_key
-        self._update_read_status = update_read_status if not datas else False
-        self._condition = condition
-        self._datas = datas
-        self._callback = callback
-        self._sync_to_es = sync_to_es
-        self._es = None
+            self._source_table = source_table
+            self._aim_table = aim_table
+            self._key_map = key_map
+            self._unique_key = unique_key
+            self._export_count = 0
+            self._update_count = 0
+            self._unique_key_mapping_source_key = unique_key_mapping_source_key
+            self._update_read_status = update_read_status if not datas else False
+            self._condition = condition
+            self._datas = datas
+            self._callback = callback
+            self._sync_to_es = sync_to_es
+            self._es = None
 
         self._aim_db = OracleDB()
         self._is_oracle = True
-        if self._sync_to_es:
-            self._es = ES()
+
 
         return self.__export()
 
@@ -182,7 +187,7 @@ class ExportData():
                 elif isinstance(data[keys[i]], bool):
                     values.append(data[keys[i]] and 1 or 0)
                 else:  # _id
-                    values.append(str(data[keys[i]])[-6:], 16)
+                    values.append(int(str(data[keys[i]])[-6:], 16))
 
                 insert_sql += '%s, '
                 update_sql += aim_keys[i] + " = %s, "%values[-1]
@@ -372,24 +377,26 @@ class ExportData():
 
 
 if __name__ == '__main__':
-    task_id = 22
+    # task_id = 22
+    print(int('53446519a80d2b6e',16))
 
-    key_map = {
-        'program_id': 'vint_sequence.nextval',
-        'search_type': 'int_search_type',
-        'program_name': 'str_title',
-        'program_url': 'str_url',
-        'release_date': 'date_release_time',
-        'image_url': 'str_image_url',
-        'program_content':'str_content',
-        'task_id': 'vint_%s'%task_id,
-        'keyword':'str_keyword',
-        'keyword_count':'int_keyword_count',
-        'check_status':'vint_202'
-    }
+    # key_map = {
+    #     'program_id': 'vint_sequence.nextval',
+    #     'search_type': 'int_search_type',
+    #     'program_name': 'str_title',
+    #     'program_url': 'str_url',
+    #     'release_date': 'date_release_time',
+    #     'image_url': 'str_image_url',
+    #     'program_content':'str_content',
+    #     'task_id': 'vint_%s'%task_id,
+    #     'keyword':'str_keyword',
+    #     'keyword_count':'int_keyword_count',
+    #     'check_status':'vint_202'
+    # }
 
-    a = '1.1'
-    print(a.isdigit())
+    # a = '1.1'
+    # print(a.isdigit())
 
-    print(eval('None'))
+    # print(eval('None'))
+
     # export = ExportData('VA_content_info', 'tab_ivms_program_info', key_map, 'program_url')

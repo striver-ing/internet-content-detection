@@ -15,15 +15,16 @@ def main():
     db = OracleDB()
     mongodb = MongoDB()
 
-    sql = 'select t.KEYWORD from TAB_MVMS_SEARCH_INFO t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time  and search_type = 702'
-    result = db.find(sql, fetch_one=False)
-    if not result:
+    sql = 'select t.KEYWORD, t.monitor_type from TAB_MVMS_SEARCH_INFO t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time  and search_type = 702'
+    result_list = db.find(sql, fetch_one=False)
+    if not result_list:
         log.debug('无任务 结束')
         return
 
-    parser_params = []
-    for i in result:
-        parser_params.extend(str(i[0]).split(','))
+    parser_params = {'result_list': result_list}
+    # parser_params = []
+    # for i in result:
+    #     parser_params.extend(str(i[0]).split(','))
 
     def begin_callback():
         log.info('\n********** WWA_weibo_user begin **********')

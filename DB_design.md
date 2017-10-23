@@ -6,11 +6,11 @@
 
 >**数据库名： `internet_content_detection `**
 
-需要图片鉴黄的数据加上一下两个字段  
+需要图片鉴黄的数据加上一下三个字段  
 
 * sexy_image_status   淫秽色情图像，多个逗号分隔
-* sexy_image_url      淫秽色情图像地址，多个逗号分隔
-* image_pron_status   图片扫描状态
+* sexy_image_url      淫秽色情图像地址，list
+* image_pron_status:0   图片扫描状态
 
 ### 互联网舆情监测系统 Op_###
 网站表 `Op_site_info`

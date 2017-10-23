@@ -40,13 +40,12 @@ def add_root_url(parser_params = {}):
         添加根url
         parser_params : %s
         '''%str(parser_params))
-
-    keywords = parser_params['keywords']
-
-    for keyword in keywords:
+    for result in parser_params:
+        monitor_type = result[1]
+        keyword = result[0]
         if keyword:
             url = 'http://weixin.sogou.com/weixin?type=1&s_from=input&query=%s&ie=utf8&_sug_=n&_sug_type_='%keyword
-            base_parser.add_url('WWA_wechat_article_url', SITE_ID, url, remark = keyword)
+            base_parser.add_url('WWA_wechat_article_url', SITE_ID, url, remark = {'keyword':keyword, 'monitor_type':monitor_type})
 
 # 必须定义 解析网址
 def parser(url_info):
@@ -56,27 +55,25 @@ def parser(url_info):
     root_url = url_info['url']
     depth = url_info['depth']
     site_id = url_info['site_id']
-    remark = url_info['remark']
+    remark = url_info['remark']['keyword']
+    monitor_type = url_info['remark']['monitor_type']
     official_accounts_id = remark
     retry_times = url_info['retry_times']
 
     headers = {
-        "Cache-Control": "max-age=0",
-        "Host": "weixin.sogou.com",
-        "Accept-Encoding": "gzip, deflate",
-        "Accept-Language": "zh-CN,zh;q=0.8",
-        "Connection": "keep-alive",
-        "Cookie": "SUID=72780CD23D148B0A59688B0C0002AD65; wuid=AAGPF/32GQAAAAqLFD2BdAAAGwY=; CXID=A468F618D67D4868DC83E6061B1B3CCC; ad=QZllllllll2Bzw7GlllllVOoAZ1lllll1kectkllllylllllROxlw@@@@@@@@@@@; ABTEST=0|1500285612|v1; IPLOC=CN1100; weixinIndexVisited=1; SUV=006317867B7CC4C5596C8AAD6B089707; SNUID=0A14ACB4D0CA9B50A8ABB33CD0CA69FA; JSESSIONID=aaaAhmO07JCzF5I8fVf1v; sct=1",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-        "Upgrade-Insecure-Requests": "1",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36"
+    "Host": "weixin.sogou.com",
+    "Connection": "keep-alive",
+    "Accept-Encoding": "gzip, deflate",
+    "Accept-Language": "zh-CN,zh;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Cookie": "ABTEST=8|1506658658|v1; IPLOC=CN1100; SUID=C5C47C7B642E940A0000000059CDC962; SUID=C5C47C7B1508990A0000000059CDC963; weixinIndexVisited=1; SUV=00F95AA57B7CC4C559CDC963CE316529; SNUID=2B2A9295EDE8B7A2BCECB605EE30F1BE; JSESSIONID=aaadcwpP9yaKs-PCMhz6v",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+    "Upgrade-Insecure-Requests": "1"
     }
 
     # 获取代理
-    ip, port, user_agent = base_parser.get_proxies()
-
-    headers["User-Agent"] = user_agent
-    proxies = {'http':"http://{ip}:{port}".format(ip = ip, port = port), 'https':"https://{ip}:{port}".format(ip = ip, port = port)}
+    proxies = base_parser.get_proxies()
+    headers["User-Agent"] = base_parser.get_user_agent()
 
     # 解析
     # print(proxies)
@@ -91,6 +88,7 @@ def parser(url_info):
     # print(html)
     regex = '<input type=text name="c" value="" placeholder="(.*?)" id="seccodeInput">'
     check_info = tools.get_info(html, regex, fetch_one = True)
+    print(root_url)
     log.debug('取文章链接' + check_info)
 
     if check_info:
@@ -111,20 +109,18 @@ def parser(url_info):
         return
 
     headers = {
+        "Accept-Language": "zh-CN,zh;q=0.8",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
+        "Host": "mp.weixin.qq.com",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
         "Upgrade-Insecure-Requests": "1",
-        "Accept-Language": "zh-CN,zh;q=0.8",
-        "Cookie": "qz_gdt=7gawywoxaaafu2usng7a; pt2gguin=o0564773807; uin=o0564773807; skey=@9LfdNu6p7; ptisp=cnc; RK=XbmCLgarbm; ptcz=cfae2beb1f53dd4759ad3383ebd1fb17a7d62df17e3624182ca2e8953e889b96; o_cookie=564773807; pgv_info=ssid=s3302157410; pgv_pvid=3738392602; pac_uid=1_564773807; _qpsvr_localtk=tk9975; sig=h0159c268acf7197482969aac7f1cd8684e4de9cc8cc911c0a2e45afe592fb7e56dd70f7dcb2e1a02bc",
-        "Connection": "keep-alive",
-        "Host": "mp.weixin.qq.com"
+        "Connection": "keep-alive"
     }
 
     # 代理
-    ip, port, user_agent = base_parser.get_proxies()
-    headers["User-Agent"] = user_agent
-    # proxies = {'http':"http://{ip}:{port}".format(ip = ip, port = port), 'https':"https://{ip}:{port}".format(ip = ip, port = port)}
+    proxies = base_parser.get_proxies()
+    headers["User-Agent"] = base_parser.get_user_agent()
     proxies = {} #使用代理会出现验证码 暂时不使用
 
     html, request = tools.get_html_by_requests(account_url, headers = headers, proxies = proxies)
@@ -184,29 +180,31 @@ def parser(url_info):
 
         # 敏感事件
         sensitive_id = ''
-        sensitive_event_infos = oracledb.find('select * from tab_mvms_sensitive_event')
-        for sensitive_event_info in sensitive_event_infos:
-            _id = sensitive_event_info[0]
-            keyword1 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
-            keyword2 = sensitive_event_info[4].split(',') if sensitive_event_info[4] else []
-            keyword3 = sensitive_event_info[5].split(',') if sensitive_event_info[5] else []
+        if monitor_type == 1 or monitor_type == 2:
+            sensitive_event_infos = oracledb.find('select t.id, t.keyword1, t.keyword2, t.keyword3 from tab_mvms_sensitive_event t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time')
+            for sensitive_event_info in sensitive_event_infos:
+                _id = sensitive_event_info[0]
+                keyword1 = sensitive_event_info[1].split(',') if sensitive_event_info[1] else []
+                keyword2 = sensitive_event_info[2].split(',') if sensitive_event_info[2] else []
+                keyword3 = sensitive_event_info[3].split(',') if sensitive_event_info[3] else []
 
-            if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
-                sensitive_id = _id
-                break
+                if base_parser.is_violate(title + content, key1 = keyword1, key2 = keyword2, key3 = keyword3):
+                    sensitive_id = _id
+                    break
 
         # 违规事件
         violate_id = ''
-        vioation_knowledge_infos = oracledb.find('select * from tab_mvms_violation_knowledge')
-        for vioation_knowledge_info in vioation_knowledge_infos:
-            _id = vioation_knowledge_info[0]
-            keyword1 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
-            keyword2 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
-            keyword3 = vioation_knowledge_info[4].split(',') if vioation_knowledge_info[4] else []
+        if monitor_type == 0 or monitor_type == 2:
+            vioation_knowledge_infos = oracledb.find('select t.id, t.keyword1, t.keyword2, t.keyword3 from tab_mvms_violation_knowledge t where sysdate >= t.monitor_start_time and sysdate <= t.monitor_end_time')
+            for vioation_knowledge_info in vioation_knowledge_infos:
+                _id = vioation_knowledge_info[0]
+                keyword1 = vioation_knowledge_info[1].split(',') if vioation_knowledge_info[1] else []
+                keyword2 = vioation_knowledge_info[2].split(',') if vioation_knowledge_info[2] else []
+                keyword3 = vioation_knowledge_info[3].split(',') if vioation_knowledge_info[3] else []
 
-            if base_parser.is_violate(title + tools.del_html_tag(content), key1=keyword1, key2=keyword2, key3=keyword3):
-                violate_id = _id
-                break
+                if base_parser.is_violate(title + tools.del_html_tag(content), key1=keyword1, key2=keyword2, key3=keyword3):
+                    violate_id = _id
+                    break
 
         log.debug('''
             标题         %s
