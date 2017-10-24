@@ -18,6 +18,8 @@ import utils.tools as tools
 from utils.log import log
 from utils.prpcrypt import Prpcrypt
 
+db = OracleDB()
+
 def delete_keys(keywords):
     is_delete = False
     keywords = keywords.split(',')
@@ -79,7 +81,6 @@ def format_keys(keywords):
     return keywords
 
 def get_clues():
-    db = OracleDB()
     sql = 'select t.id clues_id,to_char(t.keyword1),to_char(t.keyword2),to_char(t.keyword3),t.zero_id  from TAB_IOPM_CLUES t where zero_id != 7' # 7 为传播途径
     results = db.find(sql)
 
@@ -119,13 +120,30 @@ def get_clues():
         data['keyword2'] = format_keys(data['keyword2'])
         data['keyword3'] = format_keys(data['keyword3'])
         clues_json["data"].append(data)
-    clues_json = tools.dumps_json(clues_json)
-    print(clues_json)
-
-    # tools.write_file('clues/clues.txt', clues_json)
-    # os.system('start clues\\')
 
     return clues_json
+
+def save_clues_to_file(clues_json_str):
+    tools.write_file('clues/clues.txt', clues_json_str)
+    os.system('start clues\\')
+
+
+def record_sync_status(total, status, message, data, sync_type):
+    delete_count = 'null'
+    worn_clues_list = []
+    update_count = 'null'
+    save_count = 'null'
+
+    if data:
+        delete_count = data.get("deleteNum")
+        worn_clues_list = data.get("wrongIdList")
+        update_count = data.get("updateNum")
+        save_count = data.get("saveNum")
+
+    sql = "insert into TAB_IOPM_CLUES_SYNC_INFO (id, total, status, message, delete_count, update_count, save_count, worn_clues_list, sync_type) values (%s, %s, %s, '%s', %s, %s, %s, '%s', %s) "%('seq_iopm_sync.nextval', total, status, message, delete_count, update_count, save_count, ','.join(worn_clues_list), sync_type)
+
+    print(sql)
+    return db.add(sql)
 
 def main():
     '''
@@ -137,7 +155,11 @@ def main():
     '''
 
     clues_json = get_clues()
+    clues_count = len(clues_json['data'])
+
     clues_json = tools.dumps_json(clues_json)
+    print(clues_json)
+    # save_clues_to_file(clues_json)
 
 
     keys = 'pattek.com.cn'
@@ -149,15 +171,25 @@ def main():
     # 同步到内网
     url = 'http://192.168.60.38:8002/datasync_al/interface/cluesConfSync?'
     json = tools.get_json_by_requests(url, data = data)
+    # 记录同步行为
+    result = record_sync_status(clues_count, json.get("status"), json.get('message'), json.get('data'), 0)
+    print(result)
     log.debug('''
         ------ 同步线索到内网 -----
-        %s'''%json)
+        %s
+        记录到数据库 %d
+        '''%(json, result))
 
     # 同步到外网
     url = 'http://124.205.229.232:8005/gdyq/datasync_al/interface/cluesConfSync'
+    json = tools.get_json_by_requests(url, data = data)
+    # 记录同步行为
+    result = record_sync_status(clues_count, json.get("status"), json.get('message'), json.get('data'), 1)
     log.debug('''
         ------ 同步线索到外网 -----
-        %s'''%json)
+        %s
+        记录到数据库 %d
+        '''%(json, result))
 
 if __name__ == '__main__':
     main()
